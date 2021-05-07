@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "types",
+  "info": {
+    "name": "Type"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "CollectionName": {
+      "type": "string",
+      "required": true,
+      "unique": false
+    },
+    "uid": {
+      "type": "uid",
+      "targetField": "CollectionName",
+      "required": true
+    },
+    "type": {
+      "type": "json"
+    }
+  }
+}
