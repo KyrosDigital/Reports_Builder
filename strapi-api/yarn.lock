@@ -9626,7 +9626,7 @@ strapi-utils@3.6.1:
     pluralize "^8.0.0"
     yup "0.29.3"
 
-strapi@3.6.1:
+strapi@^3.6.1:
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/strapi/-/strapi-3.6.1.tgz#e78d96e5c4dd87ef03c4e1591653d74cc57bf0fa"
   integrity sha512-ApHfxvlSlSw9yiWb8nV/8ZdJ594Vt1uc/h3d5j2iAjAi0IA+1K8iHEqLezqp+DLFqQ5MTa5JobKIyt7JpEOC2A==
