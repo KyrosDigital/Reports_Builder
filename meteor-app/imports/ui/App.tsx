@@ -1,11 +1,9 @@
 import React from 'react';
-import { Hello } from './Hello';
-import { Info } from './Info';
+import { Report_View } from './Report_View';
 
 export const App = () => (
   <div>
-    <h1>Welcome to Meteor!</h1>
-    <Hello />
-    <Info />
+    <h1>Welcome to Kyros Report Builder!</h1>
+    <Report_View />
   </div>
 );
