@@ -1,10 +1,10 @@
 import { Mongo } from 'meteor/mongo';
 
-export interface DummyType {
+export interface Link {
   _id?: string;
   title: string;
   url: string;
   createdAt: Date;
 }
 
-export const DummyCollection = new Mongo.Collection<DummyType>('DummyCollection');
+export const LinksCollection = new Mongo.Collection<Link>('links');
