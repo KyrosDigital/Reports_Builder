@@ -18,8 +18,13 @@ export const Report_View = () => {
   return (
     <div>
       <p>Here are the Types created within Strapi</p>
-			{types.map(type => {
-				return <div>{type.CollectionName}</div>
+			{types.map(the => {
+				return <div>
+					<p>{the.collectionName}</p>
+					{Object.entries(the.type).map((key) => {
+						return <p>{`${key}`}</p>
+					})}
+				</div>
 			})}
     </div>
   );

@@ -21,7 +21,7 @@ export const StrapiUsersCollection = new Mongo.Collection<StrapiUsers>('users-pe
 export interface Types {
   _id?: string;
   type: Object;
-	CollectionName: string;
+	collectionName: string;
 	uid: string;
 	published_at?: string;
 	createdAt: Date;
