@@ -9,6 +9,8 @@ export const Report_Builder = () => {
 	const loading = useSubscription('ReportStructure')
 
 	const [reportStructure, setReportStructure] = useState({tables: []})
+	const [columSelected, setColumnSelected] = useState(null)
+	const [cellSelected, setCellSelected] = useState(null)
 
 	useEffect(() => {
 		if(!loading) {
@@ -18,7 +20,7 @@ export const Report_Builder = () => {
 	}, [loading])
 
 	useEffect(() => {
-		console.log(reportStructure)
+		// console.log(reportStructure)
 	}, [reportStructure])
 
 	const createNewTable = () => {
@@ -27,38 +29,87 @@ export const Report_Builder = () => {
 			columns: [{id: uuidv4(), label: 'col1'}, {id: uuidv4(), label: 'col2'}, {id: uuidv4(), label: 'col3'}],
 			rows: [{
 				id: uuidv4(),
-				cells: [{id: 'cell1'}, {id: "cell2"}, {id: "cell3"}]
+				cells: [{id: uuidv4()}, {id: uuidv4()}, {id: uuidv4()}]
 			}, {
 				id: 'row2',
-				cells: [{id: 'cell4'}, {id: "cell5"}, {id: "cell6"}]
+				cells: [{id: uuidv4()}, {id: uuidv4()}, {id: uuidv4()}]
 			}], 
 		}] })
+	}
+
+	const addColumnToTable = (tableId) => {
+		const updatedTables = reportStructure.tables.map(table => {
+			if(table.id === tableId) {
+				table.columns.push({id: uuidv4(), label: `col${table.columns.length + 1}`})
+				table.rows.map(row => { row.cells.push({id: uuidv4()}) })
+			}
+			return table
+		})
+
+		setReportStructure({ tables:  updatedTables})
+	}
+
+	const addRowToTable = (tableId) => {
+		const cells = (tableColumns) => {
+			return tableColumns.map(col => {
+				return {id: uuidv4()}
+			})
+		}
+		const updatedTables = reportStructure.tables.map(table => {
+			if(table.id === tableId) {
+				table.rows.push({id: uuidv4(), cells: cells(table.columns)})
+			}
+			return table
+		})
+
+		setReportStructure({ tables:  updatedTables})
 	}
 
   return (
     <div>
       <p>Report Builder</p>
 
-			<button onClick={createNewTable}>New Table</button>
+			<button onClick={createNewTable}>+ New Table</button>
+
+			{columSelected && <div>
+				<p>{`Table: ${columSelected.tableId}`}</p>
+				<p>{`Column: ${columSelected.columnId}`}</p>
+			</div>}
+			
+			{cellSelected && <div>
+				<p>{`Table: ${cellSelected.tableId}`}</p>
+				<p>{`Cell: ${cellSelected.cellId}`}</p>
+			</div>}
 			
 			{reportStructure.tables.map((table) => {
 				return <div key={table.id} className="table">
-					<div className="row">
-					{table.columns.map(col => {
-						return <div key={col.id} className="col">
-							<div>{col.label}</div>
-						</div>
-					})}
-					</div>
-					{table.rows.map((row) => {
-						return <div key={row.id} className="row">
-							{row.cells.map((cell) => {
-								return <div key={cell.id} className="col">
-									<div>{cell.id}</div>
+
+					<div className="">
+
+						{/* controls */}
+						<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
+						<button onClick={() => addRowToTable(table.id)}>+ Row</button>
+
+						<div className="row"> {/* column headers */}
+							{table.columns.map(col => {
+								return <div key={col.id} className="col hover-col" onClick={() => setColumnSelected({tableId: table.id, columnId: col.id})}>
+									<div>{col.label}</div>
 								</div>
 							})}
 						</div>
-					})}
+						
+						{table.rows.map((row) => {
+							return <div key={row.id} className="row">
+								{row.cells.map((cell) => {
+									return <div key={cell.id} className="col hover-cell" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
+										<div></div>
+									</div>
+								})}
+							</div>
+						})}
+						
+					</div>
+					
 				</div>
 			})}
     </div>
