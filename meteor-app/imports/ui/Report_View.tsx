@@ -4,7 +4,7 @@ import { ClientData, StrapiClientDataCollection } from '../api/collections';
 
 export const Report_View = () => {
 
-	const loading = useSubscription('Types')
+	const loading = useSubscription('ClientData')
 
 	const [clientData, setClientData] = useState<Array<ClientData>>([])
 

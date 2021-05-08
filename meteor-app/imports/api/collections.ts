@@ -33,4 +33,9 @@ export interface ClientData {
 
 export const StrapiClientDataCollection = new Mongo.Collection<ClientData>('client_data');
 
+export interface ReportStructure {
+  _id: string;
+	tables: [];
+}
 
+export const Report_Structure_Collection = new Mongo.Collection<ReportStructure>('Report_Structure_Collection');

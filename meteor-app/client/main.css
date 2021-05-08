@@ -2,3 +2,17 @@ body {
   padding: 10px;
   font-family: sans-serif;
 }
+
+.table {
+	margin: 20px 0px;
+}
+
+.row {
+  display: flex; /* aligns all child elements (flex items) in a row */
+}
+
+.col {
+  flex: 1;        /* distributes space on the line equally among items */
+	border: solid 1px slategray;
+	padding: 10px 10px;
+}
