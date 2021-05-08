@@ -61,6 +61,9 @@
     },
     "types": {
       "collection": "type"
+    },
+    "client_data": {
+      "collection": "client-data"
     }
   }
 }

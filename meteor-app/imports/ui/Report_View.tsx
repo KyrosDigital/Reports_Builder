@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import useSubscription from '../api/hooks'
-import { Types, StrapiTypesCollection } from '../api/collections';
+import { ClientData, StrapiClientDataCollection } from '../api/collections';
 
 export const Report_View = () => {
 
 	const loading = useSubscription('Types')
 
-	const [types, setTypes] = useState<Array<Types>>([])
+	const [clientData, setClientData] = useState<Array<ClientData>>([])
 
 	useEffect(() => {
 		if(!loading) {
-			let query = StrapiTypesCollection.find().fetch()
-			if(query) setTypes(query)
+			let query = StrapiClientDataCollection.find().fetch()
+			if(query) setClientData(query)
 		}
 	}, [loading])
 
   return (
     <div>
       <p>Here are the Types created within Strapi</p>
-			{types.map(the => {
+			{clientData.map(the => {
 				return <div>
 					<p>{the.collectionName}</p>
-					{Object.entries(the.type).map((key) => {
+					{Object.entries(the.data).map((key) => {
 						return <p>{`${key}`}</p>
 					})}
 				</div>

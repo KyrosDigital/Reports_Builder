@@ -18,11 +18,11 @@ export interface StrapiUsers {
 
 export const StrapiUsersCollection = new Mongo.Collection<StrapiUsers>('users-permissions_user');
 
-export interface Types {
+export interface ClientData {
   _id?: string;
-  type: Object;
+  data: Object;
 	collectionName: string;
-	uid: string;
+	userId: string;
 	published_at?: string;
 	createdAt: Date;
 	updatedAt: Date;
@@ -31,6 +31,6 @@ export interface Types {
 	updated_by?: string; 
 }
 
-export const StrapiTypesCollection = new Mongo.Collection<Types>('types');
+export const StrapiClientDataCollection = new Mongo.Collection<ClientData>('client_data');
 
 

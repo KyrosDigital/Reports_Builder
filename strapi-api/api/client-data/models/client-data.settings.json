@@ -20,10 +20,8 @@
       "required": true,
       "unique": true
     },
-    "uid": {
-      "type": "uid",
-      "targetField": "collectionName",
-      "required": true
+    "userId": {
+      "type": "string"
     }
   }
 }
