@@ -35,7 +35,25 @@ export const StrapiClientDataCollection = new Mongo.Collection<ClientData>('clie
 
 export interface ReportStructure {
   _id: string;
-	tables: [];
+	tables: Array<ReportTableStructure>;
+}
+
+export interface ReportTableStructure {
+	id: string;
+	columns: Array<ReportColumnStructure>;
+	rows: Array<ReportRowStructure>;
+}
+export interface ReportColumnStructure {
+	id: string;
+	label: string;
+}
+export interface ReportRowStructure {
+	id: string;
+	cells: Array<ReportCellStructure>;
+}
+
+export interface ReportCellStructure {
+	id: string;
 }
 
 export const Report_Structure_Collection = new Mongo.Collection<ReportStructure>('Report_Structure_Collection');

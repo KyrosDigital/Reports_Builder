@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import useSubscription from '../../api/hooks'
-import { ReportStructure, Report_Structure_Collection } from '../../api/collections';
+import { 
+	ReportStructure, 
+	ReportColumnStructure, 
+	Report_Structure_Collection 
+} from '../../api/collections';
 
 
 export const Report_Builder = () => {
 
 	const loading = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState({tables: []})
-	const [columSelected, setColumnSelected] = useState(null)
-	const [cellSelected, setCellSelected] = useState(null)
+	const [reportStructure, setReportStructure] = useState<ReportStructure>({_id: '', tables: []})
+	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
+	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 
 	useEffect(() => {
 		if(!loading) {
@@ -24,7 +28,7 @@ export const Report_Builder = () => {
 	}, [reportStructure])
 
 	const createNewTable = () => {
-		setReportStructure({ tables: [...reportStructure.tables, {
+		setReportStructure({_id: '', tables: [...reportStructure.tables, {
 			id: uuidv4(),
 			columns: [{id: uuidv4(), label: 'col1'}, {id: uuidv4(), label: 'col2'}, {id: uuidv4(), label: 'col3'}],
 			rows: [{
@@ -37,23 +41,21 @@ export const Report_Builder = () => {
 		}] })
 	}
 
-	const addColumnToTable = (tableId) => {
+	const addColumnToTable = (tableId: string) => {
 		const updatedTables = reportStructure.tables.map(table => {
 			if(table.id === tableId) {
 				table.columns.push({id: uuidv4(), label: `col${table.columns.length + 1}`})
-				table.rows.map(row => { row.cells.push({id: uuidv4()}) })
+				table.rows.forEach(row => { row.cells.push({id: uuidv4()}) })
 			}
 			return table
 		})
 
-		setReportStructure({ tables:  updatedTables})
+		setReportStructure({ _id: '', tables:  updatedTables})
 	}
 
-	const addRowToTable = (tableId) => {
-		const cells = (tableColumns) => {
-			return tableColumns.map(col => {
-				return {id: uuidv4()}
-			})
+	const addRowToTable = (tableId: string) => {
+		const cells = (tableColumns: Array<ReportColumnStructure>) => {
+			return tableColumns.map(() => ({id: uuidv4()}))
 		}
 		const updatedTables = reportStructure.tables.map(table => {
 			if(table.id === tableId) {
@@ -62,7 +64,7 @@ export const Report_Builder = () => {
 			return table
 		})
 
-		setReportStructure({ tables:  updatedTables})
+		setReportStructure({ _id: '', tables:  updatedTables})
 	}
 
   return (
@@ -71,16 +73,17 @@ export const Report_Builder = () => {
 
 			<button onClick={createNewTable}>+ New Table</button>
 
-			{columSelected && <div>
+			{columSelected.tableId !== '' && <div>
 				<p>{`Table: ${columSelected.tableId}`}</p>
 				<p>{`Column: ${columSelected.columnId}`}</p>
 			</div>}
 			
-			{cellSelected && <div>
+			{cellSelected.tableId !== '' && <div>
 				<p>{`Table: ${cellSelected.tableId}`}</p>
 				<p>{`Cell: ${cellSelected.cellId}`}</p>
 			</div>}
 			
+			{/* tables */}
 			{reportStructure.tables.map((table) => {
 				return <div key={table.id} className="table">
 
@@ -90,7 +93,8 @@ export const Report_Builder = () => {
 						<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
 						<button onClick={() => addRowToTable(table.id)}>+ Row</button>
 
-						<div className="row"> {/* column headers */}
+						{/* column headers */}
+						<div className="row"> 
 							{table.columns.map(col => {
 								return <div key={col.id} className="col hover-col" onClick={() => setColumnSelected({tableId: table.id, columnId: col.id})}>
 									<div>{col.label}</div>
@@ -98,6 +102,7 @@ export const Report_Builder = () => {
 							})}
 						</div>
 						
+						{/* rows and cells */}
 						{table.rows.map((row) => {
 							return <div key={row.id} className="row">
 								{row.cells.map((cell) => {
