@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "consumers",
+  "info": {
+    "name": "Consumer"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "User_id": {
+      "type": "string"
+    },
+    "collection_name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "json"
+    }
+  }
+}
