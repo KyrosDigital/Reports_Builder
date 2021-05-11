@@ -33,6 +33,14 @@
       }
     },
     {
+      "method": "POST",
+      "path": "/client-data/upload",
+      "handler": "client-data.upload",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "PUT",
       "path": "/client-data/:id",
       "handler": "client-data.update",

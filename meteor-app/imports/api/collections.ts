@@ -20,9 +20,9 @@ export const StrapiUsersCollection = new Mongo.Collection<StrapiUsers>('users-pe
 
 export interface ClientData {
   _id?: string;
+  collectionName: string;
+  userId: string;
   data: Object;
-	collectionName: string;
-	userId: string;
 	published_at?: string;
 	createdAt: Date;
 	updatedAt: Date;
