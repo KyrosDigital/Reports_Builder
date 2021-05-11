@@ -27,6 +27,8 @@ export const Report_Builder = () => {
 		// console.log(reportStructure)
 	}, [reportStructure])
 
+	
+
 	const createNewTable = () => {
 		setReportStructure({_id: '', tables: [...reportStructure.tables, {
 			id: uuidv4(),

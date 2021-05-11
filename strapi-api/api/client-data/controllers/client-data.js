@@ -26,4 +26,22 @@ module.exports = {
     }
     return sanitizeEntity(entity, { model: strapi.models["client-data"] });
   },
+
+  async upload(ctx) {
+    let entity;
+    if (ctx.is('multipart')) {
+      const { data, files } = parseMultipartData(ctx);
+      data.userId = ctx.state.user.id;
+      entity = await strapi.services["client-data"].create(data, { files });
+    } else {
+      let record = {};
+      ctx.request.body.userId = ctx.state.user.id;
+      console.log(ctx.state.user);
+      record["collectionName"] = ctx.request.body["collectionName"];
+      record["data"] = ctx.request.body["data"];
+      entity = await strapi.services["client-data"].create(record);
+    }
+    return sanitizeEntity(entity, { model: strapi.models.consumer });
+    
+  },
 };

@@ -14,7 +14,7 @@ Meteor.startup(() => {
 	// TODO: this does not yet factor in collection, and data sources ... 
 	// requires strings to start with ( and end with )
 	// we store object representations, so we can convert to JSON with JSON.parse
-	const parseMath = (str) => {
+	const parseMath = (str : string) => {
 		var i = 0;
 		const main = () => {
 			var arr = [], startIndex = i;
