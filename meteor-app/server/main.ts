@@ -11,6 +11,7 @@ Meteor.startup(() => {
 	// ( (data_1 + data_2 * data_3) / (data_4 + data_5) )
 	//           2        1 start   4         3
 
+	// TODO: this does not yet factor in collection, and data sources ... 
 	const parseMath = (str) => {
 		var i = 0;
 		const main = () => {
@@ -33,13 +34,12 @@ Meteor.startup(() => {
 		}
 		return main();
 	}
+	
 	console.log(parseMath("((data_1 + data_2) * data_3) / (data_4 + data_5)"));
 
-	// which results in ... 
+	// which should result in something like ... 
 
-
-
-	// a proto object created from within report builder the UI
+	// a proto object created from parseMath
 	const formula = {
 		collections: ['Transactions', 'Agents'],
 		steps: [
