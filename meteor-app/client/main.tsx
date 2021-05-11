@@ -6,6 +6,4 @@ import { runMath } from '/imports/api/math';
 
 Meteor.startup(() => {
   render(<App />, document.getElementById('react-target'));
-
-	runMath()
 });
