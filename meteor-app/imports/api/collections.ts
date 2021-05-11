@@ -17,3 +17,43 @@ export interface StrapiUsers {
 }
 
 export const StrapiUsersCollection = new Mongo.Collection<StrapiUsers>('users-permissions_user');
+
+export interface ClientData {
+  _id?: string;
+  data: Object;
+	collectionName: string;
+	userId: string;
+	published_at?: string;
+	createdAt: Date;
+	updatedAt: Date;
+	__v: number;
+	created_by?: string;
+	updated_by?: string; 
+}
+
+export const StrapiClientDataCollection = new Mongo.Collection<ClientData>('client_data');
+
+export interface ReportStructure {
+  _id: string;
+	tables: Array<ReportTableStructure>;
+}
+
+export interface ReportTableStructure {
+	id: string;
+	columns: Array<ReportColumnStructure>;
+	rows: Array<ReportRowStructure>;
+}
+export interface ReportColumnStructure {
+	id: string;
+	label: string;
+}
+export interface ReportRowStructure {
+	id: string;
+	cells: Array<ReportCellStructure>;
+}
+
+export interface ReportCellStructure {
+	id: string;
+}
+
+export const Report_Structure_Collection = new Mongo.Collection<ReportStructure>('Report_Structure_Collection');
