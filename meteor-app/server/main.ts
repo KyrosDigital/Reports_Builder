@@ -12,6 +12,8 @@ Meteor.startup(() => {
 	//           2        1 start   4         3
 
 	// TODO: this does not yet factor in collection, and data sources ... 
+	// requires strings to start with ( and end with )
+	// we store object representations, so we can convert to JSON with JSON.parse
 	const parseMath = (str) => {
 		var i = 0;
 		const main = () => {
@@ -34,8 +36,10 @@ Meteor.startup(() => {
 		}
 		return main();
 	}
-	
-	console.log(parseMath("((data_1 + data_2) * data_3) / (data_4 + data_5)"));
+
+	console.log(JSON.parse('{"collection":"Transactions","index":0,"path":"data.price"}'))
+
+	console.log(parseMath('(({"collection":"Transactions","index":0,"path":"data.price"} + {"collection":"Transactions","index":1,"path":"data.price"}) * {"value":.5}) / {"collection":"Agents","target":"count"})'));
 
 	// which should result in something like ... 
 
