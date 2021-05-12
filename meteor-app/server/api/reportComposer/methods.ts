@@ -11,6 +11,8 @@ Meteor.methods({
 		for each "row", process each column
 		if the column has a formula, do the math
 		the goal is to populate the rows, and cells within, with correct information
+	
+		This method, mutates the original report object, and returns it
 	*/
 
 	Compose_Report: function(report) {
@@ -58,12 +60,12 @@ Meteor.methods({
 			await report.formulas.map(formula => {
 
 				console.log("Before: ", formula.originalExpression)
+
 				// individually process each value, for the final expression
 				formula.values.map(value => {
 
 					if(value.type === 'query') {
 						const query = StrapiClientDataCollection.find(value.query).fetch()
-						
 
 						if(value.operation === 'sum') {
 							let values = query.map(obj => obj.data[value.property])
@@ -80,16 +82,33 @@ Meteor.methods({
 				})
 
 				// evaluate the expression, after the values have been harvested
-				const output = math.evaluate(formula.expression)	
-
+				formula.result = math.evaluate(formula.expression)	
 				console.log("After: ", formula.expression)
-				console.log("Eval: ", math.evaluate(formula.expression), "\n\n" )
+				console.log("Eval: ", formula.result, "\n\n" )
+			})
+		}
+
+		const applyFormulasToTables = async (report) => {
+
+			// map over formulas
+			// determine where the result should be applied
+			// apply the result to the correct cell, within a row
+
+			report.formulas.map(formula => {
+				const table = report.tables.find(table => table.id === formula.tableId)
+				const tableIndex = report.tables.findIndex(table => table.id === formula.tableId)
+				const cellIndex = table.columns.findIndex(col => col.id === formula.columnId)
+
+				report.tables[tableIndex].rows.map(row => (
+					row.cells[cellIndex].value = formula.result
+				))
 			})
 		}
 		
 		const run = async () => {
 
 			await computeFormulas(report)
+			await applyFormulasToTables(report)
 			// return the mutated report, containing the accurate values to display
 			return report
 

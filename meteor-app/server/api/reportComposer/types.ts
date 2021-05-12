@@ -4,8 +4,9 @@ export interface Formula {
 	columnId: string; // the column the formula should be applied to
 	cellIndex: number; // the index for a cell, under a column, within a row
 	expression: string; // the mathmatical expression to be calculated
-	evaluatedExpression: string; // the string that was evaluated with math.evaluate()
+	originalExpression: string; // the string that was evaluated with math.evaluate()
 	values: Array<FormulaValue>; // an array of values, that need to be calculated
+	result: string | number | null; // the result of the formula running
 }
 
 export interface FormulaValue {

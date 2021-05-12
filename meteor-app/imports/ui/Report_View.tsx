@@ -35,6 +35,7 @@ export const Report_View = () => {
 				cellIndex: null,
 				originalExpression: 'sum(x + 1) / y',
 				expression: 'sum(x + 1) / y',
+				result: null, 
 				values: [
 					{
 						key: 'x',
