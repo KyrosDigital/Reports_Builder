@@ -16,60 +16,101 @@ export const Report_View = () => {
 	// 	}
 	// }, [loading])
 
-	const report = {
-		_id: 'asdopasdkdas', // the mongo id of the object
-		tables: [ // the table structure, crafted by user
-			{
-				id: 'uuid',
-				type: 'collection', // collection - loops over a set of data, static - user manually sets the amount of rows
-				columns: [ {id: 'yyy', label: 'sales', formulaId: 'xxx'} ], // the columns in the table
-				rows: [ ],
-				collection: 'Agents' // could be null, if rowType is static
-			}
-		],
-		formulas: [
-			{
-				id: 'xxx',
-				tableId: 'uuid',
-				columnId: 'yyy',
-				cellIndex: null,
-				originalExpression: 'sum(x + 1) / y',
-				expression: 'sum(x + 1) / y',
-				result: null, 
-				values: [
-					{
-						key: 'x',
-						type: 'query',
-						operation: 'sum',
-						collectionName: 'Transactions',
-						query: {"userId": "60958c98857a7b14acb156d9", "collectionName": "Transactions"},
-						property: 'price'
-					},
-					{
-						key: 'y',
-						type: 'query_count',
-						collectionName: 'Agents',
-						query: {"userId": "60958c98857a7b14acb156d9", "collectionName": "Agents"}
-					},
-					// {
-					// 	key: 'z',
-					// 	type: 'pointer',
-					// 	collumnId: 'uuid',
-					// 	cellIndex: 0
-					// }
-				]
-			}
-		]
-	}
+	const [report, setReport] = useState(null)
 
-	Meteor.call('Compose_Report', report, (error, result) => {
-		if(error) console.log(error)
-		if(result) console.log(result)
-	})
+	const makeReport = () => {
+		const data = {
+			_id: 'asdopasdkdas', // the mongo id of the object
+			tables: [ // the table structure, crafted by user
+				{
+					id: 'uuid',
+					title: 'Agent Sales Volume',
+					type: 'collection', // collection - loops over a set of data, static - user manually sets the amount of rows
+					columns: [ 
+						{id: 'zzz', label: 'First Name', property: 'firstName'}, 
+						{id: 'qqq', label: 'Last Name', property: 'lastName'}, 
+						{id: 'yyy', label: 'Sales', formulaId: 'xxx'} 
+					], // the columns in the table
+					rows: [ ],
+					collection: 'Agents' // could be null, if rowType is static
+				}
+			],
+			formulas: [
+				{
+					id: 'xxx',
+					tableId: 'uuid',
+					columnId: 'yyy',
+					cellIndex: null,
+					originalExpression: 'sum(x + 1) / y',
+					expression: 'sum(x + 1) / y',
+					result: null, 
+					values: [
+						{
+							key: 'x',
+							type: 'query',
+							operation: 'sum',
+							collectionName: 'Transactions',
+							query: {"userId": "60958c98857a7b14acb156d9", "collectionName": "Transactions"},
+							property: 'price'
+						},
+						{
+							key: 'y',
+							type: 'query_count',
+							collectionName: 'Agents',
+							query: {"userId": "60958c98857a7b14acb156d9", "collectionName": "Agents"}
+						},
+						// {
+						// 	key: 'z',
+						// 	type: 'pointer',
+						// 	collumnId: 'uuid',
+						// 	cellIndex: 0
+						// }
+					]
+				}
+			]
+		}
+	
+		Meteor.call('Compose_Report', data, (error, result) => {
+			if(error) console.log(error)
+			if(result) setReport(result)
+		})
+	}
 
   return (
     <div>
       <h2>Report View</h2>
+
+			<button onClick={makeReport}>Make Report</button>
+
+			{report && report.tables.map((table) => {
+				return <div key={table.id} className="table">
+
+					<div className="">
+
+						{/* column headers */}
+						<div className="row"> 
+							{table.columns.map(col => {
+								return <div key={col.id} className="col hover-col">
+									<div>{col.label}</div>
+								</div>
+							})}
+						</div>
+						
+						{/* rows and cells */}
+						{table.rows.map((row) => {
+							return <div key={row.id} className="row">
+								{row.cells.map((cell) => {
+									return <div key={cell.id} className="col hover-cell">
+										<div>{cell.value}</div>
+									</div>
+								})}
+							</div>
+						})}
+						
+					</div>
+					
+				</div>
+			})}
     </div>
   );
 };

@@ -26,12 +26,18 @@ Meteor.methods({
 		}
 
 		// generates cells, for a given row, if table is collection driven
-		const generateCells = (columns) => {
-			return columns.map((col, i) => ({
-				index: i,
-				type: 'formula',
-				value: 0
-			}))
+		const generateCells = (columns, document) => {
+			return columns.map((column, i) => {
+				let type = '', value = 0;
+				if(column.property) {
+					type = 'property'
+					value = document.data[column.property]
+				}
+				if(column.formulaId) {
+					type = 'formula'
+				}
+				return { index: i, type: type, value: value }
+			})
 		}
 
 		// generates rows within a table, if collection driven
@@ -39,10 +45,9 @@ Meteor.methods({
 			// if type is "static", the rows should already be defined
 			if(table.type === 'collection') {
 				const collection = performQuery(table.collection)
-
 				return collection.map(document => ({
 					id: uuidv4(),
-					cells: generateCells(table.columns)
+					cells: generateCells(table.columns, document)
 				}))
 			} else {
 				return table.rows;
