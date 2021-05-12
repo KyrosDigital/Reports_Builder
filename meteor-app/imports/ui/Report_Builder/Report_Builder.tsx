@@ -4,13 +4,17 @@ import useSubscription from '../../api/hooks'
 import { 
 	ReportStructure, 
 	ReportColumnStructure, 
-	Report_Structure_Collection 
+	Report_Structure_Collection, 
+	StrapiClientDataCollection
 } from '../../api/collections';
+import {runMath} from '../../api/math';
+import 'underscore';
 
 
 export const Report_Builder = () => {
 
 	const loading = useSubscription('ReportStructure')
+	const loading2 = useSubscription('ClientData')
 
 	const [reportStructure, setReportStructure] = useState<ReportStructure>({_id: '', tables: []})
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
@@ -67,6 +71,56 @@ export const Report_Builder = () => {
 		})
 
 		setReportStructure({ _id: '', tables:  updatedTables})
+	};
+
+	function MyControlledInput({ }) {
+		const [value, setValue] = useState('');
+		var queries = [];
+	  
+		const onChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+		  setValue(event.target.value);
+		};
+
+		function querySelection(element: string) {
+			let collectionName = element;
+			let path = "";
+			let arr = StrapiClientDataCollection.find({"collecitonName" : element}).fetch();
+			let keys = Object.keys(arr[0]["data"]);
+			keys.forEach((the) => {
+				return <button onClick={the => {
+					let dataString = "data.";
+					let theString = String(the);
+					path = dataString.concat(theString);
+				})}> {the} </button>
+			})
+			let query = {};
+			query["collection"] = collectionName;
+
+		}
+		
+		const handleButtonClicked = () => {
+			
+			for (var i = 0; i < value.length; i++) {
+				if (value[i] == '&') {
+					var keys = _.uniq(StrapiClientDataCollection.find({}, {fields : {"collectionName" : 1}}).fetch());
+					keys.forEach((element) => {
+						return <button onClick={querySelection(element)}> {element} </button>
+					});
+				}
+			}
+			console.log(runMath(value, query));
+			setValue('');
+			//console.log(temp);
+			
+		}
+
+		return (
+		  <>
+			<div>Input equation: {value}</div>
+			<input value={value} onChange={onChange} />
+			<button onClick={handleButtonClicked}> submit</button>
+		  </>
+		);
 	}
 
   return (
@@ -74,7 +128,7 @@ export const Report_Builder = () => {
       <p>Report Builder</p>
 
 			<button onClick={createNewTable}>+ New Table</button>
-
+			<MyControlledInput/>
 			{columSelected.tableId !== '' && <div>
 				<p>{`Table: ${columSelected.tableId}`}</p>
 				<p>{`Column: ${columSelected.columnId}`}</p>

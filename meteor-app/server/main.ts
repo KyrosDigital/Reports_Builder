@@ -85,7 +85,7 @@ Meteor.startup(() => {
 		// set values dynamically 
 		if(step.target === 'input') value = step.value
 		if(step.target === 'count') value = queries[step.collection].length
-		if(step.target === 'object') value = queries[step.collection][step.index].data['price']
+		// if(step.target === 'object') value = queries[step.collection][step.index].data['price']
 
 		// perform math operation sequentially
 		if(step.key === 'start') chain = chain.chain(value)

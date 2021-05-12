@@ -10,7 +10,7 @@ export const Report_View = () => {
 
 	useEffect(() => {
 		if(!loading) {
-			let query = StrapiClientDataCollection.find().fetch()
+			let query = StrapiClientDataCollection.distinct("collectionName")
 			if(query) setClientData(query)
 		}
 	}, [loading])

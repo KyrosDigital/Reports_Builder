@@ -1,27 +1,50 @@
-import math from 'mathjs'
+import math from 'mathjs';
+// import '../../server/publications/publications';
+import { StrapiClientDataCollection } from './collections';
 
-export const runMath = () => {
+export const runMath = (str : string, queries : object) => {
 
-	// const trans_1 = {
-	// 	price: 1005.32,
-	// }
 
-	// const trans_2 = {
-	// 	price: 33.45,
-	// }
 
-	// const formula = `(${trans_2.price} + ${trans_1.price})`
+	// TODO: this does not yet factor in collection, and data sources ... 
+	// requires strings to start with ( and end with )
+	// we store object representations, so we can convert to JSON with JSON.parse
+	const parseMath = () => {
+		var i = 0;
+		const main = () => {
+			var arr = [], startIndex = i;
+			const addWord = () => {
+				if (i-1 > startIndex) arr.push(str.slice(startIndex, i-1));
+			}
+			while (i < str.length) {
+				switch(str[i++]) {
+					case " ":
+						addWord(); startIndex = i; continue;
+					case "{":
+						arr.push(main()); startIndex = i; continue;
+					case "}":
+						addWord(); return arr;
+				}
+			}
+			addWord();
+			return arr;
+		}
+		return main();
+	}
+	
+	
+	console.log(math.evaluate(str));
 
-	// console.log(math.evaluate(`${formula}`))
+	// console.log(JSON.parse('{"collection":"Transactions","index":0,"path":"data.price"}'))
 
-	// math.chain(3).add(4).multiply(2).done() // 14
+	// console.log(parseMath('(({"collection":"Transactions","index":0,"path":"data.price"} + {"collection":"Transactions","index":1,"path":"data.price"}) * {"value":.5}) / {"collection":"Agents","target":"count"})'));
 
-	const collection = [
-		{data: {price: 1005.32}},
-		{data: {price: 33.45}},
-		{data: {price: 55.05}},
-	] 
+	// which should result in something like ... 
 
-	const cell = ((collection[0].data.price + collection[1].data.price + collection[2].data.price) * .5)
+	// a proto object created from parseMath
+	
+
+	
 
 }
+
