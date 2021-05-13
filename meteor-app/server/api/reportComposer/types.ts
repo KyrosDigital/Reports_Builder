@@ -52,6 +52,6 @@ export interface FormulaValue {
 }
 
 export interface FormulaQuery {
-	[key: string]: boolean
+	[key: string]: string | number | null;
 }
 
