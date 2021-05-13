@@ -7,47 +7,58 @@ import { Report_Structure_Collection } from '../../api/collections'
 
 export const Report_Builder = () => {
 
-	const loading = useSubscription('ReportStructure')
+	// const loading = useSubscription('ReportStructure')
 
 	const [reportStructure, setReportStructure] = useState<Report>({_id: '', tables: [], formulas: []})
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 
-	useEffect(() => {
-		if(!loading) {
-			let query = Report_Structure_Collection.findOne()
-			if(query) setReportStructure(query)
-		}
-	}, [loading])
+	// useEffect(() => {
+	// 	if(!loading) {
+	// 		let query = Report_Structure_Collection.findOne()
+	// 		if(query) setReportStructure(query)
+	// 	}
+	// }, [loading])
 
 	useEffect(() => {
 		// console.log(reportStructure)
 	}, [reportStructure])
 
 	const createNewTable = () => {
-		setReportStructure({_id: '', tables: [...reportStructure.tables, {
-			id: uuidv4(),
-			columns: [{id: uuidv4(), label: 'col1'}, {id: uuidv4(), label: 'col2'}, {id: uuidv4(), label: 'col3'}],
-			rows: [{
+		setReportStructure({
+			_id: '', 
+			tables: [...reportStructure.tables, {
 				id: uuidv4(),
-				cells: [{id: uuidv4()}, {id: uuidv4()}, {id: uuidv4()}]
-			}, {
-				id: 'row2',
-				cells: [{id: uuidv4()}, {id: uuidv4()}, {id: uuidv4()}]
-			}], 
-		}] })
+				title: '',
+				type: '',
+				columns: [{id: uuidv4(), label: '', property: '', enum: ''}],
+				rows: [], 
+				collection: ''
+			}],
+			formulas: [...reportStructure.formulas] 
+		})
 	}
 
 	const addColumnToTable = (tableId: string) => {
 		const updatedTables = reportStructure.tables.map(table => {
 			if(table.id === tableId) {
-				table.columns.push({id: uuidv4(), label: `col${table.columns.length + 1}`})
-				table.rows.forEach(row => { row.cells.push({id: uuidv4()}) })
+				table.columns.push({id: uuidv4(), label: '', property: '', enum: ''})
+				table.rows.forEach(row => { 
+					row.cells.push({
+						id: uuidv4(),
+						index: table.columns.length,
+						type : '',
+						property: '',
+						propertyValue: '',
+						value: '',
+						expression: '',
+					}) 
+				})
 			}
 			return table
 		})
 
-		setReportStructure({ _id: '', tables:  updatedTables})
+		setReportStructure({ _id: '', tables:  updatedTables, formulas: [...reportStructure.formulas]})
 	}
 
 	const addRowToTable = (tableId: string) => {
@@ -61,7 +72,7 @@ export const Report_Builder = () => {
 			return table
 		})
 
-		setReportStructure({ _id: '', tables:  updatedTables})
+		setReportStructure({ _id: '', tables:  updatedTables, formulas: [...reportStructure.formulas]})
 	}
 
   return (
