@@ -68,12 +68,10 @@ Meteor.methods({
 
 		const computeFormulas = async (report) => {
 			
-			// we must loop over every row, so that formula results can be applied to individual cells, under a column
-
+			// we must loop over every table, row, so that formula results can be applied to individual cells, under a column
 			await report.tables.map(table => {
 
 				table.rows.map(row => {
-					// perform logic on tables, to compile the data to be displayed
 
 					let expression = '';
 
@@ -87,12 +85,6 @@ Meteor.methods({
 						formula.values.map(value => {
 	
 							if(value.type === 'query') {
-	
-								/**
-								 * TODO: problem : the formula process, does not calculate on a per row basis
-								 * this results in us not being able to use query modifies to get specific data
-								 * for a specific row
-								 */ 
 	
 								if(value.queryModifier) {
 									const cellPropertyValue = row.cells[formula.columnIndex].propertyValue
@@ -120,52 +112,22 @@ Meteor.methods({
 	
 						row.cells[formula.columnIndex].value = result
 						row.cells[formula.columnIndex].expression = expression
-						
+
 						console.log("After: ", expression)
 						console.log("Eval: ", result, "\n\n" )
 					})
 				})
 			})	
 		}
-
-		const applyFormulasToTables = async (report) => {
-
-			// map over formulas
-			// determine where the result should be applied
-			// apply the result to the correct cell, within a row
-
-			/**
-			 * TODO: problem : we apply a single formula result, to all rows.
-			 * We should instead support muliple results, for each row
-			 * so that the value is specific to the row's conditions
-			 * such as collection, or query modifiers  
-			 * 
-			 * we could instead, call this within the formula loop, and apply to each row?
-			 */
-
-			report.formulas.map(formula => {
-				const table = report.tables.find(table => table.id === formula.tableId)
-				const tableIndex = report.tables.findIndex(table => table.id === formula.tableId)
-				const cellIndex = table.columns.findIndex(col => col.id === formula.columnId)
-
-				report.tables[tableIndex].rows.map(row => (
-					row.cells[cellIndex].value = formula.result
-				))
-			})
-		}
 		
 		const run = async () => {
-
 			await createRowsInTable(report)
 			await computeFormulas(report)
-			// await applyFormulasToTables(report)
 			// return the mutated report, containing the accurate values to display
 			return report
-
 		}
 
 		return run()
 	}
 
 })
-
