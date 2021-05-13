@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "collection_names",
+  "info": {
+    "name": "CollectionNames",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "collectionName": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "uid": {
+      "type": "uid",
+      "targetField": "collectionName"
+    },
+    "userId": {
+      "type": "string",
+      "required": false,
+      "unique": false
+    }
+  }
+}
