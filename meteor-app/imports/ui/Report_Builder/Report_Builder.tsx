@@ -7,7 +7,6 @@ import {
 	Report_Structure_Collection, 
 	StrapiClientDataCollection
 } from '../../api/collections';
-import {runMath} from '../../api/math';
 import 'underscore';
 import _, { any } from 'underscore';
 
@@ -20,6 +19,7 @@ export const Report_Builder = () => {
 	const [reportStructure, setReportStructure] = useState<ReportStructure>({_id: '', tables: []})
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
+	const [collections, setCollections] = useState<object[]>([])
 
 	useEffect(() => {
 		if(!loading) {
@@ -132,7 +132,7 @@ export const Report_Builder = () => {
 					setQueryChooser(keys)
 				}
 			}
-			console.log(runMath(value, queries));
+			// console.log(runMath(value, queries));
 			setValue('');
 			
 		}
