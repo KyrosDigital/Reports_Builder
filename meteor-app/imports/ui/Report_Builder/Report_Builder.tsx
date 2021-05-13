@@ -9,6 +9,7 @@ import {
 } from '../../api/collections';
 import {runMath} from '../../api/math';
 import 'underscore';
+import _, { any } from 'underscore';
 
 
 export const Report_Builder = () => {
@@ -47,7 +48,7 @@ export const Report_Builder = () => {
 		}] })
 	}
 
-	const addColumnToTable = (tableId: string) => {
+	const addColumnToTable = (tableId: any) => {
 		const updatedTables = reportStructure.tables.map(table => {
 			if(table.id === tableId) {
 				table.columns.push({id: uuidv4(), label: `col${table.columns.length + 1}`})
@@ -59,8 +60,8 @@ export const Report_Builder = () => {
 		setReportStructure({ _id: '', tables:  updatedTables})
 	}
 
-	const addRowToTable = (tableId: string) => {
-		const cells = (tableColumns: Array<ReportColumnStructure>) => {
+	const addRowToTable = (tableId: any) => {
+		const cells = (tableColumns: any[]) => {
 			return tableColumns.map(() => ({id: uuidv4()}))
 		}
 		const updatedTables = reportStructure.tables.map(table => {
@@ -75,42 +76,64 @@ export const Report_Builder = () => {
 
 	function MyControlledInput({ }) {
 		const [value, setValue] = useState('');
-		var queries = [];
+		const [queryChooser, setQueryChooser] = useState<any[]>([]);
+		var mongoQuery: {[k: string]: any} = {};
+		var currentQuery: {[k: string]: any} = {};
+		var queries : any = []
 	  
 		const onChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
 		  setValue(event.target.value);
 		};
 
-		function querySelection(element: string) {
-			let collectionName = element;
-			let path = "";
-			let arr = StrapiClientDataCollection.find({"collecitonName" : element}).fetch();
-			let keys = Object.keys(arr[0]["data"]);
-			keys.forEach((the) => {
-				return <button onClick={the => {
-					let dataString = "data.";
-					let theString = String(the);
-					path = dataString.concat(theString);
-				})}> {the} </button>
-			})
-			let query = {};
-			query["collection"] = collectionName;
-
+		const updateChoices = (the: string) => {
+			if (!("collectionName" in mongoQuery)) {
+				console.log(mongoQuery)
+				console.log("first branch")
+				console.log("the: " + the)
+				
+				mongoQuery["collectionName"] = the
+				mongoQuery["path"] = "data"
+				currentQuery = StrapiClientDataCollection.find({"collectionName" : the}).fetch()[0]["data"]
+				//console.log(currentQuery)
+				var keys = Object.keys(currentQuery)
+				setQueryChooser(keys)
+				// console.log("this works")
+			} else {
+				console.log('working')
+				if (typeof(currentQuery[the] == "object")) {
+					mongoQuery["path"] = mongoQuery["path"].concat(".${the}")
+					currentQuery = currentQuery[the]
+					var keys = Object.keys(currentQuery);
+					setQueryChooser(keys)
+				} else {
+					queries.push(mongoQuery)
+					mongoQuery = {}
+					currentQuery = {}
+					setQueryChooser([])
+				}
+				
+			}
+			//console.log(mongoQuery)
 		}
 		
 		const handleButtonClicked = () => {
 			
 			for (var i = 0; i < value.length; i++) {
 				if (value[i] == '&') {
-					var keys = _.uniq(StrapiClientDataCollection.find({}, {fields : {"collectionName" : 1}}).fetch());
-					keys.forEach((element) => {
-						return <button onClick={querySelection(element)}> {element} </button>
-					});
+					var objects = _.uniq(StrapiClientDataCollection.find({}, {fields : {"collectionName" : 1}}).fetch());
+					var keys : string[] = []
+					mongoQuery = {}
+					console.log(mongoQuery)
+					objects.forEach((el) => {
+						if (!(keys.includes(el["collectionName"]))) {
+							keys.push(el["collectionName"])
+						}
+					})
+					setQueryChooser(keys)
 				}
 			}
-			console.log(runMath(value, query));
+			console.log(runMath(value, queries));
 			setValue('');
-			//console.log(temp);
 			
 		}
 
@@ -119,6 +142,12 @@ export const Report_Builder = () => {
 			<div>Input equation: {value}</div>
 			<input value={value} onChange={onChange} />
 			<button onClick={handleButtonClicked}> submit</button>
+			<div className="query_selection">
+				{queryChooser.map((element, index) => {
+					return <button key = {index} onClick={() => updateChoices(element)}> 
+					{element} </button>
+				})}
+			</div>
 		  </>
 		);
 	}
