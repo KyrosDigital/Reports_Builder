@@ -15,7 +15,7 @@ export interface TableColumn {
 	id: string; // the uuid of the column within a table
 	label: string; // used for display
 	formulaId?: string; // if the column has a formula applied to it
-	property?: string; // the property of a mongo object, from collection driven tables
+	property: string; // the property of a mongo object, from collection driven tables
 	enum: string; // defines the intended enumeration for the cell under a column
 }
 export interface TableRow {

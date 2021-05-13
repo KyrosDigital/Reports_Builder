@@ -28,7 +28,7 @@ Meteor.methods({
 		// generates cells, for a given row, if table is collection driven
 		const generateCells = (columns: Array<TableColumn>, document: ClientData) => {
 			return columns.map((column, i) => {
-				let type = '', property = null, propertyValue = null, value = 0;
+				let type = '', property = null, propertyValue = null, value: number | string | null | undefined = 0;
 				if(!column.formulaId) {
 					type = 'property'
 					value = document.data[column.property]
@@ -36,8 +36,8 @@ Meteor.methods({
 				if(column.formulaId) {
 					type = 'formula'
 				}
-					property = column.property
-					propertyValue = document.data[column.property]
+				property = column.property
+				propertyValue = document.data[column.property]
 				return { index: i, type, property, propertyValue, value }
 			})
 		}
@@ -51,7 +51,7 @@ Meteor.methods({
 					id: uuidv4(),
 					cells: generateCells(table.columns, document)
 				}))
-			}
+			} else return table.rows
 		}
 
 		const createRowsInTable = () => {
