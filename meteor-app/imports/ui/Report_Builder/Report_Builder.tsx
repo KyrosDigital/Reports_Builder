@@ -2,25 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import useSubscription from '../../api/hooks'
 import { Report, TableColumn } from '../../api/types/reports';
-import { Report_Structure_Collection } from '../../api/collections'
+import { Report_Structure_Collection, StrapiClientCollectionNames } from '../../api/collections'
 
 
 export const Report_Builder = () => {
 
-	// const loading = useSubscription('ReportStructure')
+	const loading = useSubscription('CollectionNames')
 
 	const [reportStructure, setReportStructure] = useState<Report>({_id: '', tables: [], formulas: []})
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
-	const [userCollections, setUserCollections] = useState(['Agents', 'Transactions'])
+	const [userCollections, setUserCollections] = useState([])
 
 
-	// useEffect(() => {
-	// 	if(!loading) {
-	// 		let query = Report_Structure_Collection.findOne()
-	// 		if(query) setReportStructure(query)
-	// 	}
-	// }, [loading])
+	useEffect(() => {
+		if(!loading) {
+			let query = StrapiClientCollectionNames.find().fetch()
+			if(query) setUserCollections(query)
+		}
+	}, [loading])
 
 	useEffect(() => {
 		console.log(reportStructure)
@@ -100,6 +100,15 @@ export const Report_Builder = () => {
 		setReportStructure({ _id: '', tables:  updatedTables, formulas: [...reportStructure.formulas]})
 	}
 
+	const handleColumnLabelChange = (tableId, columnIndex, label) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+
+		reportStructure.tables[tableIndex].columns[columnIndex].label = label
+		setReportStructure(prevState => {
+			return { ...prevState,  tables : reportStructure.tables }
+		});
+	}
+
   return (
     <div>
       <p>Report Builder</p>
@@ -107,15 +116,6 @@ export const Report_Builder = () => {
 			<button onClick={createNewStaticTable}>+ New Static Table</button>
 			<button onClick={createCollectionTable}>+ New Collection Table</button>
 
-			{columSelected.tableId !== '' && <div>
-				<p>{`Table: ${columSelected.tableId}`}</p>
-				<p>{`Column: ${columSelected.columnId}`}</p>
-			</div>}
-			
-			{cellSelected.tableId !== '' && <div>
-				<p>{`Table: ${cellSelected.tableId}`}</p>
-				<p>{`Cell: ${cellSelected.cellId}`}</p>
-			</div>}
 			
 			{/* tables */}
 			{reportStructure.tables.map((table) => (
@@ -125,20 +125,29 @@ export const Report_Builder = () => {
 
 						<h2>{table.title}</h2>
 
-						{/* controls */}
-						<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
-						{table.type === 'static' && <button onClick={() => addRowToTable(table.id)}>+ Row</button>}
-						
 						{/* collection table - select collection to drive the table */}
-						{table.type === 'collection' && userCollections.map(collectionName => {
-							return <button onClick={() => setCollectionForTable(table.id, collectionName)}>{collectionName}</button>
-						})}
+						<div style={{marginBottom: '25px'}}>
+							<span>Choose Collection:</span>
+							{table.type === 'collection' && userCollections.map(collection => {
+								return <button onClick={() => setCollectionForTable(table.id, collection.collectionName)}>{collection.collectionName}</button>
+							})}
+						</div>
+						
+						{table.type === 'collection' && (table.collection.length > 0) && 
+						<div style={{marginBottom: '25px'}}>Collection Selected: {table.collection}</div>}
+						
+
+						{/* controls */}
+						<div>
+							<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
+							{table.type === 'static' && <button onClick={() => addRowToTable(table.id)}>+ Row</button>}
+						</div>
 
 						{/* column headers */}
 						<div className="row"> 
-							{table.columns.map(col => {
+							{table.columns.map((col, i) => {
 								return <div key={col.id} className="col hover-col" onClick={() => setColumnSelected({tableId: table.id, columnId: col.id})}>
-									<div>{col.label}</div>
+									<input placeholder={'Enter column header'} value={col.label} onChange={(e) => handleColumnLabelChange(table.id, i, e.target.value)}/>
 								</div>
 							})}
 						</div>
