@@ -27,9 +27,9 @@ export const Report_View = () => {
 					title: 'Agent Sales Volume',
 					type: 'collection', // collection - loops over a set of data, static - user manually sets the amount of rows
 					columns: [ 
-						{id: 'zzz', label: 'First Name', property: 'firstName'}, 
-						{id: 'qqq', label: 'Last Name', property: 'lastName'}, 
-						{id: 'yyy', label: 'Sales', formulaId: 'xxx'} 
+						{id: 'zzz', label: 'First Name', property: 'firstName', enum: 'string'}, 
+						{id: 'qqq', label: 'Last Name', property: 'lastName', enum: 'string'}, 
+						{id: 'yyy', label: 'Sales', formulaId: 'xxx', enum: 'number'} 
 					], // the columns in the table
 					rows: [ ],
 					collection: 'Agents' // could be null, if rowType is static
@@ -50,6 +50,7 @@ export const Report_View = () => {
 							type: 'query',
 							operation: 'sum',
 							collectionName: 'Transactions',
+							queryModifier: "data.agentId",
 							query: {"userId": "60958c98857a7b14acb156d9", "collectionName": "Transactions"},
 							property: 'price'
 						},

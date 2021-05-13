@@ -17,6 +17,8 @@ Meteor.methods({
 
 	Compose_Report: function(report) {
 
+		let collection = [] // if table is collection driven, this is used.
+
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
 			return StrapiClientDataCollection.find({
@@ -44,7 +46,7 @@ Meteor.methods({
 		const generateRows =  (table: []) => {
 			// if type is "static", the rows should already be defined
 			if(table.type === 'collection') {
-				const collection = performQuery(table.collection)
+				collection = performQuery(table.collection)
 				return collection.map(document => ({
 					id: uuidv4(),
 					cells: generateCells(table.columns, document)
@@ -70,6 +72,17 @@ Meteor.methods({
 				formula.values.map(value => {
 
 					if(value.type === 'query') {
+
+						/**
+						 * TODO: problem : the formula process, does not calculate on a per row basis
+						 * this results in us not being able to use query modifies to get specific data
+						 * for a specific row
+						 */ 
+
+						if(value.queryModifier) {
+							value.query[value.queryModifier] = 'bbbwwwaaa'
+						}
+
 						const query = StrapiClientDataCollection.find(value.query).fetch()
 
 						if(value.operation === 'sum') {
@@ -98,6 +111,15 @@ Meteor.methods({
 			// map over formulas
 			// determine where the result should be applied
 			// apply the result to the correct cell, within a row
+
+			/**
+			 * TODO: problem : we apply a single formula result, to all rows.
+			 * We should instead support muliple results, for each row
+			 * so that the value is specific to the row's conditions
+			 * such as collection, or query modifiers  
+			 * 
+			 * we could instead, call this within the formula loop, and apply to each row?
+			 */
 
 			report.formulas.map(formula => {
 				const table = report.tables.find(table => table.id === formula.tableId)

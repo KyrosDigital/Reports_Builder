@@ -1,7 +1,7 @@
 export interface Report {
 	_id: string; // the mongoId of the report object
 	tables: Array<Table>; // all the tables within a report
-	formulas: Array<Formula>;
+	formulas: Array<Formula>; // the formulas to process when viewing a report
 }
 export interface Table {
 	id: string; // unique id of the table within a report
@@ -16,6 +16,7 @@ export interface TableColumn {
 	label: string; // used for display
 	formulaId?: string; // if the column has a formula applied to it
 	property?: string; // the property of a mongo object, from collection driven tables
+	enum: string; // defines the intended enumeration for the cell under a column
 }
 export interface TableRow {
 	id: string; // the uuid of the row
@@ -41,6 +42,7 @@ export interface FormulaValue {
 	type: string; // query - "a mongo query", query_count - "a number of objects from a query", pointer - 'grabs the value of another cell or field in the table'
 	operation: string; // sum, min, max, mean - "math.sum, math.min, ..."
 	collectionName: string; // user defined collection, used for display purposes
+	queryModifier?: string; // a modifier for a query, selected from the collection that drives the table
 	query: Object; // a json formatted query object for slamming into mongo.find().fetch()
 	path?: string; // the path traversal for a document fetched by a mongo query
 	columnId?: string; // the column targeted, if type is "pointer"
