@@ -29,7 +29,7 @@ export const Report_View = () => {
 					columns: [ 
 						{id: 'zzz', label: 'First Name', property: 'firstName', enum: 'string'}, 
 						{id: 'qqq', label: 'Last Name', property: 'lastName', enum: 'string'}, 
-						{id: 'yyy', label: 'Sales', formulaId: 'xxx', enum: 'number'} 
+						{id: 'yyy', label: 'Sales', property: 'agentId', formulaId: 'xxx', enum: 'number'} 
 					], // the columns in the table
 					rows: [ ],
 					collection: 'Agents' // could be null, if rowType is static
@@ -40,10 +40,9 @@ export const Report_View = () => {
 					id: 'xxx',
 					tableId: 'uuid',
 					columnId: 'yyy',
-					cellIndex: null,
+					columnIndex: 2,
 					originalExpression: 'sum(x + 1) / y',
 					expression: 'sum(x + 1) / y',
-					result: null, 
 					values: [
 						{
 							key: 'x',

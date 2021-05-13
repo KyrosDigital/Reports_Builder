@@ -25,17 +25,18 @@ export interface TableRow {
 export interface TableCell {
 	index: number; // the index of a cell within a row
 	type: string; // input - whatever the user typed, formula - a user crafted formula, property - a property from a document within a collection
+	property: string; // if type is "property", we store the designated property name here
+	propertyValue: string | number | null; // we store values of properties here, which are used with query modifiers
 	value: string; // either what the user typed, or the output of a a formula
+	expression?: string; // the mathmatical expression that was calculated with math.evaluate()
 }
 export interface Formula {
 	id: string; // the uuid of the formula in a given report
 	tableId: string; // the id of the table, the formula belongs to
 	columnId: string; // the column the formula should be applied to
-	cellIndex: number; // the index for a cell, under a column, within a row
-	expression: string; // the mathmatical expression to be calculated
-	originalExpression: string; // the string that was evaluated with math.evaluate()
+	columnIndex: number; // the index of the column, the formula runs for. Used for applying results to row cells
+	expression: string; // the mathmatical expression to be calculated with math.evaluate()
 	values: Array<FormulaValue>; // an array of values, that need to be calculated
-	result: string | number | null; // the result of the formula running
 }
 export interface FormulaValue {
 	key: string; // points to a position in the formula, id like string xxxxxxxxxxxxxxxxxx

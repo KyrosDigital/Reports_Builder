@@ -30,15 +30,17 @@ Meteor.methods({
 		// generates cells, for a given row, if table is collection driven
 		const generateCells = (columns, document) => {
 			return columns.map((column, i) => {
-				let type = '', value = 0;
-				if(column.property) {
+				let type = '', property = null, propertyValue = null, value = 0;
+				if(!column.formulaId) {
 					type = 'property'
 					value = document.data[column.property]
 				}
 				if(column.formulaId) {
 					type = 'formula'
 				}
-				return { index: i, type: type, value: value }
+					property = column.property
+					propertyValue = document.data[column.property]
+				return { index: i, type, property, propertyValue, value }
 			})
 		}
 
@@ -56,54 +58,74 @@ Meteor.methods({
 			}
 		}
 
-		const computeFormulas = async (report) => {
+		const createRowsInTable = async (report) => {
 			// run for each table, ensuring proper amount of rows
 			await report.tables.map((table: []) => {
 				table.rows = generateRows(table)
 				return table
 			});
+		}
 
-			// perform logic on tables, to compile the data to be displayed
-			await report.formulas.map(formula => {
+		const computeFormulas = async (report) => {
+			
+			// we must loop over every row, so that formula results can be applied to individual cells, under a column
 
-				console.log("Before: ", formula.originalExpression)
+			await report.tables.map(table => {
 
-				// individually process each value, for the final expression
-				formula.values.map(value => {
+				table.rows.map(row => {
+					// perform logic on tables, to compile the data to be displayed
 
-					if(value.type === 'query') {
+					let expression = '';
 
-						/**
-						 * TODO: problem : the formula process, does not calculate on a per row basis
-						 * this results in us not being able to use query modifies to get specific data
-						 * for a specific row
-						 */ 
+					report.formulas.map(formula => {
+						
+						expression = formula.expression;
 
-						if(value.queryModifier) {
-							value.query[value.queryModifier] = 'bbbwwwaaa'
-						}
+						console.log("Before: ", formula.expression)
+	
+						// individually process each value, for the final expression
+						formula.values.map(value => {
+	
+							if(value.type === 'query') {
+	
+								/**
+								 * TODO: problem : the formula process, does not calculate on a per row basis
+								 * this results in us not being able to use query modifies to get specific data
+								 * for a specific row
+								 */ 
+	
+								if(value.queryModifier) {
+									const cellPropertyValue = row.cells[formula.columnIndex].propertyValue
+									value.query[value.queryModifier] = cellPropertyValue
+								}
+	
+								const query = StrapiClientDataCollection.find(value.query).fetch()
 
-						const query = StrapiClientDataCollection.find(value.query).fetch()
-
-						if(value.operation === 'sum') {
-							let values = query.map(obj => obj.data[value.property])
-							formula.expression = formula.expression.replace(value.key, math.sum(values))
-						}
-
-					}
-
-					if(value.type === 'query_count') {
-						const count = StrapiClientDataCollection.find(value.query).count()
-						formula.expression = formula.expression.replace(value.key, count)
-					}
-
+								if(value.operation === 'sum') {
+									let values = query.map(obj => obj.data[value.property])
+									expression = expression.replace(value.key, math.sum(values))
+								}
+	
+							}
+	
+							if(value.type === 'query_count') {
+								const count = StrapiClientDataCollection.find(value.query).count()
+								expression = expression.replace(value.key, count)
+							}
+	
+						})
+	
+						// evaluate the expression, after the values have been harvested
+						const result = math.evaluate(expression)
+	
+						row.cells[formula.columnIndex].value = result
+						row.cells[formula.columnIndex].expression = expression
+						
+						console.log("After: ", expression)
+						console.log("Eval: ", result, "\n\n" )
+					})
 				})
-
-				// evaluate the expression, after the values have been harvested
-				formula.result = math.evaluate(formula.expression)	
-				console.log("After: ", formula.expression)
-				console.log("Eval: ", formula.result, "\n\n" )
-			})
+			})	
 		}
 
 		const applyFormulasToTables = async (report) => {
@@ -134,8 +156,9 @@ Meteor.methods({
 		
 		const run = async () => {
 
+			await createRowsInTable(report)
 			await computeFormulas(report)
-			await applyFormulasToTables(report)
+			// await applyFormulasToTables(report)
 			// return the mutated report, containing the accurate values to display
 			return report
 
