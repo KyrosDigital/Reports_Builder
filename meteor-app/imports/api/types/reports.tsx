@@ -23,7 +23,7 @@ export interface TableRow {
 	cells: Array<TableCell>; // there should be a cell for each column
 }
 export interface TableCell {
-	id?: string; // a uuid for the cell
+	id: string; // a uuid for the cell
 	index: number; // the index of a cell within a row
 	type: string; // input - whatever the user typed, formula - a user crafted formula, property - a property from a document within a collection
 	property: string; // if type is "property", we store the designated property name here

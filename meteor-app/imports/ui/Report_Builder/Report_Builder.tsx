@@ -12,6 +12,8 @@ export const Report_Builder = () => {
 	const [reportStructure, setReportStructure] = useState<Report>({_id: '', tables: [], formulas: []})
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
+	const [userCollections, setUserCollections] = useState(['Agents', 'Transactions'])
+
 
 	// useEffect(() => {
 	// 	if(!loading) {
@@ -21,23 +23,46 @@ export const Report_Builder = () => {
 	// }, [loading])
 
 	useEffect(() => {
-		// console.log(reportStructure)
+		console.log(reportStructure)
 	}, [reportStructure])
 
-	const createNewTable = () => {
+	const createNewStaticTable = () => {
 		setReportStructure({
 			_id: '', 
 			tables: [...reportStructure.tables, {
 				id: uuidv4(),
-				title: '',
-				type: '',
+				title: 'Static Table Name',
+				type: 'static',
 				columns: [{id: uuidv4(), label: '', property: '', enum: ''}],
 				rows: [], 
 				collection: ''
 			}],
-			formulas: [...reportStructure.formulas] 
+			formulas: [] 
 		})
 	}
+
+	const createCollectionTable = () => {
+		setReportStructure({
+			_id: '', 
+			tables: [...reportStructure.tables, {
+				id: uuidv4(),
+				title: 'Collection Table Name',
+				type: 'collection',
+				columns: [{id: uuidv4(), label: '', property: '', enum: ''}],
+				rows: [], 
+				collection: ''
+			}],
+			formulas: [] 
+		})
+	}
+
+	const setCollectionForTable = (tableId: string, collectionName: string) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+		reportStructure.tables[tableIndex].collection = collectionName
+		setReportStructure(prevState => {
+			return { ...prevState,  tables : reportStructure.tables }
+		});
+  }
 
 	const addColumnToTable = (tableId: string) => {
 		const updatedTables = reportStructure.tables.map(table => {
@@ -79,7 +104,8 @@ export const Report_Builder = () => {
     <div>
       <p>Report Builder</p>
 
-			<button onClick={createNewTable}>+ New Table</button>
+			<button onClick={createNewStaticTable}>+ New Static Table</button>
+			<button onClick={createCollectionTable}>+ New Collection Table</button>
 
 			{columSelected.tableId !== '' && <div>
 				<p>{`Table: ${columSelected.tableId}`}</p>
@@ -92,14 +118,21 @@ export const Report_Builder = () => {
 			</div>}
 			
 			{/* tables */}
-			{reportStructure.tables.map((table) => {
-				return <div key={table.id} className="table">
+			{reportStructure.tables.map((table) => (
+				<div key={table.id} className="table">
 
 					<div className="">
 
+						<h2>{table.title}</h2>
+
 						{/* controls */}
 						<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
-						<button onClick={() => addRowToTable(table.id)}>+ Row</button>
+						{table.type === 'static' && <button onClick={() => addRowToTable(table.id)}>+ Row</button>}
+						
+						{/* collection table - select collection to drive the table */}
+						{table.type === 'collection' && userCollections.map(collectionName => {
+							return <button onClick={() => setCollectionForTable(table.id, collectionName)}>{collectionName}</button>
+						})}
 
 						{/* column headers */}
 						<div className="row"> 
@@ -124,7 +157,7 @@ export const Report_Builder = () => {
 					</div>
 					
 				</div>
-			})}
+			))}
     </div>
   );
 };
