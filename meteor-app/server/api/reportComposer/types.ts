@@ -44,9 +44,14 @@ export interface FormulaValue {
 	operation: string; // sum, min, max, mean - "math.sum, math.min, ..."
 	collectionName: string; // user defined collection, used for display purposes
 	queryModifier?: string; // a modifier for a query, selected from the collection that drives the table
-	query: Object; // a json formatted query object for slamming into mongo.find().fetch()
+	query: FormulaQuery; // a json formatted query object for slamming into mongo.find().fetch()
+	property: string; // the property we want to use, when fetching objects in a collection
 	path?: string; // the path traversal for a document fetched by a mongo query
 	columnId?: string; // the column targeted, if type is "pointer"
 	cellIndex?: number; // used to fetch a value from a cell that has already been calculated
+}
+
+export interface FormulaQuery {
+	[key: string]: boolean
 }
 

@@ -1,8 +1,8 @@
 import { Meteor } from "meteor/meteor";
 import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
-import { StrapiClientDataCollection } from '../../../imports/api/collections';
-
+import { ClientData, StrapiClientDataCollection } from '../../../imports/api/collections';
+import { Report, Table, TableColumn, FormulaValue } from './types'
 Meteor.methods({
 
 	/*
@@ -15,9 +15,7 @@ Meteor.methods({
 		This method, mutates the original report object, and returns it
 	*/
 
-	Compose_Report: function(report) {
-
-		let collection = [] // if table is collection driven, this is used.
+	Compose_Report: function(report: Report) {
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
@@ -28,7 +26,7 @@ Meteor.methods({
 		}
 
 		// generates cells, for a given row, if table is collection driven
-		const generateCells = (columns, document) => {
+		const generateCells = (columns: Array<TableColumn>, document: ClientData) => {
 			return columns.map((column, i) => {
 				let type = '', property = null, propertyValue = null, value = 0;
 				if(!column.formulaId) {
@@ -45,56 +43,54 @@ Meteor.methods({
 		}
 
 		// generates rows within a table, if collection driven
-		const generateRows =  (table: []) => {
+		const generateRows =  (table: Table) => {
 			// if type is "static", the rows should already be defined
 			if(table.type === 'collection') {
-				collection = performQuery(table.collection)
-				return collection.map(document => ({
+				const collection = performQuery(table.collection)
+				return collection.map((document: ClientData) => ({
 					id: uuidv4(),
 					cells: generateCells(table.columns, document)
 				}))
-			} else {
-				return table.rows;
 			}
 		}
 
-		const createRowsInTable = async (report) => {
+		const createRowsInTable = () => {
 			// run for each table, ensuring proper amount of rows
-			await report.tables.map((table: []) => {
+			report.tables.forEach((table: Table) => {
 				table.rows = generateRows(table)
 				return table
 			});
 		}
 
-		const computeFormulas = async (report) => {
+		const computeFormulas = async () => {
 			
 			// we must loop over every table, row, so that formula results can be applied to individual cells, under a column
-			await report.tables.map(table => {
+			report.tables.forEach(table => {
 
-				table.rows.map(row => {
+				table.rows.forEach(row => {
 
 					let expression = '';
 
-					report.formulas.map(formula => {
+					report.formulas.forEach(formula => {
 						
 						expression = formula.expression;
 
 						console.log("Before: ", formula.expression)
 	
 						// individually process each value, for the final expression
-						formula.values.map(value => {
+						formula.values.forEach((value: FormulaValue) => {
 	
 							if(value.type === 'query') {
 	
 								if(value.queryModifier) {
 									const cellPropertyValue = row.cells[formula.columnIndex].propertyValue
-									value.query[value.queryModifier] = cellPropertyValue
+									value.query[value.queryModifier]= cellPropertyValue
 								}
 	
 								const query = StrapiClientDataCollection.find(value.query).fetch()
 
 								if(value.operation === 'sum') {
-									let values = query.map(obj => obj.data[value.property])
+									let values = query.map((obj: any) => obj.data[value.property])
 									expression = expression.replace(value.key, math.sum(values))
 								}
 	
@@ -102,7 +98,7 @@ Meteor.methods({
 	
 							if(value.type === 'query_count') {
 								const count = StrapiClientDataCollection.find(value.query).count()
-								expression = expression.replace(value.key, count)
+								expression = expression.replace(value.key, String(count))
 							}
 	
 						})
@@ -121,8 +117,8 @@ Meteor.methods({
 		}
 		
 		const run = async () => {
-			await createRowsInTable(report)
-			await computeFormulas(report)
+			createRowsInTable()
+			await computeFormulas()
 			// return the mutated report, containing the accurate values to display
 			return report
 		}

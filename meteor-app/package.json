@@ -16,6 +16,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/mathjs": "^6.0.12",
     "@types/meteor": "^1.4.49",
     "@types/mocha": "^8.0.3",
     "@types/react": "^16.9.49",
