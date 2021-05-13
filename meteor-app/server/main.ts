@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import { StrapiUsersCollection } from '../imports/api/collections';
+import './publications/publications';
+import './api/reportComposer/methods';
 
 Meteor.startup(() => {
-
-	console.log(StrapiUsersCollection.find().fetch())
-
+	
 });
