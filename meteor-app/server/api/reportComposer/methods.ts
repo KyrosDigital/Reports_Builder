@@ -2,7 +2,8 @@ import { Meteor } from "meteor/meteor";
 import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
 import { ClientData, StrapiClientDataCollection } from '../../../imports/api/collections';
-import { Report, Table, TableColumn, FormulaValue } from './types'
+import { Report, Table, TableColumn, FormulaValue } from '../../../imports/api/types/reports'
+
 Meteor.methods({
 
 	/*

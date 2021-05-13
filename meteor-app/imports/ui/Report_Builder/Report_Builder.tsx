@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import useSubscription from '../../api/hooks'
-import { 
-	ReportStructure, 
-	ReportColumnStructure, 
-	Report_Structure_Collection 
-} from '../../api/collections';
+import { Report, TableColumn } from '../../api/types/reports';
+import { Report_Structure_Collection } from '../../api/collections'
 
 
 export const Report_Builder = () => {
 
 	const loading = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState<ReportStructure>({_id: '', tables: []})
+	const [reportStructure, setReportStructure] = useState<Report>({_id: '', tables: [], formulas: []})
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 
@@ -54,7 +51,7 @@ export const Report_Builder = () => {
 	}
 
 	const addRowToTable = (tableId: string) => {
-		const cells = (tableColumns: Array<ReportColumnStructure>) => {
+		const cells = (tableColumns: Array<TableColumn>) => {
 			return tableColumns.map(() => ({id: uuidv4()}))
 		}
 		const updatedTables = reportStructure.tables.map(table => {

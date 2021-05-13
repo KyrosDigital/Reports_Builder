@@ -1,5 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 
+import { Report } from './types/reports'
+
 export interface StrapiUsers {
   _id?: string;
   confirmed: boolean;
@@ -38,27 +40,5 @@ export interface ClientDataObject {
 
 export const StrapiClientDataCollection = new Mongo.Collection<ClientData>('client_data');
 
-export interface ReportStructure {
-  _id: string;
-	tables: Array<ReportTableStructure>;
-}
 
-export interface ReportTableStructure {
-	id: string;
-	columns: Array<ReportColumnStructure>;
-	rows: Array<ReportRowStructure>;
-}
-export interface ReportColumnStructure {
-	id: string;
-	label: string;
-}
-export interface ReportRowStructure {
-	id: string;
-	cells: Array<ReportCellStructure>;
-}
-
-export interface ReportCellStructure {
-	id: string;
-}
-
-export const Report_Structure_Collection = new Mongo.Collection<ReportStructure>('Report_Structure_Collection');
+export const Report_Structure_Collection = new Mongo.Collection<Report>('Report_Structure_Collection');

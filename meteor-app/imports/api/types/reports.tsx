@@ -54,4 +54,3 @@ export interface FormulaValue {
 export interface FormulaQuery {
 	[key: string]: string | number | null;
 }
-
