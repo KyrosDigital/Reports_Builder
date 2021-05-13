@@ -19,7 +19,7 @@ export const Report_Builder = () => {
 	const [reportStructure, setReportStructure] = useState<ReportStructure>({_id: '', tables: []})
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
-	const [collections, setCollections] = useState<object[]>([])
+	const [collections, setCollections] = useState<any>({})
 
 	useEffect(() => {
 		if(!loading) {
@@ -27,6 +27,17 @@ export const Report_Builder = () => {
 			if(query) setReportStructure(query)
 		}
 	}, [loading])
+
+	useEffect(() => {
+		if (!loading2) {
+			let collNames = StrapiClientDataCollection.find({"userId" : "609d427f5077b0819f0e6011"}, {fields : {"collectionName" : 1}}).fetch()
+		let documents: {[k: string]: any} = {}
+		collNames.forEach((el) => {
+			documents[el["collectionName"]] = (StrapiClientDataCollection.findOne({"userId" : "609d427f5077b0819f0e6011", "collectionName" : el["collectionName"]}, {fields : {"collectionName" : 1, "data" : 1}}))
+		})
+		setCollections(documents)
+		}
+	}, [loading2])
 
 	useEffect(() => {
 		// console.log(reportStructure)
@@ -77,59 +88,51 @@ export const Report_Builder = () => {
 	function MyControlledInput({ }) {
 		const [value, setValue] = useState('');
 		const [queryChooser, setQueryChooser] = useState<any[]>([]);
-		var mongoQuery: {[k: string]: any} = {};
-		var currentQuery: {[k: string]: any} = {};
+		const [mongoQuery, setMongoQuery] = useState<any>({})
+		const [currentQuery, setCurrentQuery] = useState<any>({})
 		var queries : any = []
 	  
 		const onChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
 		  setValue(event.target.value);
 		};
 
-		const updateChoices = (the: string) => {
-			if (!("collectionName" in mongoQuery)) {
-				console.log(mongoQuery)
-				console.log("first branch")
-				console.log("the: " + the)
-				
-				mongoQuery["collectionName"] = the
-				mongoQuery["path"] = "data"
-				currentQuery = StrapiClientDataCollection.find({"collectionName" : the}).fetch()[0]["data"]
+		function updateChoices(the: string) {
+			if (!("collection" in mongoQuery)) {
+				let temp:{[k: string] : any} = {}
+				temp["collectionName"] = the
+				temp["path"] = "data"
+				setMongoQuery(temp)
+				setCurrentQuery(collections[the]["data"])
+				console.log(collections[the]["data"])
 				//console.log(currentQuery)
-				var keys = Object.keys(currentQuery)
+				var keys = Object.keys(collections[the]["data"])
 				setQueryChooser(keys)
 				// console.log("this works")
 			} else {
 				console.log('working')
 				if (typeof(currentQuery[the] == "object")) {
-					mongoQuery["path"] = mongoQuery["path"].concat(".${the}")
-					currentQuery = currentQuery[the]
-					var keys = Object.keys(currentQuery);
+					let temp = mongoQuery
+					temp["path"] = temp["path"].concat("." + the)
+					setMongoQuery(temp)
+					setCurrentQuery(currentQuery[the])
+					var keys = Object.keys(currentQuery[the]);
 					setQueryChooser(keys)
 				} else {
 					queries.push(mongoQuery)
-					mongoQuery = {}
-					currentQuery = {}
+					setCurrentQuery({})
+					setMongoQuery({})
 					setQueryChooser([])
 				}
 				
 			}
-			//console.log(mongoQuery)
 		}
 		
 		const handleButtonClicked = () => {
 			
 			for (var i = 0; i < value.length; i++) {
 				if (value[i] == '&') {
-					var objects = _.uniq(StrapiClientDataCollection.find({}, {fields : {"collectionName" : 1}}).fetch());
-					var keys : string[] = []
-					mongoQuery = {}
-					console.log(mongoQuery)
-					objects.forEach((el) => {
-						if (!(keys.includes(el["collectionName"]))) {
-							keys.push(el["collectionName"])
-						}
-					})
-					setQueryChooser(keys)
+					// console.log(mongoQuery)
+					setQueryChooser(Object.keys(collections))
 				}
 			}
 			// console.log(runMath(value, queries));

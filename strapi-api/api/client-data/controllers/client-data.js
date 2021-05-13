@@ -36,6 +36,7 @@ module.exports = {
     } else {
       let record = {};
       ctx.request.body.userId = ctx.state.user.id;
+      data.userId = ctx.state.user.id;
       console.log(ctx.state.user);
       record["collectionName"] = ctx.request.body["collectionName"];
       record["data"] = ctx.request.body["data"];
