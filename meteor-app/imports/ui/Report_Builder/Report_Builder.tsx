@@ -130,7 +130,7 @@ export const Report_Builder = () => {
 
   return (
     <div>
-      <p>Report Builder</p>
+      <p className='text-2xl font-bold'>Report Builder</p>
 
 			<button onClick={createNewStaticTable}>+ New Static Table</button>
 			<button onClick={createCollectionTable}>+ New Collection Table</button>
