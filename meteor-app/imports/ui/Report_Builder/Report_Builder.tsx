@@ -7,6 +7,7 @@ import {
 	Report_Structure_Collection, 
 	StrapiClientDataCollection
 } from '../../api/collections';
+import { MyControlledInput } from './controlledInput'
 
 
 export const Report_Builder = () => {
@@ -18,6 +19,7 @@ export const Report_Builder = () => {
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [collections, setCollections] = useState<any>({})
+	
 	
 
 	useEffect(() => {
@@ -84,113 +86,13 @@ export const Report_Builder = () => {
 		setReportStructure({ _id: '', tables:  updatedTables})
 	};
 
-	function MyControlledInput({ }) {
-		// used for input
-		const [value, setValue] = useState('');
-		// displaying stuff in the buttons
-		const [queryChooser, setQueryChooser] = useState<any>({});
-		// storing the query in string form
-		const [mongoQuery, setMongoQuery] = useState<any>({})
-		// for the update choices, I just need the first if statement to run once
-		const [counter, setCounter] = useState<any>({})
-		// holds all queries, hopefully under the key of the variable they're replacing
-		const [queries, setQueries] = useState<any>({})
-		// hold variables to be set as keys for everything else
-		const [variables, setVariables] = useState<any[]>([])
-		const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 
-		'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 
-		'x', 'y', 'z']
-	  
-		const onChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-		  setValue(event.target.value);
-		};
-		
-		useEffect(() => {
-			console.log('queryChooser => ', queryChooser);
-		}, [queryChooser])
-
 	
-		function updateChoices(the: string, el : string) {
-			if (counter[el] < 1) {
-				let temp:{[k: string] : any} = mongoQuery
-				temp[el] = {}
-				let count = counter
-				count[el] = 1
-				setCounter(count)
-				temp[el]["collectionName"] = the
-				temp[el]["path"] = "data"
-				setMongoQuery(temp)
-				console.log(collections[the]["data"])
-				var keys = queryChooser
-				keys[el] = Object.keys(collections[the]["data"])
-				console.log("keys", keys)
-				setQueryChooser(keys)
-				// this ^ isn't updating 
-			} else { // we are assuming no nested objects
-				let temp = mongoQuery
-				temp[el]["path"] = temp["path"].concat("." + the)
-				let temp2 = queries
-				temp2[el] = temp
-				setQueries(temp2)
-				setMongoQuery({})
-				setQueryChooser([])
-				setCounter(0)
-				console.log(queries)
-			}
-		}
-		
-		const handleButtonClicked = () => {
-			var vars: any[] = []
-			for (var i = 0; i < value.length; i++) {
-				if (alphabet.includes(value[i])) {
-					console.log("letter detected")
-					
-					// setting variables(keys for other stuff)
-					vars.push(value[i])
-				}
-			}
-			
-			//console.log(vars)
-			var temp_queries:{[k: string] : any} = {}
-			var temp_queryChooser:{[k: string] : any} = {}
-			var temp_counter:{[k: string] : any} = {}
-			for(var i = 0; i < vars.length; i++) {
-				temp_queries[vars[i]] = false
-				temp_queryChooser[vars[i]] = Object.keys(collections)
-				temp_counter[vars[i]] = 0
-			}
-			setQueries(temp_queries)
-			setQueryChooser(temp_queryChooser)
-			setVariables(vars)
-			setCounter(temp_counter)
-			//console.log(temp_queries)
-			
-		}
-	
-		return (
-		  <>
-			<div>Input equation: {value}</div>
-			<input value={value} onChange={onChange} />
-			<button onClick={handleButtonClicked}> submit</button>
-			<div className="query_selection">
-				{variables.map((el : string, ind) => {
-					return <div key = {ind} className = ""> {el} = 
-						{queryChooser[el].map((element : string, index : number) => {
-							return <button key = {index} onClick={() => updateChoices(element, el)}> {element} </button>
-						})}
-						</div>
-				})}
-			</div>
-		  </>
-		);
-	}
-
   return (
     <div>
       <p>Report Builder</p>
 
 			<button onClick={createNewTable}>+ New Table</button>
-			<MyControlledInput/>
+			<MyControlledInput collections = {collections} />
 			{columSelected.tableId !== '' && <div>
 				<p>{`Table: ${columSelected.tableId}`}</p>
 				<p>{`Column: ${columSelected.columnId}`}</p>
