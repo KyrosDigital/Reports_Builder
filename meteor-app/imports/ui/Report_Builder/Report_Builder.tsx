@@ -109,6 +109,14 @@ export const Report_Builder = () => {
 		});
 	}
 
+	const removeTableFromReport = (tableId) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+		reportStructure.tables.splice(tableIndex, 1);
+		setReportStructure(prevState => {
+			return { ...prevState,  tables : reportStructure.tables }
+		});
+	}
+
   return (
     <div>
       <p>Report Builder</p>
@@ -126,12 +134,14 @@ export const Report_Builder = () => {
 						<h2>{table.title}</h2>
 
 						{/* collection table - select collection to drive the table */}
-						<div style={{marginBottom: '25px'}}>
-							<span>Choose Collection:</span>
-							{table.type === 'collection' && userCollections.map(collection => {
-								return <button onClick={() => setCollectionForTable(table.id, collection.collectionName)}>{collection.collectionName}</button>
-							})}
-						</div>
+						{table.type === 'collection' && (table.collection.length === 0) && 
+							<div style={{marginBottom: '25px'}}>
+								<span>Choose Collection:</span>
+								{table.type === 'collection' && userCollections.map(collection => {
+									return <button onClick={() => setCollectionForTable(table.id, collection.collectionName)}>{collection.collectionName}</button>
+								})}
+							</div>
+						}
 						
 						{table.type === 'collection' && (table.collection.length > 0) && 
 						<div style={{marginBottom: '25px'}}>Collection Selected: {table.collection}</div>}
@@ -139,6 +149,7 @@ export const Report_Builder = () => {
 
 						{/* controls */}
 						<div>
+							<button onClick={() => removeTableFromReport(table.id)}>- delete table</button>
 							<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
 							{table.type === 'static' && <button onClick={() => addRowToTable(table.id)}>+ Row</button>}
 						</div>
