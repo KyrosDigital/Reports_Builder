@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import useSubscription from '../../api/hooks'
 import { Report, TableColumn } from '../../api/types/reports';
 import { Report_Structure_Collection, StrapiClientCollectionNames } from '../../api/collections'
-
+import { ToolBar } from './toolBar'
 
 export const Report_Builder = () => {
 
@@ -13,7 +13,8 @@ export const Report_Builder = () => {
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [userCollections, setUserCollections] = useState([])
-
+	const [showToolBar, setShowToolBar] = useState(false)
+	const [selectedTable, setSelectedTable] = useState(null)
 
 	useEffect(() => {
 		if(!loading) {
@@ -26,34 +27,22 @@ export const Report_Builder = () => {
 		console.log(reportStructure)
 	}, [reportStructure])
 
-	const createNewStaticTable = () => {
+	const createNewTable = (type: string) => {
+		const table = {
+			id: uuidv4(),
+			title: '',
+			type: type,
+			columns: [{id: uuidv4(), label: '', property: '', enum: ''}],
+			rows: [], 
+			collection: ''
+		}
 		setReportStructure({
 			_id: '', 
-			tables: [...reportStructure.tables, {
-				id: uuidv4(),
-				title: 'Static Table Name',
-				type: 'static',
-				columns: [{id: uuidv4(), label: '', property: '', enum: ''}],
-				rows: [], 
-				collection: ''
-			}],
+			tables: [...reportStructure.tables, table],
 			formulas: [] 
 		})
-	}
-
-	const createCollectionTable = () => {
-		setReportStructure({
-			_id: '', 
-			tables: [...reportStructure.tables, {
-				id: uuidv4(),
-				title: 'Collection Table Name',
-				type: 'collection',
-				columns: [{id: uuidv4(), label: '', property: '', enum: ''}],
-				rows: [], 
-				collection: ''
-			}],
-			formulas: [] 
-		})
+		setSelectedTable(table)
+		setShowToolBar(true)
 	}
 
 	const setCollectionForTable = (tableId: string, collectionName: string) => {
@@ -109,7 +98,7 @@ export const Report_Builder = () => {
 		});
 	}
 
-	const removeTableFromReport = (tableId) => {
+	const deleteTable = (tableId) => {
 		let c = confirm("Are you sure you want to delete this table?")
 		if(c) {
 			let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
@@ -117,6 +106,8 @@ export const Report_Builder = () => {
 			setReportStructure(prevState => {
 				return { ...prevState,  tables : reportStructure.tables }
 			});
+			setShowToolBar(false)
+			setSelectedTable(null)
 		}
 	}
 
@@ -128,74 +119,78 @@ export const Report_Builder = () => {
 		});
 	}
 
+	const toggleToolBar = (table) => {
+		if(table) {
+			setSelectedTable(table)
+			setShowToolBar(true)
+		} else {
+			setShowToolBar(false)
+			setSelectedTable(null)
+		}
+	}
+
   return (
     <div>
-      <p className='text-2xl font-bold'>Report Builder</p>
 
-			<button onClick={createNewStaticTable}>+ New Static Table</button>
-			<button onClick={createCollectionTable}>+ New Collection Table</button>
+			{/* ToolBar */}
+			{showToolBar && 
+				<ToolBar 
+					table={selectedTable} 
+					handleTableTitleUpdate={handleTableTitleUpdate}
+					userCollections={userCollections}
+					setCollectionForTable={setCollectionForTable}
+					deleteTable={deleteTable}
+				/>
+			}
+
+			<button onClick={() => createNewTable('static')}>+ New Static Table</button>
+			<button onClick={() => createNewTable('collection')}>+ New Collection Table</button>
 
 			<hr />
-			{/* tables */}
-			{reportStructure.tables.map((table) => (
-				<div key={table.id} className="table">
 
-					<div className="">
+			<div style={{height: '100vh'}}>
 
-						<div style={{marginBottom: '25px'}}>
-							<label>Table Title: </label>
-							<input placeholder={'Enter Table Title'} value={table.title} onChange={(e) => handleTableTitleUpdate(table.id, e.target.value)}/>
-						</div>
+				{/* tables */}
+				{reportStructure.tables.map((table) => (
+					<div key={table.id} className="table" onClick={()=>toggleToolBar(table)}>
 
-						<div style={{marginBottom: '25px'}}>Table Type: {table.type}</div>
-
-						{/* collection table - select collection to drive the table */}
-						{table.type === 'collection' && (table.collection.length === 0) && 
-							<div style={{marginBottom: '25px'}}>
-								<span>Choose Collection:</span>
-								{table.type === 'collection' && userCollections.map(collection => {
-									return <button onClick={() => setCollectionForTable(table.id, collection.collectionName)}>{collection.collectionName}</button>
-								})}
-							</div>
-						}
-						
-						{table.type === 'collection' && (table.collection.length > 0) && 
-						<div style={{marginBottom: '25px'}}>Collection Selected: {table.collection}</div>}
-						
-
-						{/* controls */}
 						<div>
-							<button onClick={() => removeTableFromReport(table.id)}>- delete table</button>
-							<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
-							{table.type === 'static' && <button onClick={() => addRowToTable(table.id)}>+ Row</button>}
-						</div>
 
-						{/* column headers */}
-						<div className="row"> 
-							{table.columns.map((col, i) => {
-								return <div key={col.id} className="col hover-col" onClick={() => setColumnSelected({tableId: table.id, columnId: col.id})}>
-									<input placeholder={'Enter column header'} value={col.label} onChange={(e) => handleColumnLabelChange(table.id, i, e.target.value)}/>
-								</div>
-							})}
-						</div>
-						
-						{/* rows and cells */}
-						{table.rows.map((row) => {
-							return <div key={row.id} className="row">
-								{row.cells.map((cell) => {
-									return <div key={cell.id} className="col hover-cell" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
-										<div></div>
+							{/* controls */}
+							<div>
+								
+								<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
+								{table.type === 'static' && <button onClick={() => addRowToTable(table.id)}>+ Row</button>}
+							</div>
+
+							{/* column headers */}
+							<div className="row"> 
+								{table.columns.map((col, i) => {
+									return <div key={col.id} className="col hover-col" onClick={() => setColumnSelected({tableId: table.id, columnId: col.id})}>
+										<input placeholder={'Enter column header'} value={col.label} onChange={(e) => handleColumnLabelChange(table.id, i, e.target.value)}/>
 									</div>
 								})}
 							</div>
-						})}
+							
+							{/* rows and cells */}
+							{table.rows.map((row) => {
+								return <div key={row.id} className="row">
+									{row.cells.map((cell) => {
+										return <div key={cell.id} className="col hover-cell" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
+											<div></div>
+										</div>
+									})}
+								</div>
+							})}
+							
+						</div>
+
+						<hr />
 						
 					</div>
-
-					<hr />
-					
-				</div>
-			))}
+				))}
+			</div>
+			
     </div>
   );
 };
