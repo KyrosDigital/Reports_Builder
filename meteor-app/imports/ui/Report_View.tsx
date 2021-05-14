@@ -72,7 +72,7 @@ export const Report_View = () => {
 	
 		Meteor.call('Compose_Report', data, (error, result) => {
 			if(error) console.log(error)
-			if(result) setReport(result)
+			if(result) {console.log(result); setReport(result)}
 		})
 	}
 
