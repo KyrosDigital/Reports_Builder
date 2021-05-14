@@ -130,7 +130,7 @@ export const Report_Builder = () => {
 	}
 
   return (
-    <div>
+    <div className='container p-6'>
 
 			{/* ToolBar */}
 			{showToolBar && 
@@ -140,6 +140,8 @@ export const Report_Builder = () => {
 					userCollections={userCollections}
 					setCollectionForTable={setCollectionForTable}
 					deleteTable={deleteTable}
+					addColumnToTable={addColumnToTable}
+					addRowToTable={addRowToTable}
 				/>
 			}
 
@@ -156,12 +158,7 @@ export const Report_Builder = () => {
 
 						<div>
 
-							{/* controls */}
-							<div>
-								
-								<button onClick={() => addColumnToTable(table.id)}>+ Column</button>
-								{table.type === 'static' && <button onClick={() => addRowToTable(table.id)}>+ Row</button>}
-							</div>
+							
 
 							{/* column headers */}
 							<div className="row"> 

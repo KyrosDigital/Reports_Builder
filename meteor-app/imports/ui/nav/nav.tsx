@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Navbar = () => {
   return (
     <>
-      <div className="bg-gray-400 h-12 flex justify-between p-2">
+      <div className="bg-gray-400 h-12 flex justify-between p-2 pl-6">
         <div className="flex items-center mr-4">
           <Link to='/report-builder' className="mr-4">
             Report Builder
