@@ -2,28 +2,3 @@ body {
   font-family: helvetica;
 }
 
-.table {
-	margin: 20px 0px;
-	background-color: #f7f7f7;
-}
-
-.row {
-  display: flex; /* aligns all child elements (flex items) in a row */
-}
-
-.col {
-  flex: 1;        /* distributes space on the line equally among items */
-	border: solid 1px slategray;
-	padding: 10px 10px;
-	max-width: 300px;
-}
-
-.hover-col:hover {
-	cursor: pointer;
-	background-color: lightcyan;
-}
-
-.hover-cell:hover {
-	cursor: pointer;
-	background-color: slategray;
-}

@@ -2,65 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
 import { Label } from '../components/labels'
+import { TableToolBar } from './tableToolBar'
+import { ColumnToolBar } from './columnToolBar'
 
 export const ToolBar = ({
-	table, handleTableTitleUpdate, userCollections, setCollectionForTable, deleteTable,
-	addColumnToTable, addRowToTable
+	table, handleTableTitleUpdate, 
+	userCollections, setCollectionForTable, 
+	addColumnToTable, addRowToTable, deleteTable,
+	column, handleColumnLabelChange
 }) => {
 
   return (
     <div className="container h-3/4 w-3/12 p-4 absolute top-12 right-0 bg-gray-100">
       
-			{/* Table type */}
-			<div className="flex">
-				<Label text={`Table Type:`} color={'indigo'}/>
-				<Label text={table.type} color={'yellow'}/>
-			</div>
-			
-
-			{/* Table title */}
-			<div className="mb-4">
-				<Input 
-					placeholder={'Enter Table Title'}
-					label={"Table Title:"} 
-					value={table.title} 
-					onChange={(e) => handleTableTitleUpdate(table.id, e.target.value)}
-					/>
-			</div>
-
-			{/* collection table - select collection to drive the table */}
-			{table.type === 'collection' && (table.collection.length === 0) && 
-				<div className="mb-4">
-					<Label text={`Choose Collection:`} color={'indigo'}/>
-					{table.type === 'collection' && userCollections.map((collection, i) => {
-						return <Button key={i} onClick={() => setCollectionForTable(table.id, collection.collectionName)} 
-							text={collection.collectionName} color="yellow"
-						/>
-					})}
-				</div>
+			{table && 
+				<TableToolBar 
+					table={table}
+					handleTableTitleUpdate={handleTableTitleUpdate}
+					userCollections={userCollections}
+					setCollectionForTable={setCollectionForTable}
+					addColumnToTable={addColumnToTable}
+					addRowToTable={addRowToTable}
+					deleteTable={deleteTable}
+				/>
 			}
 
-			{table.type === 'collection' && (table.collection.length > 0) &&
-				<div className="flex">
-					<Label text={`Collection Selected:`} color={'indigo'}/>
-					<Label text={table.collection} color={'yellow'}/>
-				</div> 
+			{column && 
+				<ColumnToolBar 
+					column={column.column}
+					columnIndex={column.columnIndex}
+					tableId={column.tableId}
+					handleColumnLabelChange={handleColumnLabelChange}
+					deleteColumn={() => {}}
+				/>
 			}
-
-			{/* controls */}
-			<div className="mb-4">
-				<Label text={`Structure:`} color={'indigo'}/>
-				<div className="flex">
-					<Button onClick={() => addColumnToTable(table.id)} text="+ Column" color="green"/>
-
-					{table.type === 'static' && 
-						<Button onClick={() => addRowToTable(table.id)} text="+ Row" color="green"/>
-					}
-				</div>
-			</div>
-
-			{/* delete table */}
-			<Button onClick={() => deleteTable(table.id)} text="Delete table" color="red"/>
 
     </div>
   );

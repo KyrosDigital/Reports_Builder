@@ -11,11 +11,11 @@ export const Report_Builder = () => {
 	const loading = useSubscription('CollectionNames')
 
 	const [reportStructure, setReportStructure] = useState<Report>({_id: '', tables: [], formulas: []})
-	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
 	const [selectedTable, setSelectedTable] = useState(null)
+	const [selectedColumn, setSelectedColumn] = useState(null)
 
 	useEffect(() => {
 		if(!loading) {
@@ -120,13 +120,25 @@ export const Report_Builder = () => {
 		});
 	}
 
-	const toggleToolBar = (table) => {
+	const toggleToolBarForTable = (table) => {
 		if(table) {
+			setSelectedColumn(null)
 			setSelectedTable(table)
 			setShowToolBar(true)
 		} else {
 			setShowToolBar(false)
 			setSelectedTable(null)
+		}
+	}
+
+	const toggleToolBarForColumn = (tableId, column, columnIndex) => {
+		if(column) {
+			setSelectedTable(null)
+			setSelectedColumn({tableId, column, columnIndex})
+			setShowToolBar(true)
+		} else {
+			setSelectedColumn(null)
+			setShowToolBar(false)
 		}
 	}
 
@@ -143,6 +155,8 @@ export const Report_Builder = () => {
 					deleteTable={deleteTable}
 					addColumnToTable={addColumnToTable}
 					addRowToTable={addRowToTable}
+					column={selectedColumn}
+					handleColumnLabelChange={handleColumnLabelChange}
 				/>
 			}
 
@@ -153,17 +167,20 @@ export const Report_Builder = () => {
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (
-					<div key={table.id} className="my-10 p-4 bg-indigo-50 rounded" onClick={()=>toggleToolBar(table)}>
+					<div key={table.id} className="my-10 p-4 bg-indigo-50 rounded">
 
 						<p className="text-xl font-medium">{table.title}</p>
-
+						<Button onClick={() => toggleToolBarForTable(table)} text="Edit Table" color="indigo"/>
 						<div>
 
 							{/* column headers */}
 							<div className="flex"> 
 								{table.columns.map((col, i) => {
-									return <div key={col.id} className="flex-1 h-10 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setColumnSelected({tableId: table.id, columnId: col.id})}>
-										<input placeholder={'Enter column header'} value={col.label} onChange={(e) => handleColumnLabelChange(table.id, i, e.target.value)}/>
+									return <div 
+										key={col.id} 
+										className="flex-1 h-10 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" 
+										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
+										<p>{col.label}</p>
 									</div>
 								})}
 							</div>
