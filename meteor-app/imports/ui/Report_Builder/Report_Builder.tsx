@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { ToolBar } from './toolBar'
+import { Button } from '../components/buttons'
 import useSubscription from '../../api/hooks'
 import { Report, TableColumn } from '../../api/types/reports';
 import { Report_Structure_Collection, StrapiClientCollectionNames } from '../../api/collections'
-import { ToolBar } from './toolBar'
 
 export const Report_Builder = () => {
 
@@ -145,25 +146,23 @@ export const Report_Builder = () => {
 				/>
 			}
 
-			<button onClick={() => createNewTable('static')}>+ New Static Table</button>
-			<button onClick={() => createNewTable('collection')}>+ New Collection Table</button>
+			<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
+			<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
 
-			<hr />
-
-			<div style={{height: '100vh'}}>
+			<div>
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (
-					<div key={table.id} className="table" onClick={()=>toggleToolBar(table)}>
+					<div key={table.id} className="my-10 p-4 bg-indigo-50 rounded" onClick={()=>toggleToolBar(table)}>
+
+						<p className="text-xl font-medium">{table.title}</p>
 
 						<div>
 
-							
-
 							{/* column headers */}
-							<div className="row"> 
+							<div className="flex"> 
 								{table.columns.map((col, i) => {
-									return <div key={col.id} className="col hover-col" onClick={() => setColumnSelected({tableId: table.id, columnId: col.id})}>
+									return <div key={col.id} className="flex-1 h-10 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setColumnSelected({tableId: table.id, columnId: col.id})}>
 										<input placeholder={'Enter column header'} value={col.label} onChange={(e) => handleColumnLabelChange(table.id, i, e.target.value)}/>
 									</div>
 								})}
@@ -171,9 +170,9 @@ export const Report_Builder = () => {
 							
 							{/* rows and cells */}
 							{table.rows.map((row) => {
-								return <div key={row.id} className="row">
+								return <div key={row.id} className="flex">
 									{row.cells.map((cell) => {
-										return <div key={cell.id} className="col hover-cell" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
+										return <div key={cell.id} className="flex-1 h-10 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
 											<div></div>
 										</div>
 									})}
@@ -181,8 +180,6 @@ export const Report_Builder = () => {
 							})}
 							
 						</div>
-
-						<hr />
 						
 					</div>
 				))}
