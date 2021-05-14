@@ -1,33 +1,19 @@
 import React from 'react';
-import {
-  Nav,
-  NavLink,
-  Bars,
-  NavMenu,
-  NavBtn,
-  NavBtnLink,
-} from './NavbarElements';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
     <>
-      <Nav>
-        <Bars />
-  
-        <NavMenu>
-          <NavLink to='/report-builder' activeStyle>
+      <div className="bg-gray-400 h-12 flex justify-between p-2">
+        <div className="flex items-center mr-4">
+          <Link to='/report-builder' className="mr-4">
             Report Builder
-          </NavLink>
-          <NavLink to='/report-view' activeStyle>
+          </Link>
+          <Link to='/report-view' className="mr-4">
             Report View
-          </NavLink>
-          {/* Second Nav */}
-          {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
-        </NavMenu>
-        <NavBtn>
-          <NavBtnLink to='/signin'>Sign In</NavBtnLink>
-        </NavBtn>
-      </Nav>
+          </Link>
+        </div>
+      </div>
     </>
   );
 };
