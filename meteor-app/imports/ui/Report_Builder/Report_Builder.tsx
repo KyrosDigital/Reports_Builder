@@ -110,8 +110,19 @@ export const Report_Builder = () => {
 	}
 
 	const removeTableFromReport = (tableId) => {
+		let c = confirm("Are you sure you want to delete this table?")
+		if(c) {
+			let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+			reportStructure.tables.splice(tableIndex, 1);
+			setReportStructure(prevState => {
+				return { ...prevState,  tables : reportStructure.tables }
+			});
+		}
+	}
+
+	const handleTableTitleUpdate = (tableId, title) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
-		reportStructure.tables.splice(tableIndex, 1);
+		reportStructure.tables[tableIndex].title = title
 		setReportStructure(prevState => {
 			return { ...prevState,  tables : reportStructure.tables }
 		});
@@ -124,14 +135,19 @@ export const Report_Builder = () => {
 			<button onClick={createNewStaticTable}>+ New Static Table</button>
 			<button onClick={createCollectionTable}>+ New Collection Table</button>
 
-			
+			<hr />
 			{/* tables */}
 			{reportStructure.tables.map((table) => (
 				<div key={table.id} className="table">
 
 					<div className="">
 
-						<h2>{table.title}</h2>
+						<div style={{marginBottom: '25px'}}>
+							<label>Table Title: </label>
+							<input placeholder={'Enter Table Title'} value={table.title} onChange={(e) => handleTableTitleUpdate(table.id, e.target.value)}/>
+						</div>
+
+						<div style={{marginBottom: '25px'}}>Table Type: {table.type}</div>
 
 						{/* collection table - select collection to drive the table */}
 						{table.type === 'collection' && (table.collection.length === 0) && 
@@ -175,6 +191,8 @@ export const Report_Builder = () => {
 						})}
 						
 					</div>
+
+					<hr />
 					
 				</div>
 			))}
