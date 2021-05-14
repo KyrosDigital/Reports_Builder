@@ -18,13 +18,7 @@ export const Report_Builder = () => {
 	const [columSelected, setColumnSelected] = useState({tableId: '', columnId: ''})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [collections, setCollections] = useState<any>({})
-	// holds all queries, hopefully under the key of the variable they're replacing
-	const [queries, setQueries] = useState<any>({})
-	// hold variables to be set as keys for everything else
-	const [variables, setVariables] = useState<any[]>([])
-	const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 
-		'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 
-		'x', 'y', 'z']
+	
 
 	useEffect(() => {
 		if(!loading) {
@@ -99,18 +93,27 @@ export const Report_Builder = () => {
 		const [mongoQuery, setMongoQuery] = useState<any>({})
 		// for the update choices, I just need the first if statement to run once
 		const [counter, setCounter] = useState<any>({})
+		// holds all queries, hopefully under the key of the variable they're replacing
+		const [queries, setQueries] = useState<any>({})
+		// hold variables to be set as keys for everything else
+		const [variables, setVariables] = useState<any[]>([])
+		const alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 
+		'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 
+		'x', 'y', 'z']
 	  
 		const onChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
 		  setValue(event.target.value);
 		};
 		
 		useEffect(() => {
-			queryChooser !== {} && console.log('I changed queryChooser to ', queryChooser);
-		  }, [queryChooser])
+			console.log('queryChooser => ', queryChooser);
+		}, [queryChooser])
+
 	
 		function updateChoices(the: string, el : string) {
 			if (counter[el] < 1) {
-				let temp:{[k: string] : any} = {}
+				let temp:{[k: string] : any} = mongoQuery
+				temp[el] = {}
 				let count = counter
 				count[el] = 1
 				setCounter(count)
@@ -118,9 +121,11 @@ export const Report_Builder = () => {
 				temp[el]["path"] = "data"
 				setMongoQuery(temp)
 				console.log(collections[the]["data"])
-				//console.log(currentQuery)
-				var keys = Object.keys(collections[the]["data"])
+				var keys = queryChooser
+				keys[el] = Object.keys(collections[the]["data"])
+				console.log("keys", keys)
 				setQueryChooser(keys)
+				// this ^ isn't updating 
 			} else { // we are assuming no nested objects
 				let temp = mongoQuery
 				temp[el]["path"] = temp["path"].concat("." + the)
@@ -144,7 +149,7 @@ export const Report_Builder = () => {
 					vars.push(value[i])
 				}
 			}
-			//setVariables(vars)
+			
 			//console.log(vars)
 			var temp_queries:{[k: string] : any} = {}
 			var temp_queryChooser:{[k: string] : any} = {}
@@ -155,9 +160,9 @@ export const Report_Builder = () => {
 				temp_counter[vars[i]] = 0
 			}
 			setQueries(temp_queries)
-			console.log("temp_querychooser" , temp_queryChooser)
 			setQueryChooser(temp_queryChooser)
-			//setCounter(temp_counter)
+			setVariables(vars)
+			setCounter(temp_counter)
 			//console.log(temp_queries)
 			
 		}
@@ -169,9 +174,7 @@ export const Report_Builder = () => {
 			<button onClick={handleButtonClicked}> submit</button>
 			<div className="query_selection">
 				{variables.map((el : string, ind) => {
-					console.log(queryChooser)
-					console.log(el)
-					return <div key = {ind} className = ""> 
+					return <div key = {ind} className = ""> {el} = 
 						{queryChooser[el].map((element : string, index : number) => {
 							return <button key = {index} onClick={() => updateChoices(element, el)}> {element} </button>
 						})}
