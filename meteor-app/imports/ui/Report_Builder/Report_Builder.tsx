@@ -136,6 +136,8 @@ export const Report_Builder = () => {
 		}
 	}
 
+	const fakeArray = [1, 2]
+
   return (
     <div className='container p-6'>
 
@@ -164,7 +166,7 @@ export const Report_Builder = () => {
 					<div key={table.id} className="my-10 p-4 bg-indigo-50 rounded">
 
 						<p className="text-xl font-medium">{table.title}</p>
-						<Button onClick={() => toggleToolBarForTable(table)} text="Edit Table" color="indigo"/>
+						<Button onClick={() => toggleToolBarForTable(table)} text="✏️" color="indigo"/>
 						<div>
 
 							{/* column headers */}
@@ -179,17 +181,28 @@ export const Report_Builder = () => {
 								})}
 							</div>
 							
-							{/* rows and cells */}
+							{/* rows and cells - if static driven */}
 							{table.rows.map((row) => {
 								return <div key={row.id} className="flex">
 									{row.cells.map((cell) => {
-										return <div key={cell.id} className="flex-1 h-10 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
+										return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
 											<div></div>
 										</div>
 									})}
 								</div>
 							})}
-							
+
+							{/* Fake rows - if table is collection driven */}
+							{table.type === 'collection' && fakeArray.map((col, x) => {
+								return <div key={Math.random()} className="flex">
+									{table.columns.map((i) => {
+										return <div key={Math.random()} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-100 border-dashed rounded-md bg-white">
+											<div className="text-indigo-100">data</div>
+										</div>
+									})}
+								</div>
+							})}
+
 						</div>
 						
 					</div>
