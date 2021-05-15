@@ -125,9 +125,6 @@ export const Report_Builder = () => {
 			setSelectedColumn(null)
 			setSelectedTable(table)
 			setShowToolBar(true)
-		} else {
-			setShowToolBar(false)
-			setSelectedTable(null)
 		}
 	}
 
@@ -136,9 +133,6 @@ export const Report_Builder = () => {
 			setSelectedTable(null)
 			setSelectedColumn({tableId, column, columnIndex})
 			setShowToolBar(true)
-		} else {
-			setSelectedColumn(null)
-			setShowToolBar(false)
 		}
 	}
 
@@ -178,9 +172,9 @@ export const Report_Builder = () => {
 								{table.columns.map((col, i) => {
 									return <div 
 										key={col.id} 
-										className="flex-1 h-10 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" 
+										className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" 
 										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
-										<p>{col.label}</p>
+										<span>{col.label}</span>
 									</div>
 								})}
 							</div>
