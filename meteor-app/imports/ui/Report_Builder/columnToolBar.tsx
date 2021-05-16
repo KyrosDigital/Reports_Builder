@@ -5,6 +5,8 @@ import { Label } from '../components/labels'
 
 export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelChange, deleteColumn}) => {
 
+	const [formula, setFormula] = useState('')
+
 	return (
 		<>
 			{/* Column type */}
@@ -22,8 +24,21 @@ export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelCh
 					/>
 			</div>
 
+			{/* Add formula */}
+			<div className="mb-4">
+				<Input 
+					placeholder={'(2 * x) / y'}
+					label={"Column Formula:"} 
+					value={formula} 
+					onChange={(e) => setFormula(e.target.value)}
+					/>
+			</div>
+			
 			{/* delete table */}
-			<Button onClick={() => deleteColumn(column.id)} text="Delete Column" color="red"/>
+			<div>
+				<Button onClick={() => deleteColumn(column.id)} text="Delete Column" color="red"/>
+			</div>
+			
 		</>
 	)
 }
