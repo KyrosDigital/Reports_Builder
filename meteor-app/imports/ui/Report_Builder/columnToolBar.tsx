@@ -6,6 +6,16 @@ import { Label } from '../components/labels'
 export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelChange, deleteColumn}) => {
 
 	const [formula, setFormula] = useState('')
+	const [hasIllegalChar, setHasIllegalChar] = useState(false)
+
+	const numerics = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+	const symbols = ["(", ")", "+", "-", "*", "/", "."]
+	const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+	const letters = "/^[0-9a-zA-Z]+$/";
+	useEffect(() => {
+		// check for illegal characters
+	}, [formula])
 
 	return (
 		<>
