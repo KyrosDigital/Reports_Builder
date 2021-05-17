@@ -23,6 +23,7 @@ export const Report_Builder = () => {
 	const [showToolBar, setShowToolBar] = useState(false)
 	const [selectedTable, setSelectedTable] = useState(null)
 	const [selectedColumn, setSelectedColumn] = useState(null)
+	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
 
 	useEffect(() => {
 		if(!loading && !loading2 && !loading3) {
@@ -169,6 +170,7 @@ export const Report_Builder = () => {
 	const toggleToolBarForTable = (table) => {
 		if(table) {
 			setSelectedColumn(null)
+			setSelectedColumnFormula(null)
 			setSelectedTable(table)
 			setShowToolBar(true)
 		}
@@ -178,6 +180,7 @@ export const Report_Builder = () => {
 		if(column) {
 			setSelectedTable(null)
 			setSelectedColumn({tableId, column, columnIndex})
+			setSelectedColumnFormula(reportStructure.formulas.find(formula => (formula.tableId === tableId && formula.columnId === column.id)))
 			setShowToolBar(true)
 		}
 	}
@@ -207,6 +210,7 @@ export const Report_Builder = () => {
 					deleteColumn={deleteColumn}
 					addRowToTable={addRowToTable}
 					column={selectedColumn}
+					columnFormula={selectedColumnFormula}
 					handleColumnLabelChange={handleColumnLabelChange}
 					handleFormulaUpdate={handleFormulaUpdate}
 				/>
