@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from './components/buttons'
-import useSubscription from '../api/hooks'
-import { Report_Structure_Collection } from '../api/collections'
+import { Button } from '../components/buttons'
+import useSubscription from '../../api/hooks'
+import { Report_Structure_Collection } from '../../api/collections'
 
 export const Report_List = () => {
 
