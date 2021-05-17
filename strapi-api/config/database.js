@@ -2,10 +2,12 @@ module.exports = ({ env }) => ({
   defaultConnection: 'default',
   connections: {
     default: {
-      connector: 'bookshelf',
+      connector: 'mongoose',
       settings: {
-        client: 'sqlite',
-        filename: env('DATABASE_FILENAME', '.tmp/data.db'),
+        client: 'mongo',
+				host: env('DATABASE_HOST', 'localhost'),
+				port: env.int('DATABASE_PORT', 3001),
+				database: env('DATABASE_NAME', 'meteor')
       },
       options: {
         useNullAsDefault: true,
