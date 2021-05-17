@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ToolBar } from './toolBar'
 import { Button } from '../components/buttons'
+import { Input } from '../components/inputs'
 import useSubscription from '../../api/hooks'
 import { Report, TableColumn } from '../../api/types/reports';
 import { Report_Structure_Collection, StrapiClientCollectionNames } from '../../api/collections'
@@ -12,7 +13,7 @@ export const Report_Builder = () => {
 	const loading = useSubscription('CollectionNames')
 	const loading2 = useSubscription('ClientData')
 
-	const [reportStructure, setReportStructure] = useState<Report>({tables: [], formulas: []})
+	const [reportStructure, setReportStructure] = useState<Report>({name: '', tables: [], formulas: []})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
@@ -39,10 +40,9 @@ export const Report_Builder = () => {
 			rows: [], 
 			collection: ''
 		}
-		setReportStructure({
-			tables: [...reportStructure.tables, table],
-			formulas: [] 
-		})
+		setReportStructure(prevState => {
+			return { ...prevState,  tables: [...reportStructure.tables, table] }
+		});
 		setSelectedTable(table)
 		setShowToolBar(true)
 	}
@@ -73,8 +73,9 @@ export const Report_Builder = () => {
 			}
 			return table
 		})
-
-		setReportStructure({tables:  updatedTables, formulas: [...reportStructure.formulas]})
+		setReportStructure(prevState => {
+			return { ...prevState,  tables : updatedTables }
+		});
 	}
 
 	const deleteColumn = (tableId, columnIndex) => {
@@ -99,7 +100,9 @@ export const Report_Builder = () => {
 			return table
 		})
 
-		setReportStructure({tables: updatedTables, formulas: [...reportStructure.formulas]})
+		setReportStructure(prevState => {
+			return { ...prevState,  tables : updatedTables }
+		});
 	}
 
 	const handleColumnLabelChange = (tableId, columnIndex, label) => {
@@ -148,6 +151,12 @@ export const Report_Builder = () => {
 		}
 	}
 
+	const handleReportName = (value) => {
+		setReportStructure(prevState => {
+			return { ...prevState,  name: value }
+		});
+	}
+
 	const saveReport = () => {
 		Meteor.call('Upsert_Report', reportStructure, (error, result) => {
 			if(error) console.log(error)
@@ -175,10 +184,16 @@ export const Report_Builder = () => {
 					handleColumnLabelChange={handleColumnLabelChange}
 				/>
 			}
-
-			<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
-			<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
-			<Button onClick={() => saveReport()} text="Save Report" color="blue"/>
+			
+			<div className="flex">
+				<Input placeholder={'Enter Report Name'} label={null} value={reportStructure.name} 
+					onChange={(e) => handleReportName(e.target.value)}
+				/>
+				<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
+				<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
+				<Button onClick={() => saveReport()} text="Save Report" color="blue"/>
+			</div>
+			
 
 			<div>
 
