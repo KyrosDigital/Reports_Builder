@@ -180,13 +180,15 @@ export const Report_Builder = () => {
 		if(column) {
 			setSelectedTable(null)
 			setSelectedColumn({tableId, column, columnIndex})
-			setSelectedColumnFormula(reportStructure.formulas.find(formula => (formula.tableId === tableId && formula.columnId === column.id)))
+			const columnSpecificFormula = reportStructure.formulas.find(formula => (formula.tableId === tableId && formula.columnId === column.id))
+			if(columnSpecificFormula) {
+				setSelectedColumnFormula(columnSpecificFormula);
+			} else { setSelectedColumnFormula(null) }
 			setShowToolBar(true)
 		}
 	}
 
 	const saveReport = () => {
-		console.log(reportStructure.formulas)
 		Meteor.call('Upsert_Report', reportStructure, (error, result) => {
 			if(error) console.log(error)
 			if(result) {

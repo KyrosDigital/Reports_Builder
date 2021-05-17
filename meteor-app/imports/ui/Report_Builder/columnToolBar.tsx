@@ -16,8 +16,6 @@ export const ColumnToolBar = ({
 	const [formulaValues, setFormulaValues] = useState([])
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
-	console.log(columnFormula)
-
 	// preload data from loaded report structure
 	useEffect(() => {
 		if(columnFormula) {
@@ -33,10 +31,12 @@ export const ColumnToolBar = ({
 					selectedKey: value.property
 				}
 			})
-
 			setFormulaVariables(mapVariableArray)
+		} else { // handles toggling between columns, if one has a formula and one does not
+			setFormulaString('')
+			setFormulaValues([])
+			setFormulaVariables([])
 		}
-		
 	}, [columnFormula])
 
 	// if the formula string, or formula values change
@@ -53,10 +53,6 @@ export const ColumnToolBar = ({
 			}
 		})
 
-		handleFormulaUpdate({ // update report structure here
-			tableId: tableId, columnId: column.id, columnIndex: columnIndex,
-			expression: formulaString, values: formulaValues
-		})
 	}, [formulaString, formulaValues])
 
 	// If formula variable state changes
@@ -88,6 +84,18 @@ export const ColumnToolBar = ({
 			prevState[i].selectedKey = key
 			return [...prevState]
 		});
+	}
+
+	// NOTE: we must save formula by click for time being.
+	// the way the data is passed back and forth, it prevent us from being able to 
+	// update on click or type, and being able to toggle between columns, and have the data be accurate
+	// if you call handleFormulaUpdate within the useEffect for [formulaString, formulaValues],
+	// you'll see what I mean. 
+	const saveFormula = () => {
+		handleFormulaUpdate({ // update report structure here
+			tableId: tableId, columnId: column.id, columnIndex: columnIndex,
+			expression: formulaString, values: formulaValues
+		})
 	}
 
 	return (
@@ -136,6 +144,12 @@ export const ColumnToolBar = ({
 				</div>
 			})}
 			
+			{/* Save formula */}
+			<div>
+				<Button onClick={() => saveFormula()} text={'Save Formula'} color="blue"/>
+			</div>
+			
+
 			{/* delete table */}
 			<div>
 				<Button onClick={() => deleteColumn(tableId, columnIndex)} text="Delete Column" color="red"/>
