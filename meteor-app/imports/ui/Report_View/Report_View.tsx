@@ -77,40 +77,46 @@ export const Report_View = () => {
 	}
 
   return (
-    <div>
+    <div className='container p-6'>
       <h2>Report View</h2>
 			<p> id of report is {id}</p>
 			<button onClick={makeReport}>Make Report</button>
 
-			{report && report.tables.map((table) => {
-				return <div key={table.id} className="table">
+			<div>
 
-					<div className="">
+				{report && report.tables.map((table) => {
+					return <div key={table.id} className="my-10 p-4 bg-indigo-50 rounded">
 
-						{/* column headers */}
-						<div className="row"> 
-							{table.columns.map(col => {
-								return <div key={col.id} className="col hover-col">
-									<div>{col.label}</div>
-								</div>
-							})}
-						</div>
-						
-						{/* rows and cells */}
-						{table.rows.map((row) => {
-							return <div key={row.id} className="row">
-								{row.cells.map((cell) => {
-									return <div key={cell.id} className="col hover-cell">
-										<div>{cell.value}</div>
+						<p className="text-xl font-medium">{table.title}</p>
+
+						<div>
+
+							{/* column headers */}
+							<div className="flex"> 
+								{table.columns.map((col, i) => {
+									return <div key={col.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white">
+										<span>{col.label}</span>
 									</div>
 								})}
 							</div>
-						})}
+							
+							{/* rows and cells - if static driven */}
+							{table.rows.map((row) => {
+								return <div key={row.id} className="flex">
+									{row.cells.map((cell) => {
+										return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
+											<div>{cell.value}</div>
+										</div>
+									})}
+								</div>
+							})}
+							
+						</div>
 						
 					</div>
-					
-				</div>
-			})}
+				})}
+
+			</div>
     </div>
   );
 };
