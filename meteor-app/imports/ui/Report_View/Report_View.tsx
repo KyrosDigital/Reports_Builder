@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {useParams} from 'react-router-dom';
 import useSubscription from '../../api/hooks'
 import { ClientData, StrapiClientDataCollection } from '../../api/collections';
+import { Button } from '../components/buttons';
 
 export const Report_View = () => {
 	const { id } = useParams()
@@ -80,7 +81,7 @@ export const Report_View = () => {
     <div className='container p-6'>
       <h2>Report View</h2>
 			<p> id of report is {id}</p>
-			<button onClick={makeReport}>Make Report</button>
+			<Button onClick={makeReport} text="Make Report" color="indigo"/>
 
 			<div>
 
