@@ -137,8 +137,6 @@ export const Report_Builder = () => {
 		}
 	}
 
-	const fakeArray = [1, 2]
-
   return (
     <div className='container p-6'>
 
@@ -194,7 +192,7 @@ export const Report_Builder = () => {
 							})}
 
 							{/* Fake rows - if table is collection driven */}
-							{table.type === 'collection' && fakeArray.map((col, x) => {
+							{table.type === 'collection' && Array.from([1, 2]).map((col, x) => {
 								return <div key={Math.random()} className="flex">
 									{table.columns.map((i) => {
 										return <div key={Math.random()} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-100 border-dashed rounded-md bg-white">

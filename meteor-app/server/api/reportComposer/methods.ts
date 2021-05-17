@@ -6,7 +6,18 @@ import { Report, Table, TableColumn, FormulaValue } from '../../../imports/api/t
 
 Meteor.methods({
 
+
 	/*
+		Used to create a new report, or to update one
+	
+	*/
+	Upsert_Report: function(report: Report) {
+
+	},
+
+	/*
+		For Viewing a Report
+
 		Determine if table is collection driven, or static
 		if collection driven, fetch, and loop
 		for each "row", process each column
