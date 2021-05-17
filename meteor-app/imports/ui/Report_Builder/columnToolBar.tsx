@@ -78,7 +78,7 @@ export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelCh
 
 			{/* formula variables*/}
 			{formulaVariables.map((variable, i) => {
-				
+
 				let label = `${variable.char}`
 				if(variable.collectionName) label = `${variable.char} = ${variable.collectionName}`
 				if(variable.selectedKey) label = `${variable.char} = ${variable.collectionName}.${variable.selectedKey}`
@@ -96,7 +96,7 @@ export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelCh
 			
 			{/* delete table */}
 			<div>
-				<Button onClick={() => deleteColumn(column.id)} text="Delete Column" color="red"/>
+				<Button onClick={() => deleteColumn(tableId, columnIndex)} text="Delete Column" color="red"/>
 			</div>
 			
 		</>

@@ -9,7 +9,7 @@ import { ColumnToolBar } from './columnToolBar'
 export const ToolBar = ({
 	table, handleTableTitleUpdate, 
 	userCollections, setCollectionForTable, 
-	addColumnToTable, addRowToTable, deleteTable,
+	addColumnToTable, deleteColumn, addRowToTable, deleteTable,
 	column, handleColumnLabelChange
 }) => {
 
@@ -37,7 +37,7 @@ export const ToolBar = ({
 					columnIndex={column.columnIndex}
 					tableId={column.tableId}
 					handleColumnLabelChange={handleColumnLabelChange}
-					deleteColumn={() => {}}
+					deleteColumn={deleteColumn}
 					userCollections={userCollections}
 				/>
 			}

@@ -77,6 +77,17 @@ export const Report_Builder = () => {
 		setReportStructure({ _id: '', tables:  updatedTables, formulas: [...reportStructure.formulas]})
 	}
 
+	const deleteColumn = (tableId, columnIndex) => {
+		let c = confirm("Are you sure you want to delete this column?")
+		if(c) {
+			let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+			reportStructure.tables[tableIndex].columns.splice(columnIndex, 1);
+			setReportStructure(prevState => {
+				return { ...prevState,  tables : reportStructure.tables }
+			});
+		}
+	}
+
 	const addRowToTable = (tableId: string) => {
 		const cells = (tableColumns: Array<TableColumn>) => {
 			return tableColumns.map(() => ({id: uuidv4()}))
@@ -149,6 +160,7 @@ export const Report_Builder = () => {
 					setCollectionForTable={setCollectionForTable}
 					deleteTable={deleteTable}
 					addColumnToTable={addColumnToTable}
+					deleteColumn={deleteColumn}
 					addRowToTable={addRowToTable}
 					column={selectedColumn}
 					handleColumnLabelChange={handleColumnLabelChange}
