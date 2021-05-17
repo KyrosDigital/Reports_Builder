@@ -11,8 +11,8 @@ export const App = () => (
       <Navbar />
       <Switch>
         <Route path='/' exact component={Report_Builder} />
-        <Route path='/report-view/:id' component={Report_View} />
-        <Route path='/report-builder/:id' component={Report_Builder} />
+        <Route path='/report-view/:id?' component={Report_View} />
+        <Route path='/report-builder/:id?' component={Report_Builder} />
         <Route path='/report-list' component={Report_List} />
       </Switch>
     </Router>
