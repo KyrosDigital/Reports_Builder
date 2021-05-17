@@ -38,6 +38,7 @@ export const ToolBar = ({
 					tableId={column.tableId}
 					handleColumnLabelChange={handleColumnLabelChange}
 					deleteColumn={() => {}}
+					userCollections={userCollections}
 				/>
 			}
 

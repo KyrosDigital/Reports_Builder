@@ -9,6 +9,7 @@ import { Report_Structure_Collection, StrapiClientCollectionNames } from '../../
 export const Report_Builder = () => {
 
 	const loading = useSubscription('CollectionNames')
+	const loading2 = useSubscription('ClientData')
 
 	const [reportStructure, setReportStructure] = useState<Report>({_id: '', tables: [], formulas: []})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
@@ -18,11 +19,11 @@ export const Report_Builder = () => {
 	const [selectedColumn, setSelectedColumn] = useState(null)
 
 	useEffect(() => {
-		if(!loading) {
+		if(!loading && !loading2) {
 			let query = StrapiClientCollectionNames.find().fetch()
 			if(query) setUserCollections(query)
 		}
-	}, [loading])
+	}, [loading, loading2])
 
 	useEffect(() => {
 		console.log(reportStructure)
@@ -87,7 +88,7 @@ export const Report_Builder = () => {
 			return table
 		})
 
-		setReportStructure({ _id: '', tables:  updatedTables, formulas: [...reportStructure.formulas]})
+		setReportStructure({ _id: '', tables: updatedTables, formulas: [...reportStructure.formulas]})
 	}
 
 	const handleColumnLabelChange = (tableId, columnIndex, label) => {
