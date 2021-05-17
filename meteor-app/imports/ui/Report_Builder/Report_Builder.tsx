@@ -56,11 +56,17 @@ export const Report_Builder = () => {
 		setShowToolBar(true)
 	}
 
+	const handleReportName = (value) => {
+		setReportStructure(prevState => {
+			return { ...prevState,  name: value }
+		});
+	}
+
 	const setCollectionForTable = (tableId: string, collectionName: string) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 		reportStructure.tables[tableIndex].collection = collectionName
 		setReportStructure(prevState => {
-			return { ...prevState,  tables : reportStructure.tables }
+			return { ...prevState,  tables: reportStructure.tables }
 		});
   }
 
@@ -72,7 +78,7 @@ export const Report_Builder = () => {
 					row.cells.push({
 						id: uuidv4(),
 						index: table.columns.length,
-						type : '',
+						type: '',
 						property: '',
 						propertyValue: '',
 						value: '',
@@ -83,7 +89,7 @@ export const Report_Builder = () => {
 			return table
 		})
 		setReportStructure(prevState => {
-			return { ...prevState,  tables : updatedTables }
+			return { ...prevState,  tables: updatedTables }
 		});
 	}
 
@@ -93,7 +99,7 @@ export const Report_Builder = () => {
 			let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 			reportStructure.tables[tableIndex].columns.splice(columnIndex, 1);
 			setReportStructure(prevState => {
-				return { ...prevState,  tables : reportStructure.tables }
+				return { ...prevState,  tables: reportStructure.tables }
 			});
 		}
 	}
@@ -110,7 +116,7 @@ export const Report_Builder = () => {
 		})
 
 		setReportStructure(prevState => {
-			return { ...prevState,  tables : updatedTables }
+			return { ...prevState,  tables: updatedTables }
 		});
 	}
 
@@ -119,7 +125,7 @@ export const Report_Builder = () => {
 
 		reportStructure.tables[tableIndex].columns[columnIndex].label = label
 		setReportStructure(prevState => {
-			return { ...prevState,  tables : reportStructure.tables }
+			return { ...prevState,  tables: reportStructure.tables }
 		});
 	}
 
@@ -129,7 +135,7 @@ export const Report_Builder = () => {
 			let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 			reportStructure.tables.splice(tableIndex, 1);
 			setReportStructure(prevState => {
-				return { ...prevState,  tables : reportStructure.tables }
+				return { ...prevState,  tables: reportStructure.tables }
 			});
 			setShowToolBar(false)
 			setSelectedTable(null)
@@ -142,6 +148,22 @@ export const Report_Builder = () => {
 		setReportStructure(prevState => {
 			return { ...prevState,  tables : reportStructure.tables }
 		});
+	}
+
+	const handleFormulaUpdate = (formula) => {
+		let existingFormula = reportStructure.formulas.find(each => (each.tableId === formula.tableId && each.columnId === formula.columnId))
+		if(!existingFormula) { // add a new formula to the set
+			formula.id = uuidv4()
+			setReportStructure(prevState => {
+				return { ...prevState,  formulas: [...reportStructure.formulas, formula] }
+			});
+		} else { // update an existing formula
+			let formulaIndex = reportStructure.formulas.findIndex(each => each.id === existingFormula.id)
+			reportStructure.formulas[formulaIndex] = formula
+			setReportStructure(prevState => {
+				return { ...prevState,  formulas: reportStructure.formulas }
+			});
+		}
 	}
 
 	const toggleToolBarForTable = (table) => {
@@ -160,13 +182,8 @@ export const Report_Builder = () => {
 		}
 	}
 
-	const handleReportName = (value) => {
-		setReportStructure(prevState => {
-			return { ...prevState,  name: value }
-		});
-	}
-
 	const saveReport = () => {
+		console.log(reportStructure.formulas)
 		Meteor.call('Upsert_Report', reportStructure, (error, result) => {
 			if(error) console.log(error)
 			if(result) {
@@ -191,6 +208,7 @@ export const Report_Builder = () => {
 					addRowToTable={addRowToTable}
 					column={selectedColumn}
 					handleColumnLabelChange={handleColumnLabelChange}
+					handleFormulaUpdate={handleFormulaUpdate}
 				/>
 			}
 			

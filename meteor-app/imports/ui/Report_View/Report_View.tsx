@@ -42,7 +42,6 @@ export const Report_View = () => {
 					tableId: 'uuid',
 					columnId: 'yyy',
 					columnIndex: 2,
-					originalExpression: 'sum(x + 1) / y',
 					expression: 'sum(x + 1) / y',
 					values: [
 						{

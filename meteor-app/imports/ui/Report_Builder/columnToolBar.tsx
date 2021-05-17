@@ -1,36 +1,59 @@
 import React, { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
 import { Label } from '../components/labels'
 import { StrapiClientDataCollection } from '../../api/collections'
 
-export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelChange, deleteColumn, userCollections}) => {
+export const ColumnToolBar = ({
+	column, columnIndex, tableId, 
+	handleColumnLabelChange, 
+	handleFormulaUpdate,
+	deleteColumn, userCollections
+}) => {
 
-	const [formula, setFormula] = useState('')
+	const [formulaString, setFormulaString] = useState('')
 	const [formulaVariables, setFormulaVariables] = useState([])
-	const [hasIllegalChar, setHasIllegalChar] = useState(false)
-
-	const numerics = '0123456789'
-	const symbols = ["(", ")", "+", "-", "*", "/", ".", " "]
+	const [formulaValues, setFormulaValues] = useState([])
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
 	useEffect(() => {
 		formulaVariables.forEach(variable => {
-			if(!Array.from(formula).includes(variable.char)) {
+			if(!Array.from(formulaString).includes(variable.char)) {
 				let redacted = formulaVariables.filter(item => item.char !== variable.char)
 				setFormulaVariables(redacted);
 			}
 		})
-		Array.from(formula).forEach(char => {
+		Array.from(formulaString).forEach(char => {
 			if(alphabet.includes(char) && formulaVariables.filter(variable => variable.char === char).length === 0) {
 				setFormulaVariables(oldArray => [...oldArray, {char: char, collectionName: null, keys: [], slectedKey: null}]);
 			}
 		})
-	}, [formula])
+		console.log(formulaValues)
+		// update report structure here
+		handleFormulaUpdate({
+			id: uuidv4(),
+			tableId: tableId,
+			columnId: column.id,
+			columnIndex: columnIndex,
+			expression: formulaString,
+			values: formulaValues
+		})
+	}, [formulaString, formulaValues])
 
-	// useEffect(() => {
-	// 	console.log(formulaVariables)
-	// }, [formulaVariables])
+	useEffect(() => {
+		const values = formulaVariables.map(variable => {
+			return {
+				key: variable.char,
+				type: 'query', // TODO:
+				collectionName: variable.collectionName,
+				queryModifier: "data.agentId", // TODO: 
+				query: {"userId": "60958c98857a7b14acb156d9", "collectionName": variable.collectionName}, // TODO:
+				property: variable.selectedKey
+			}
+		})
+		setFormulaValues(values)
+	}, [formulaVariables])
 
 	const handleSelectCollectionForVariable = (collectionName, i) => {
 		const query = StrapiClientDataCollection.findOne({"userId" : "60958c98857a7b14acb156d9", "collectionName" : collectionName}, {fields : {"collectionName" : 1, "data" : 1}})
@@ -53,7 +76,7 @@ export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelCh
 			{/* Column type */}
 			<div className="flex">
 				<Label text={`Column Type:`} color={'indigo'}/>
-				{formula && <Label text={'Formula'} color={'yellow'}/>}
+				{formulaString && <Label text={'Formula'} color={'yellow'}/>}
 			</div>
 
 			{/* Column label */}
@@ -71,8 +94,8 @@ export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelCh
 				<Input 
 					placeholder={'(2 * x) / y'}
 					label={"Column Formula:"} 
-					value={formula} 
-					onChange={(e) => setFormula(e.target.value)}
+					value={formulaString} 
+					onChange={(e) => setFormulaString(e.target.value.toLowerCase())}
 					/>
 			</div>
 
