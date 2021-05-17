@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ToolBar } from './toolBar'
@@ -11,7 +12,7 @@ export const Report_Builder = () => {
 	const loading = useSubscription('CollectionNames')
 	const loading2 = useSubscription('ClientData')
 
-	const [reportStructure, setReportStructure] = useState<Report>({_id: '', tables: [], formulas: []})
+	const [reportStructure, setReportStructure] = useState<Report>({tables: [], formulas: []})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
@@ -26,7 +27,7 @@ export const Report_Builder = () => {
 	}, [loading, loading2])
 
 	useEffect(() => {
-		console.log(reportStructure)
+		// console.log(reportStructure)
 	}, [reportStructure])
 
 	const createNewTable = (type: string) => {
@@ -39,7 +40,6 @@ export const Report_Builder = () => {
 			collection: ''
 		}
 		setReportStructure({
-			_id: '', 
 			tables: [...reportStructure.tables, table],
 			formulas: [] 
 		})
@@ -74,7 +74,7 @@ export const Report_Builder = () => {
 			return table
 		})
 
-		setReportStructure({ _id: '', tables:  updatedTables, formulas: [...reportStructure.formulas]})
+		setReportStructure({tables:  updatedTables, formulas: [...reportStructure.formulas]})
 	}
 
 	const deleteColumn = (tableId, columnIndex) => {
@@ -99,7 +99,7 @@ export const Report_Builder = () => {
 			return table
 		})
 
-		setReportStructure({ _id: '', tables: updatedTables, formulas: [...reportStructure.formulas]})
+		setReportStructure({tables: updatedTables, formulas: [...reportStructure.formulas]})
 	}
 
 	const handleColumnLabelChange = (tableId, columnIndex, label) => {
@@ -148,6 +148,15 @@ export const Report_Builder = () => {
 		}
 	}
 
+	const saveReport = () => {
+		Meteor.call('Upsert_Report', reportStructure, (error, result) => {
+			if(error) console.log(error)
+			if(result) {
+				setReportStructure(result)
+			}
+		})
+	}
+
   return (
     <div className='container p-6'>
 
@@ -169,6 +178,7 @@ export const Report_Builder = () => {
 
 			<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
 			<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
+			<Button onClick={() => saveReport()} text="Save Report" color="blue"/>
 
 			<div>
 
