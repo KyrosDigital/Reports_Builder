@@ -1,10 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState, useEffect } from 'react';
+import {useParams} from 'react-router-dom';
 import useSubscription from '../api/hooks'
 import { ClientData, StrapiClientDataCollection } from '../api/collections';
 
 export const Report_View = () => {
-
+	const { id } = useParams()
 	// const loading = useSubscription('ClientData')
 
 	// const [clientData, setClientData] = useState<Array<ClientData>>([])
@@ -79,7 +80,7 @@ export const Report_View = () => {
   return (
     <div>
       <h2>Report View</h2>
-
+			<p> id of report is {id}</p>
 			<button onClick={makeReport}>Make Report</button>
 
 			{report && report.tables.map((table) => {
