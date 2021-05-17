@@ -1,5 +1,5 @@
 import React from 'react';
-import { Report_View } from './Report_View';
+import { Report_View } from './Report_View/Report_View';
 import { Report_Builder } from './Report_Builder/Report_Builder';
 import { Report_List } from './Report_List/Report_List'
 import Navbar from './nav/nav';

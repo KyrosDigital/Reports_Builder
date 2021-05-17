@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState, useEffect } from 'react';
 import {useParams} from 'react-router-dom';
-import useSubscription from '../api/hooks'
-import { ClientData, StrapiClientDataCollection } from '../api/collections';
+import useSubscription from '../../api/hooks'
+import { ClientData, StrapiClientDataCollection } from '../../api/collections';
 
 export const Report_View = () => {
 	const { id } = useParams()
