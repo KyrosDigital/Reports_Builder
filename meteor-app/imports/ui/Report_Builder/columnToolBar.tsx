@@ -6,15 +6,25 @@ import { Label } from '../components/labels'
 export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelChange, deleteColumn}) => {
 
 	const [formula, setFormula] = useState('')
+	const [formulaVariables, setFormulaVariables] = useState([])
 	const [hasIllegalChar, setHasIllegalChar] = useState(false)
 
-	const numerics = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-	const symbols = ["(", ")", "+", "-", "*", "/", "."]
+	const numerics = '0123456789'
+	const symbols = ["(", ")", "+", "-", "*", "/", ".", " "]
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
-	const letters = "/^[0-9a-zA-Z]+$/";
 	useEffect(() => {
-		// check for illegal characters
+		formulaVariables.forEach(char => {
+			if(!Array.from(formula).includes(char)) {
+				let redacted = formulaVariables.filter(item => item !== char)
+				setFormulaVariables(redacted);
+			}
+		})
+		Array.from(formula).forEach(char => {
+			if(alphabet.includes(char) && !formulaVariables.includes(char)) {
+				setFormulaVariables(oldArray => [...oldArray, char]);
+			}
+		})
 	}, [formula])
 
 	return (
@@ -22,6 +32,7 @@ export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelCh
 			{/* Column type */}
 			<div className="flex">
 				<Label text={`Column Type:`} color={'indigo'}/>
+				{formula && <Label text={'Formula'} color={'yellow'}/>}
 			</div>
 
 			{/* Column label */}
@@ -34,7 +45,7 @@ export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelCh
 					/>
 			</div>
 
-			{/* Add formula */}
+			{/* formula */}
 			<div className="mb-4">
 				<Input 
 					placeholder={'(2 * x) / y'}
@@ -43,6 +54,13 @@ export const ColumnToolBar = ({column, columnIndex, tableId, handleColumnLabelCh
 					onChange={(e) => setFormula(e.target.value)}
 					/>
 			</div>
+
+			{/* formula variables*/}
+			{formulaVariables.map(variable => {
+					return <div className="mb-4">
+					<Label text={`${variable} =`} color={'indigo'}/>
+				</div>
+			})}
 			
 			{/* delete table */}
 			<div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export const Input = ({placeholder, value, onChange, label}) => {
+export const Input = ({placeholder, value, onChange, onBlur, label}) => {
 	return (
 		<>
 			<div className="mb-3 pt-0">
@@ -12,7 +12,7 @@ export const Input = ({placeholder, value, onChange, label}) => {
 				<input 
 					className="px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border-0 shadow outline-none focus:outline-none focus:ring w-full"
 					type="text" 
-					placeholder={placeholder} value={value} onChange={onChange}
+					placeholder={placeholder} value={value} onChange={onChange} onBlur={onBlur}
 				/>
 			</div>
 		</>
