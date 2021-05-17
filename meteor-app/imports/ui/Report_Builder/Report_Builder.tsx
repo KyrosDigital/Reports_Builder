@@ -94,13 +94,16 @@ export const Report_Builder = () => {
 		});
 	}
 
+	// deleting a column also means deleting coresponding formulas
 	const deleteColumn = (tableId, columnIndex) => {
 		let c = confirm("Are you sure you want to delete this column?")
 		if(c) {
 			let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 			reportStructure.tables[tableIndex].columns.splice(columnIndex, 1);
+			let formulaIndex = reportStructure.formulas.findIndex(formula => (formula.tableId === tableId && formula.columnIndex === columnIndex))
+			reportStructure.formulas.splice(formulaIndex, 1);
 			setReportStructure(prevState => {
-				return { ...prevState,  tables: reportStructure.tables }
+				return { ...prevState,  tables: reportStructure.tables, formulas: reportStructure.formulas }
 			});
 		}
 	}
@@ -125,6 +128,15 @@ export const Report_Builder = () => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 
 		reportStructure.tables[tableIndex].columns[columnIndex].label = label
+		setReportStructure(prevState => {
+			return { ...prevState,  tables: reportStructure.tables }
+		});
+	}
+
+	const handleColumnPropertyChange = (tableId, columnIndex, property) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+
+		reportStructure.tables[tableIndex].columns[columnIndex].property = property
 		setReportStructure(prevState => {
 			return { ...prevState,  tables: reportStructure.tables }
 		});
@@ -214,6 +226,7 @@ export const Report_Builder = () => {
 					column={selectedColumn}
 					columnFormula={selectedColumnFormula}
 					handleColumnLabelChange={handleColumnLabelChange}
+					handleColumnPropertyChange={handleColumnPropertyChange}
 					handleFormulaUpdate={handleFormulaUpdate}
 				/>
 			}

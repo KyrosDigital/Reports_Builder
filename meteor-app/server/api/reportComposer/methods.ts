@@ -37,7 +37,13 @@ Meteor.methods({
 		This method, mutates the original report object, and returns it
 	*/
 
-	Compose_Report: function(report: Report) {
+	Compose_Report: function(reportId: string) {
+
+		let report = null;
+
+		const setReportToDisplay = () => {
+			report = Report_Structure_Collection.findOne({_id: reportId})
+		}
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
@@ -106,9 +112,8 @@ Meteor.methods({
 	
 								if(value.queryModifier) {
 									const cellPropertyValue = row.cells[formula.columnIndex].propertyValue
-									value.query[value.queryModifier]= cellPropertyValue
+									value.query[value.queryModifier] = cellPropertyValue
 								}
-	
 								const query = StrapiClientDataCollection.find(value.query).fetch()
 
 								if(value.operation === 'sum') {
@@ -124,7 +129,7 @@ Meteor.methods({
 							}
 	
 						})
-	
+						
 						// evaluate the expression, after the values have been harvested
 						const result = math.evaluate(expression)
 	
@@ -139,6 +144,9 @@ Meteor.methods({
 		}
 		
 		const run = async () => {
+
+			await setReportToDisplay()
+
 			createRowsInTable()
 			await computeFormulas()
 			// return the mutated report, containing the accurate values to display

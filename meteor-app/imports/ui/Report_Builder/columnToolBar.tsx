@@ -6,7 +6,7 @@ import { StrapiClientDataCollection } from '../../api/collections'
 
 export const ColumnToolBar = ({
 	column, columnIndex, tableId, 
-	handleColumnLabelChange, 
+	handleColumnLabelChange, handleColumnPropertyChange,
 	handleFormulaUpdate, columnFormula,
 	deleteColumn, userCollections
 }) => {
@@ -61,6 +61,7 @@ export const ColumnToolBar = ({
 			return {
 				key: variable.char,
 				type: 'query', // TODO:
+				operation: 'sum', // TODO: 
 				collectionName: variable.collectionName || null,
 				queryModifier: "data.agentId", // TODO: 
 				query: {"userId": "60958c98857a7b14acb156d9", "collectionName": variable.collectionName}, // TODO:
@@ -113,6 +114,16 @@ export const ColumnToolBar = ({
 					label={"Column Header:"} 
 					value={column.label} 
 					onChange={(e) => handleColumnLabelChange(tableId, columnIndex, e.target.value)}
+					/>
+			</div>
+
+			{/* Column property */}
+			<div className="mb-4">
+				<Input 
+					placeholder={'Enter column property'}
+					label={"Column Property:"} 
+					value={column.property} 
+					onChange={(e) => handleColumnPropertyChange(tableId, columnIndex, e.target.value)}
 					/>
 			</div>
 
