@@ -15,8 +15,9 @@ export const Report_Builder = () => {
 
 	const loading = useSubscription('CollectionNames')
 	const loading2 = useSubscription('ClientData')
+	const loading3 = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState<Report>({name: '', tables: [], formulas: []})
+	const [reportStructure, setReportStructure] = useState<Report>({_id: id, name: '', tables: [], formulas: []})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
@@ -24,11 +25,16 @@ export const Report_Builder = () => {
 	const [selectedColumn, setSelectedColumn] = useState(null)
 
 	useEffect(() => {
-		if(!loading && !loading2) {
-			let query = StrapiClientCollectionNames.find().fetch()
+		if(!loading && !loading2 && !loading3) {
+			const query = StrapiClientCollectionNames.find().fetch()
 			if(query) setUserCollections(query)
+
+			if(id) {
+				const reportQuery = Report_Structure_Collection.findOne({_id: id})
+				setReportStructure(reportQuery)
+			}
 		}
-	}, [loading, loading2])
+	}, [loading, loading2, loading3])
 
 	useEffect(() => {
 		// console.log(reportStructure)
