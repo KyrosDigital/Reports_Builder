@@ -3,6 +3,7 @@ import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
 import { Label } from '../components/labels'
 import { StrapiClientDataCollection } from '../../api/collections'
+import toast from 'react-hot-toast';
 
 export const ColumnToolBar = ({
 	column, columnIndex, tableId, 
@@ -97,6 +98,7 @@ export const ColumnToolBar = ({
 			tableId: tableId, columnId: column.id, columnIndex: columnIndex,
 			expression: formulaString, values: formulaValues
 		})
+		toast.success('Formula Saved!')
 	}
 
 	return (

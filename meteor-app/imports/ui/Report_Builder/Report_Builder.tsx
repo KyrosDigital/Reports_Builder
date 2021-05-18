@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
@@ -204,13 +205,14 @@ export const Report_Builder = () => {
 			if(error) console.log(error)
 			if(result) {
 				setReportStructure(result)
+				toast.success('Report Saved!')
 			}
 		})
 	}
 
   return (
     <div className='container p-6'>
-			
+
 			{/* ToolBar */}
 			{showToolBar && 
 				<ToolBar 

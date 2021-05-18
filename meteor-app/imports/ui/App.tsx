@@ -4,9 +4,11 @@ import { Report_Builder } from './Report_Builder/Report_Builder';
 import { Report_List } from './Report_List/Report_List'
 import Navbar from './nav/nav';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 export const App = () => (
   <div>
+		<Toaster position="top-right"/>
 		<Router>
       <Navbar />
       <Switch>
