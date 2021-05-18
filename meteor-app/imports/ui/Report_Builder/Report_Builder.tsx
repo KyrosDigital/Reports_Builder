@@ -8,7 +8,6 @@ import useSubscription from '../../api/hooks'
 import { Report, TableColumn } from '../../api/types/reports';
 import {useParams} from 'react-router-dom';
 import { Report_Structure_Collection, StrapiClientCollectionNames } from '../../api/collections'
-import { prodDependencies } from 'mathjs';
 
 export const Report_Builder = () => {
 	const { id } = useParams()
@@ -211,7 +210,7 @@ export const Report_Builder = () => {
 
   return (
     <div className='container p-6'>
-			<p>id of report is {id}</p>
+			
 			{/* ToolBar */}
 			{showToolBar && 
 				<ToolBar 

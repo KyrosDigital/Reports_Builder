@@ -145,7 +145,7 @@ Meteor.methods({
 		
 		const run = async () => {
 
-			await setReportToDisplay()
+			setReportToDisplay()
 
 			createRowsInTable()
 			await computeFormulas()

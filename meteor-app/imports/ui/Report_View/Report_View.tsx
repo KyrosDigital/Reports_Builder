@@ -21,56 +21,6 @@ export const Report_View = () => {
 	const [report, setReport] = useState(null)
 
 	const makeReport = () => {
-		const data = {
-			_id: 'asdopasdkdas', // the mongo id of the object
-			tables: [ // the table structure, crafted by user
-				{
-					id: 'uuid',
-					title: 'Agent Sales Volume',
-					type: 'collection', // collection - loops over a set of data, static - user manually sets the amount of rows
-					columns: [ 
-						{id: 'zzz', label: 'First Name', property: 'firstName', enum: 'string'}, 
-						{id: 'qqq', label: 'Last Name', property: 'lastName', enum: 'string'}, 
-						{id: 'yyy', label: 'Sales', property: 'agentId', formulaId: 'xxx', enum: 'number'} 
-					], // the columns in the table
-					rows: [ ],
-					collection: 'Agents' // could be null, if rowType is static
-				}
-			],
-			formulas: [
-				{
-					id: 'xxx',
-					tableId: 'uuid',
-					columnId: 'yyy',
-					columnIndex: 2,
-					expression: 'sum(x + 1) / y',
-					values: [
-						{
-							key: 'x',
-							type: 'query',
-							operation: 'sum',
-							collectionName: 'Transactions',
-							queryModifier: "data.agentId",
-							query: {"userId": "60958c98857a7b14acb156d9", "collectionName": "Transactions"},
-							property: 'price'
-						},
-						{
-							key: 'y',
-							type: 'query_count',
-							collectionName: 'Agents',
-							query: {"userId": "60958c98857a7b14acb156d9", "collectionName": "Agents"}
-						},
-						// {
-						// 	key: 'z',
-						// 	type: 'pointer',
-						// 	collumnId: 'uuid',
-						// 	cellIndex: 0
-						// }
-					]
-				}
-			]
-		}
-	
 		Meteor.call('Compose_Report', id, (error, result) => {
 			if(error) console.log(error)
 			if(result) {console.log(result); setReport(result)}

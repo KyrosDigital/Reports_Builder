@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '../components/buttons'
-import { Input } from '../components/inputs'
-import { Label } from '../components/labels'
+import React from 'react';
 import { ProgressBar } from '../components/progressBar'
 import { TableToolBar } from './tableToolBar'
 import { ColumnToolBar } from './columnToolBar'
