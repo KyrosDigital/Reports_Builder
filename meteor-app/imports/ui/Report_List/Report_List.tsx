@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from './components/buttons'
-import useSubscription from '../api/hooks'
+import { Button } from '../components/buttons'
+import useSubscription from '../../api/hooks'
+import { Report_Structure_Collection } from '../../api/collections'
 
 export const Report_List = () => {
 
-    // For when we have a reports collection
+  const loading = useSubscription('ReportStructure')
+  const [reportCollection, setReportCollection] = useState([])
 
-    // const loading = useSubscription('Reports')
-    // const [reportCollection, setReportCollection] = useState([])
-    // useEffect(() => {
-    //     if (!loading) {
-    //         let query = Reports.find().fetch()
-    //         setReportCollection(query)
-    //     }
-    // })
-
-    var dummyReports = [{"_id" : 1, 'name' : 'average profits'}, {"_id" : 2, 'name' : 'average sales'}, 
-                        {"_id" : 3, 'name' : 'annual charts'}]
-
+  useEffect(() => {
+    if (!loading) {
+      let query = Report_Structure_Collection.find().fetch()
+      setReportCollection(query)
+    }
+  }, [loading])
 
   return (
     <div className="space-y-4">
@@ -27,7 +23,7 @@ export const Report_List = () => {
         </Link>
         <div></div>
         <h1 className="font-sans text-xl font-bold">Your Reports:</h1>
-        {dummyReports.map((el, id) => {
+        {reportCollection.map((el, id) => {
           return <div key = {id} className="mx-4 box-border h-32 w-56 p-4 border-4 border-black bg-green-100 rounded-xl space-y-2">
                     <h2 className="font-sans text-xl font-bold">{el.name}</h2>
                     <Link to={'/report-view/' + el._id} className="mr-4">

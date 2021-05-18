@@ -1,35 +1,44 @@
+import { Meteor } from 'meteor/meteor';
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
 import { Button } from '../components/buttons'
+import { Input } from '../components/inputs'
 import useSubscription from '../../api/hooks'
 import { Report, TableColumn } from '../../api/types/reports';
 import {useParams} from 'react-router-dom';
 import { Report_Structure_Collection, StrapiClientCollectionNames } from '../../api/collections'
-import { prodDependencies } from 'mathjs';
 
 export const Report_Builder = () => {
 	const { id } = useParams()
 
 	const loading = useSubscription('CollectionNames')
 	const loading2 = useSubscription('ClientData')
+	const loading3 = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState<Report>({_id: '', tables: [], formulas: []})
+	const [reportStructure, setReportStructure] = useState<Report>({_id: id, name: '', tables: [], formulas: []})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
 	const [selectedTable, setSelectedTable] = useState(null)
 	const [selectedColumn, setSelectedColumn] = useState(null)
+	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
 
 	useEffect(() => {
-		if(!loading && !loading2) {
-			let query = StrapiClientCollectionNames.find().fetch()
+		if(!loading && !loading2 && !loading3) {
+			const query = StrapiClientCollectionNames.find().fetch()
 			if(query) setUserCollections(query)
+
+			if(id) {
+				const reportQuery = Report_Structure_Collection.findOne({_id: id})
+				setReportStructure(reportQuery)
+			}
 		}
-	}, [loading, loading2])
+	}, [loading, loading2, loading3])
 
 	useEffect(() => {
-		console.log(reportStructure)
+		// console.log(reportStructure)
 	}, [reportStructure])
 
 	const createNewTable = (type: string) => {
@@ -41,20 +50,24 @@ export const Report_Builder = () => {
 			rows: [], 
 			collection: ''
 		}
-		setReportStructure({
-			_id: '', 
-			tables: [...reportStructure.tables, table],
-			formulas: [] 
-		})
+		setReportStructure(prevState => {
+			return { ...prevState,  tables: [...reportStructure.tables, table] }
+		});
 		setSelectedTable(table)
 		setShowToolBar(true)
+	}
+
+	const handleReportName = (value) => {
+		setReportStructure(prevState => {
+			return { ...prevState,  name: value }
+		});
 	}
 
 	const setCollectionForTable = (tableId: string, collectionName: string) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 		reportStructure.tables[tableIndex].collection = collectionName
 		setReportStructure(prevState => {
-			return { ...prevState,  tables : reportStructure.tables }
+			return { ...prevState,  tables: reportStructure.tables }
 		});
   }
 
@@ -66,7 +79,7 @@ export const Report_Builder = () => {
 					row.cells.push({
 						id: uuidv4(),
 						index: table.columns.length,
-						type : '',
+						type: '',
 						property: '',
 						propertyValue: '',
 						value: '',
@@ -76,17 +89,21 @@ export const Report_Builder = () => {
 			}
 			return table
 		})
-
-		setReportStructure({ _id: '', tables:  updatedTables, formulas: [...reportStructure.formulas]})
+		setReportStructure(prevState => {
+			return { ...prevState,  tables: updatedTables }
+		});
 	}
 
+	// deleting a column also means deleting coresponding formulas
 	const deleteColumn = (tableId, columnIndex) => {
 		let c = confirm("Are you sure you want to delete this column?")
 		if(c) {
 			let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 			reportStructure.tables[tableIndex].columns.splice(columnIndex, 1);
+			let formulaIndex = reportStructure.formulas.findIndex(formula => (formula.tableId === tableId && formula.columnIndex === columnIndex))
+			reportStructure.formulas.splice(formulaIndex, 1);
 			setReportStructure(prevState => {
-				return { ...prevState,  tables : reportStructure.tables }
+				return { ...prevState,  tables: reportStructure.tables, formulas: reportStructure.formulas }
 			});
 		}
 	}
@@ -102,7 +119,9 @@ export const Report_Builder = () => {
 			return table
 		})
 
-		setReportStructure({ _id: '', tables: updatedTables, formulas: [...reportStructure.formulas]})
+		setReportStructure(prevState => {
+			return { ...prevState,  tables: updatedTables }
+		});
 	}
 
 	const handleColumnLabelChange = (tableId, columnIndex, label) => {
@@ -110,7 +129,16 @@ export const Report_Builder = () => {
 
 		reportStructure.tables[tableIndex].columns[columnIndex].label = label
 		setReportStructure(prevState => {
-			return { ...prevState,  tables : reportStructure.tables }
+			return { ...prevState,  tables: reportStructure.tables }
+		});
+	}
+
+	const handleColumnPropertyChange = (tableId, columnIndex, property) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+
+		reportStructure.tables[tableIndex].columns[columnIndex].property = property
+		setReportStructure(prevState => {
+			return { ...prevState,  tables: reportStructure.tables }
 		});
 	}
 
@@ -120,7 +148,7 @@ export const Report_Builder = () => {
 			let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 			reportStructure.tables.splice(tableIndex, 1);
 			setReportStructure(prevState => {
-				return { ...prevState,  tables : reportStructure.tables }
+				return { ...prevState,  tables: reportStructure.tables }
 			});
 			setShowToolBar(false)
 			setSelectedTable(null)
@@ -135,9 +163,29 @@ export const Report_Builder = () => {
 		});
 	}
 
+	const handleFormulaUpdate = (formula) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === formula.tableId)
+		let existingFormula = reportStructure.formulas.find(each => (each.tableId === formula.tableId && each.columnId === formula.columnId))
+		if(!existingFormula) { // add a new formula to the set
+			formula.id = uuidv4()
+			// apply formulaId to column
+			reportStructure.tables[tableIndex].columns[formula.columnIndex].formulaId = formula.id
+			setReportStructure(prevState => {
+				return { ...prevState, tables: reportStructure.tables, formulas: [...reportStructure.formulas, formula] }
+			});
+		} else { // update an existing formula
+			let formulaIndex = reportStructure.formulas.findIndex(each => each.id === existingFormula.id)
+			reportStructure.formulas[formulaIndex] = formula
+			setReportStructure(prevState => {
+				return { ...prevState,  formulas: reportStructure.formulas }
+			});
+		}
+	}
+
 	const toggleToolBarForTable = (table) => {
 		if(table) {
 			setSelectedColumn(null)
+			setSelectedColumnFormula(null)
 			setSelectedTable(table)
 			setShowToolBar(true)
 		}
@@ -147,13 +195,27 @@ export const Report_Builder = () => {
 		if(column) {
 			setSelectedTable(null)
 			setSelectedColumn({tableId, column, columnIndex})
+			const columnSpecificFormula = reportStructure.formulas.find(formula => (formula.tableId === tableId && formula.columnId === column.id))
+			if(columnSpecificFormula) {
+				setSelectedColumnFormula(columnSpecificFormula);
+			} else { setSelectedColumnFormula(null) }
 			setShowToolBar(true)
 		}
 	}
 
+	const saveReport = () => {
+		Meteor.call('Upsert_Report', reportStructure, (error, result) => {
+			if(error) console.log(error)
+			if(result) {
+				setReportStructure(result)
+				toast.success('Report Saved!')
+			}
+		})
+	}
+
   return (
     <div className='container p-6'>
-			<p>id of report is {id}</p>
+
 			{/* ToolBar */}
 			{showToolBar && 
 				<ToolBar 
@@ -166,12 +228,22 @@ export const Report_Builder = () => {
 					deleteColumn={deleteColumn}
 					addRowToTable={addRowToTable}
 					column={selectedColumn}
+					columnFormula={selectedColumnFormula}
 					handleColumnLabelChange={handleColumnLabelChange}
+					handleColumnPropertyChange={handleColumnPropertyChange}
+					handleFormulaUpdate={handleFormulaUpdate}
 				/>
 			}
-
-			<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
-			<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
+			
+			<div className="flex">
+				<Input placeholder={'Enter Report Name'} label={null} value={reportStructure.name} 
+					onChange={(e) => handleReportName(e.target.value)}
+				/>
+				<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
+				<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
+				<Button onClick={() => saveReport()} text="Save Report" color="blue"/>
+			</div>
+			
 
 			<div>
 

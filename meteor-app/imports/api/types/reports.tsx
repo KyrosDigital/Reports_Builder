@@ -1,5 +1,6 @@
 export interface Report {
-	_id: string; // the mongoId of the report object
+	_id: string | null | undefined; // the mongoId of the report object
+	name: string;
 	tables: Array<Table>; // all the tables within a report
 	formulas: Array<Formula>; // the formulas to process when viewing a report
 }

@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '../components/buttons'
-import { Input } from '../components/inputs'
-import { Label } from '../components/labels'
+import React from 'react';
 import { ProgressBar } from '../components/progressBar'
 import { TableToolBar } from './tableToolBar'
 import { ColumnToolBar } from './columnToolBar'
@@ -10,7 +7,8 @@ export const ToolBar = ({
 	table, handleTableTitleUpdate, 
 	userCollections, setCollectionForTable, 
 	addColumnToTable, deleteColumn, addRowToTable, deleteTable,
-	column, handleColumnLabelChange
+	column, columnFormula, handleColumnLabelChange, handleColumnPropertyChange,
+	handleFormulaUpdate
 }) => {
 
   return (
@@ -37,8 +35,11 @@ export const ToolBar = ({
 					columnIndex={column.columnIndex}
 					tableId={column.tableId}
 					handleColumnLabelChange={handleColumnLabelChange}
+					handleColumnPropertyChange={handleColumnPropertyChange}
 					deleteColumn={deleteColumn}
 					userCollections={userCollections}
+					handleFormulaUpdate={handleFormulaUpdate}
+					columnFormula={columnFormula}
 				/>
 			}
 

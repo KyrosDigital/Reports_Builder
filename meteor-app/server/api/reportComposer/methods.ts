@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
-import { ClientData, StrapiClientDataCollection } from '../../../imports/api/collections';
+import { ClientData, StrapiClientDataCollection, Report_Structure_Collection } from '../../../imports/api/collections';
 import { Report, Table, TableColumn, FormulaValue } from '../../../imports/api/types/reports'
 
 Meteor.methods({
@@ -12,7 +12,17 @@ Meteor.methods({
 	
 	*/
 	Upsert_Report: function(report: Report) {
-
+		let action = null;
+		if(!report._id) {
+			action = Report_Structure_Collection.insert(report)
+			console.log('Created report', action)
+			return Report_Structure_Collection.findOne({_id: action})
+		}
+		if(report._id) {
+			action = Report_Structure_Collection.update({_id: report._id}, report)
+			console.log('Updated report', action)
+			return Report_Structure_Collection.findOne({_id: report._id})
+		}
 	},
 
 	/*
@@ -27,7 +37,13 @@ Meteor.methods({
 		This method, mutates the original report object, and returns it
 	*/
 
-	Compose_Report: function(report: Report) {
+	Compose_Report: function(reportId: string) {
+
+		let report = null;
+
+		const setReportToDisplay = () => {
+			report = Report_Structure_Collection.findOne({_id: reportId})
+		}
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
@@ -96,9 +112,8 @@ Meteor.methods({
 	
 								if(value.queryModifier) {
 									const cellPropertyValue = row.cells[formula.columnIndex].propertyValue
-									value.query[value.queryModifier]= cellPropertyValue
+									value.query[value.queryModifier] = cellPropertyValue
 								}
-	
 								const query = StrapiClientDataCollection.find(value.query).fetch()
 
 								if(value.operation === 'sum') {
@@ -114,7 +129,7 @@ Meteor.methods({
 							}
 	
 						})
-	
+						
 						// evaluate the expression, after the values have been harvested
 						const result = math.evaluate(expression)
 	
@@ -129,6 +144,9 @@ Meteor.methods({
 		}
 		
 		const run = async () => {
+
+			setReportToDisplay()
+
 			createRowsInTable()
 			await computeFormulas()
 			// return the mutated report, containing the accurate values to display
