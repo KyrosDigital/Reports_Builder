@@ -3,9 +3,25 @@ import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
 import { ClientData, StrapiClientDataCollection } from '../../../imports/api/collections';
 import { Report, Table, TableColumn, FormulaValue } from '../../../imports/api/types/reports'
+import { HTTP } from 'meteor/http'
 
 Meteor.methods({
 
+
+
+	// Strapi Authentication
+	Authenticate: function(username : string, password : string) {
+		// POST /auth/local
+		console.log("username: ", username)
+		console.log("password: ", password)
+		return HTTP.call('POST', 'http://localhost:1337/auth/local', 
+		{params: {"identifier" : username, "password" : password}});
+	},
+
+	Check_Auth: function(token : string) {
+		return HTTP.call('GET', 'http://localhost:1337/collection-names', 
+		{headers: {'Authorization' : 'Bearer ' + token}});
+	},
 
 	/*
 		Used to create a new report, or to update one

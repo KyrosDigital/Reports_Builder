@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/buttons'
@@ -7,6 +8,7 @@ export const Login = () => {
     const [credentials, setCredentials] = useState({})
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [jwt, setJwt] = useState('')
 
     const handleUserName = (event: {target: {value: React.SetStateAction<string>; }; }) => {
         setUsername(event.target.value)
@@ -17,11 +19,15 @@ export const Login = () => {
     }
 
     const handleSubmit = () => {
-        let info = {"username" : username, "password" : password}
+        let info = {"identifier" : username, "password" : password}
         setCredentials(info)
+        
+        Meteor.call('Authenticate', username, password, (error : any, result : any) => {
+            if (error) console.log(error)
+            if (result) console.log(result); setJwt(result.data.jwt);
+        })
         setUsername('')
         setPassword('')
-        console.log('working')
     }
     
 
@@ -52,6 +58,17 @@ export const Login = () => {
                 onClick = {() => handleSubmit()}
                 color="blue"
             />
+            <div></div>
+            <button onClick={() => {
+                Meteor.call('Check_Auth', jwt, (error : any, result : any) => {
+                    if (error) console.log(error)
+                    if (result) console.log(result);
+                })
+            }}>Check Authentication</button>
+            <div/>
+            <button onClick={() => {console.log(jwt)}}>Peep jwt</button>
+            <div/>
+            <button onClick={() => {setJwt('')}}>Clear JWT</button>
         </div>
     </div>
   );
