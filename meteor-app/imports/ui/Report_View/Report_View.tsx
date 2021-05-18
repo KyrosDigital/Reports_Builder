@@ -1,26 +1,14 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {useParams} from 'react-router-dom';
-import useSubscription from '../../api/hooks'
-import { ClientData, StrapiClientDataCollection } from '../../api/collections';
 import { Button } from '../components/buttons';
 
 export const Report_View = () => {
 	const { id } = useParams()
-	// const loading = useSubscription('ClientData')
-
-	// const [clientData, setClientData] = useState<Array<ClientData>>([])
-
-	// useEffect(() => {
-	// 	if(!loading) {
-	// 		let query = StrapiClientDataCollection.find().fetch()
-	// 		if(query) setClientData(query)
-	// 	}
-	// }, [loading])
 
 	const [report, setReport] = useState(null)
 
-	const makeReport = () => {
+	const makeReport = () => {	
 		Meteor.call('Compose_Report', id, (error, result) => {
 			if(error) console.log(error)
 			if(result) {console.log(result); setReport(result)}

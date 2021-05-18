@@ -164,11 +164,14 @@ export const Report_Builder = () => {
 	}
 
 	const handleFormulaUpdate = (formula) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === formula.tableId)
 		let existingFormula = reportStructure.formulas.find(each => (each.tableId === formula.tableId && each.columnId === formula.columnId))
 		if(!existingFormula) { // add a new formula to the set
 			formula.id = uuidv4()
+			// apply formulaId to column
+			reportStructure.tables[tableIndex].columns[formula.columnIndex].formulaId = formula.id
 			setReportStructure(prevState => {
-				return { ...prevState,  formulas: [...reportStructure.formulas, formula] }
+				return { ...prevState, tables: reportStructure.tables, formulas: [...reportStructure.formulas, formula] }
 			});
 		} else { // update an existing formula
 			let formulaIndex = reportStructure.formulas.findIndex(each => each.id === existingFormula.id)
