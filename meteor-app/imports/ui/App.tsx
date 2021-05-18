@@ -17,7 +17,7 @@ export const App = () => (
         <Route path='/report-view/:id?' component={Report_View} />
         <Route path='/report-builder/:id?' component={Report_Builder} />
         <Route path='/report-list' component={Report_List} />
-        <Route path='/login' component={Login} />
+        <Route path='/something' component={Login} />
       </Switch>
     </Router>
   </div>
