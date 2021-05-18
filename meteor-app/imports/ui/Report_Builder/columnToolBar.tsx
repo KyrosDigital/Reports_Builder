@@ -107,6 +107,7 @@ export const ColumnToolBar = ({
 			<div className="flex">
 				<Label text={`Column Type:`} color={'indigo'}/>
 				{formulaString && <Label text={'Formula'} color={'yellow'}/>}
+				{column.property && <Label text={'Property'} color={'yellow'}/>}
 			</div>
 
 			{/* Column label */}
@@ -119,25 +120,29 @@ export const ColumnToolBar = ({
 					/>
 			</div>
 
-			{/* Column property */}
-			<div className="mb-4">
-				<Input 
-					placeholder={'Enter column property'}
-					label={"Column Property:"} 
-					value={column.property} 
-					onChange={(e) => handleColumnPropertyChange(tableId, columnIndex, e.target.value)}
-					/>
-			</div>
+			{/* Column property - if no formula */}
+			{!formulaString &&
+				<div className="mb-4">
+					<Input 
+						placeholder={'Enter column property'}
+						label={"Column Property:"} 
+						value={column.property} 
+						onChange={(e) => handleColumnPropertyChange(tableId, columnIndex, e.target.value)}
+						/>
+				</div>
+			}
 
-			{/* formula */}
-			<div className="mb-4">
-				<Input 
-					placeholder={'(2 * x) / y'}
-					label={"Column Formula:"} 
-					value={formulaString} 
-					onChange={(e) => setFormulaString(e.target.value.toLowerCase())}
-					/>
-			</div>
+			{/* formula - if no property*/}
+			{!column.property && 
+				<div className="mb-4">
+					<Input 
+						placeholder={'(2 * x) / y'}
+						label={"Column Formula:"} 
+						value={formulaString} 
+						onChange={(e) => setFormulaString(e.target.value.toLowerCase())}
+						/>
+				</div>
+			}
 
 			{/* formula variables*/}
 			{formulaVariables.map((variable, i) => {
@@ -158,9 +163,11 @@ export const ColumnToolBar = ({
 			})}
 			
 			{/* Save formula */}
-			<div>
-				<Button onClick={() => saveFormula()} text={'Save Formula'} color="blue"/>
-			</div>
+			{!column.property && 
+				<div>
+					<Button onClick={() => saveFormula()} text={'Save Formula'} color="blue"/>
+				</div>
+			}
 			
 
 			{/* delete table */}

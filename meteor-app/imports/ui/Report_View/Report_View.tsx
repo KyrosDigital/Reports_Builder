@@ -17,8 +17,8 @@ export const Report_View = () => {
 
   return (
     <div className='container p-6'>
-      <h2>Report View</h2>
-			<p> id of report is {id}</p>
+      <h2 className="text-xl font-bold">{report?.name}</h2>
+
 			<Button onClick={makeReport} text="Make Report" color="indigo"/>
 
 			<div>
