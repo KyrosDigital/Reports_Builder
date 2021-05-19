@@ -48,8 +48,14 @@ export const seedUserData = () => {
 					reject('Failed to create Editor user!!')
 				}
 				
-			}).then(result => {
-				if(result) Roles.addUsersToRoles(result, 'Editor')
+			}).then(userId => {
+				if(userId) {
+					Roles.addUsersToRoles(userId, 'Editor')
+					return userId
+				}
+			}).then((userId) => {
+				const checkRole = Roles.userIsInRole(userId, ['Editor'])
+				console.log('Check if user is in Role "Editor": ', checkRole)
 			})
 		}
 
@@ -74,8 +80,14 @@ export const seedUserData = () => {
 					reject('Failed to create Viewer user!!')
 				}
 				
-			}).then(result => {
-				if(result) Roles.addUsersToRoles(result, 'Viewer')
+			}).then(userId => {
+				if(userId) {
+					Roles.addUsersToRoles(userId, 'Viewer')
+					return userId
+				}
+			}).then((userId) => {
+				const checkRole = Roles.userIsInRole(userId, ['Viewer'])
+				console.log('Check if user is in Role "Viewer": ', checkRole)
 			})
 		}
 
