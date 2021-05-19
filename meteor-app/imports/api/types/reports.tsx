@@ -1,4 +1,4 @@
-export interface Report {
+export interface ReportStructure {
 	_id: string | null | undefined; // the mongoId of the report object
 	name: string;
 	tables: Array<Table>; // all the tables within a report
@@ -55,4 +55,11 @@ export interface FormulaValue {
 
 export interface FormulaQuery {
 	[key: string]: string | number | null;
+}
+
+export interface ReportData {
+  _id: string | undefined;
+	collectionName: string;
+	[key: string]: string | number | Object | null | undefined;
+
 }
