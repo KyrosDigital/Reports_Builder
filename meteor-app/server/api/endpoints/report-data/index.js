@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor'
 import { WebApp } from 'meteor/webapp'
 import parse from 'urlencoded-body-parser'
 import { getJson } from '../parser'
-import { Report_Data } from '/imports/api/collections'
 import { validateJWT } from '../validate-jwt'
 
 
@@ -35,6 +34,14 @@ WebApp.connectHandlers.use('/report-data/create', async (req, res, next) => {
 
 WebApp.connectHandlers.use('/report-data', async (req, res, next) => {
   const { headers } = req
+
+	// validate JWT before doing anything
+	const authToken = headers.authorization.split(" ")[1]
+	if(!validateJWT(authToken)) {
+		res.writeHead(401)
+		res.end('Auth failed - Invalid token')
+		return
+	}
 
   console.info('/report-data route - headers\n', headers)
 
