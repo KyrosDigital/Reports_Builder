@@ -1,16 +1,24 @@
 import { Meteor } from "meteor/meteor"
+
 import { Client_Accounts, Report_Data } from "/imports/api/collections"
 
 export const seedUserData = () => {
 	if(Meteor.users.find().count() === 0) {
 
+		const jwt = require('jsonwebtoken')
+
 		const createAccount = () => {
 			return new Promise((resolve, reject) => {
-				const accountId = Client_Accounts.insert({
+
+				const account = {
 					name: 'City2Shore',
 					created_at: new Date(),
-				})
-				
+				}
+
+				account.jwt = jwt.sign(account, Meteor.settings.private.jwt_secret);
+
+				const accountId = Client_Accounts.insert(account)
+
 				if(accountId) {
 					console.log(`Seeder - Account created: ${accountId}`)
 					resolve(accountId)

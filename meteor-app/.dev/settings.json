@@ -1,0 +1,9 @@
+{
+  "public": {
+
+  },
+
+	"private": {
+		"jwt_secret": "5uHwCBR7qHjiGgHIMmC37j4FJyrfcX$iOShit0akVDxlBr$dLxe!MCutLayLc3amEadT1pRxEWfWN3#gX6PtFJQW#CHnJEhFmUGCDYEyYA3t#V70hZEZzOObAiqLq@Zhxn%bvDFunmI1bmS1c4KTcuQsx9hNKE3wW7t9wUV4wDLrWYlks!kjrjJrIYvwsEDiwZ2Hw$wEfGceh5DTEnMvQh!bafzxxfTRk36TxEd59qFtRvg#i2!wUnAYL%1Ns0yn"
+	}
+}

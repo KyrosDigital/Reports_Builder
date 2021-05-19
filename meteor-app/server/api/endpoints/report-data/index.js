@@ -3,12 +3,20 @@ import { WebApp } from 'meteor/webapp'
 import parse from 'urlencoded-body-parser'
 import { getJson } from '../parser'
 import { Report_Data } from '/imports/api/collections'
+import { validateJWT } from '../validate-jwt'
 
-// IMPORTANT: your paths must be ordered by longest at top of this file. 
 
 WebApp.connectHandlers.use('/report-data/create', async (req, res, next) => {
   const { headers } = req
 
+	// validate JWT before doing anything
+	const authToken = headers.authorization.split(" ")[1]
+	if(!validateJWT(authToken)) {
+		res.writeHead(401)
+		res.end('Auth failed - Invalid token')
+		return
+	}
+	
   console.info('/report-data/create route - headers\n', headers)
 
 	const json = await getJson(req).catch(e => {
