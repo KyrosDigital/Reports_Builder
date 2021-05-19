@@ -57,6 +57,7 @@ Meteor.methods({
 		const generateCells = (columns: Array<TableColumn>, document: ClientData) => {
 			return columns.map((column, i) => {
 				let type = '', property = null, propertyValue = null, value: number | string | null | undefined = 0;
+				// a column should only have either a formula, or a property assigned, never both
 				if(!column.formulaId) {
 					type = 'property'
 					value = document.data[column.property]
@@ -66,7 +67,7 @@ Meteor.methods({
 				}
 				property = column.property
 				propertyValue = document.data[column.property]
-				return { index: i, type, property, propertyValue, value }
+				return { index: i, id: uuidv4(), type, property, propertyValue, value }
 			})
 		}
 
@@ -112,7 +113,7 @@ Meteor.methods({
 	
 								if(value.queryModifier) {
 									const cellPropertyValue = row.cells[formula.columnIndex].propertyValue
-									value.query[value.queryModifier] = cellPropertyValue
+									value.query[`data.${value.queryModifier}`] = cellPropertyValue
 								}
 								const query = StrapiClientDataCollection.find(value.query).fetch()
 

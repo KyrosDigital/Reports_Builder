@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 export const ColumnToolBar = ({
 	column, columnIndex, tableId, 
 	handleColumnLabelChange, handleColumnPropertyChange,
-	handleFormulaUpdate, columnFormula,
+	handleFormulaUpdate, handleFormulaRemoval, columnFormula,
 	deleteColumn, userCollections
 }) => {
 
@@ -29,7 +29,8 @@ export const ColumnToolBar = ({
 					char: value.key, 
 					collectionName: value.collectionName,
 					keys: query ? Object.keys(query.data) : [],
-					selectedKey: value.property
+					selectedKey: value.property,
+					queryModifier: value.queryModifier
 				}
 			})
 			setFormulaVariables(mapVariableArray)
@@ -50,7 +51,7 @@ export const ColumnToolBar = ({
 		})
 		Array.from(formulaString).forEach(char => {
 			if(alphabet.includes(char) && formulaVariables.filter(variable => variable.char === char).length === 0) {
-				setFormulaVariables(oldArray => [...oldArray, {char: char, collectionName: null, keys: [], slectedKey: null}]);
+				setFormulaVariables(oldArray => [...oldArray, {char: char, collectionName: null, keys: [], slectedKey: null, queryModifier: null}]);
 			}
 		})
 
@@ -64,7 +65,7 @@ export const ColumnToolBar = ({
 				type: 'query', // TODO:
 				operation: 'sum', // TODO: 
 				collectionName: variable.collectionName || null,
-				queryModifier: "data.agentId", // TODO: 
+				queryModifier: variable.queryModifier,
 				query: {"userId": "60958c98857a7b14acb156d9", "collectionName": variable.collectionName}, // TODO:
 				property: variable.selectedKey || null
 			}
@@ -88,6 +89,15 @@ export const ColumnToolBar = ({
 		});
 	}
 
+	const handleSelectedQueryModifier = (key, i) => {
+		setFormulaVariables(prevState => {
+			prevState[i].queryModifier = key
+			return [...prevState]
+		});
+		// we also need to corespond the query modifier to the column property
+		handleColumnPropertyChange(tableId, columnIndex, key)
+	}
+
 	// NOTE: we must save formula by click for time being.
 	// the way the data is passed back and forth, it prevent us from being able to 
 	// update on click or type, and being able to toggle between columns, and have the data be accurate
@@ -99,6 +109,15 @@ export const ColumnToolBar = ({
 			expression: formulaString, values: formulaValues
 		})
 		toast.success('Formula Saved!')
+	}
+
+	const removeFormula = () => {
+		handleFormulaRemoval(tableId, columnIndex, column.id)
+		handleColumnPropertyChange(tableId, columnIndex, '')
+		setFormulaString('')
+		setFormulaValues([])
+		setFormulaVariables([])
+		toast.success('Formula Removed!')
 	}
 
 	return (
@@ -161,11 +180,25 @@ export const ColumnToolBar = ({
 					})}
 				</div>
 			})}
+
+			{/* formula data query modifiers  */}
+			{formulaVariables.map((variable, i) => {
+				let label = `${variable.char} filter:`
+				if(variable.queryModifier) label = `${variable.char} filter: ${variable.queryModifier}`
+
+				return <div className="mb-4" key={i}>
+					<Label text={label} color={'indigo'}/>
+					{!variable.queryModifier && variable.keys.map((key, x) => {
+						return <Button key={x} onClick={() => handleSelectedQueryModifier(key, i)} text={key} color="green"/>
+					})}
+				</div>
+			})}
 			
 			{/* Save formula */}
-			{!column.property && 
-				<div>
+			{formulaString && 
+				<div className="flex">
 					<Button onClick={() => saveFormula()} text={'Save Formula'} color="blue"/>
+					<Button onClick={() => removeFormula()} text={'Remove Formula'} color="blue"/>
 				</div>
 			}
 			

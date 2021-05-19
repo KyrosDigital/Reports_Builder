@@ -182,6 +182,19 @@ export const Report_Builder = () => {
 		}
 	}
 
+	const handleFormulaRemoval = (tableId, columnIndex, columnId) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+		let existingFormula = reportStructure.formulas.find(each => (each.tableId === tableId && each.columnId === columnId))
+		if(existingFormula) {
+			reportStructure.tables[tableIndex].columns[columnIndex].formulaId = undefined
+			let formulaIndex = reportStructure.formulas.findIndex(each => each.id === existingFormula.id)
+			reportStructure.formulas.splice(formulaIndex, 1);
+			setReportStructure(prevState => {
+				return { ...prevState, tables: reportStructure.tables, formulas: reportStructure.formulas }
+			});
+		}
+	}
+
 	const toggleToolBarForTable = (table) => {
 		if(table) {
 			setSelectedColumn(null)
@@ -232,6 +245,7 @@ export const Report_Builder = () => {
 					handleColumnLabelChange={handleColumnLabelChange}
 					handleColumnPropertyChange={handleColumnPropertyChange}
 					handleFormulaUpdate={handleFormulaUpdate}
+					handleFormulaRemoval={handleFormulaRemoval}
 				/>
 			}
 			
