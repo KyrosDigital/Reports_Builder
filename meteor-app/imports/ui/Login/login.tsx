@@ -1,28 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Meteor } from 'meteor/meteor';
+import React, { useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Button } from '../components/buttons'
+import { UserContext } from '/imports/api/contexts/userContext';
 
 export const Login = () => {
 
-    const [credentials, setCredentials] = useState({})
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+	const history = useHistory()
 
-    const handleUserName = (event: {target: {value: React.SetStateAction<string>; }; }) => {
-        setUsername(event.target.value)
-    }
+	const [user, setUser] = useContext(UserContext)
 
-    const handlePassword = (event: {target: {value: React.SetStateAction<string>; }; }) => {
-        setPassword(event.target.value)
-    }
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
-    const handleSubmit = () => {
-        let info = {"username" : username, "password" : password}
-        setCredentials(info)
-        setUsername('')
-        setPassword('')
-        console.log('working')
-    }
+  const handleUserName = (event: {target: {value: React.SetStateAction<string>; }; }) => {
+  	setUsername(event.target.value)
+  }
+
+  const handlePassword = (event: {target: {value: React.SetStateAction<string>; }; }) => {
+    setPassword(event.target.value)
+  }
+
+	const handleSubmit = () => {
+		setUsername('')
+		setPassword('')
+		Meteor.loginWithPassword(username, password, (error) => {
+			if(error) console.log(error);
+			else {
+				setUser(Meteor.userId())
+				history.push('report-list')
+			}
+		})
+	}
     
 
   return (

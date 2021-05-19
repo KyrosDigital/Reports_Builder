@@ -47,7 +47,7 @@ WebApp.connectHandlers.use('/report-data', async (req, res, next) => {
 
 	const json = await getJson(req).catch(e => {
     console.error('/report-data - err catch parsing JSON:\n', e)
- })
+ 	})
 
   res.writeHead(200)
   res.end(`${JSON.stringify(json)}`)

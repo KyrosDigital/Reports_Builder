@@ -19,7 +19,7 @@ WebApp.connectHandlers.use('/viewers/create', async (req, res, next) => {
 
 	const json = await getJson(req).catch(e => {
     console.error('/viewers/create - err catch parsing JSON:\n', e)
- })
+ 	})
 
   res.writeHead(200)
   res.end(`${JSON.stringify(json)}`)
@@ -40,7 +40,7 @@ WebApp.connectHandlers.use('/viewers', async (req, res, next) => {
 
 	const json = await getJson(req).catch(e => {
     console.error('/viewers/create - err catch parsing JSON:\n', e)
- })
+ 	})
 
   res.writeHead(200)
   res.end(`${JSON.stringify(json)}`)
