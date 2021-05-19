@@ -6,7 +6,6 @@ import { Report, Table, TableColumn, FormulaValue } from '../../../imports/api/t
 
 Meteor.methods({
 
-
 	/*
 		Used to create a new report, or to update one
 	

@@ -10,13 +10,16 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.11.2",
+    "content-type": "^1.0.4",
     "mathjs": "^9.3.2",
     "meteor-node-stubs": "^1.0.1",
+    "raw-body": "^2.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hot-toast": "^1.0.2",
     "react-icons": "^4.2.0",
     "react-router-dom": "^5.2.0",
+    "urlencoded-body-parser": "^3.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
