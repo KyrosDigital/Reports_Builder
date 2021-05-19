@@ -29,11 +29,12 @@ export const seedUserData = () => {
 					profile: {
 						first_name: 'Nathan',
 						last_name: 'Jean',
+						accountId: accountId
 					}
 				})
 
 				if(newUserId) {
-					console.log(`Seeder - Editor user created: ${accountId}`)
+					console.log(`Seeder - Editor user created: ${newUserId}`)
 					resolve(newUserId)
 				} else {
 					reject('Failed to create Editor user!!')
@@ -53,12 +54,13 @@ export const seedUserData = () => {
 					profile: {
 						first_name: 'Craig',
 						last_name: 'Geers',
-						agentId: 'xxxyyyzzz'
+						agentId: 'xxxyyyzzz',
+						accountId: accountId,
 					}
 				})
 
 				if(newUserId) {
-					console.log(`Seeder - View user created: ${accountId}`)
+					console.log(`Seeder - View user created: ${newUserId}`)
 					resolve(newUserId)
 				} else {
 					reject('Failed to create Viewer user!!')

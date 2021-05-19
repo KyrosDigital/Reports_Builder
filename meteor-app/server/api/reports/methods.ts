@@ -10,8 +10,8 @@ Meteor.methods({
 	/*
 		Used to create a new report data, from rest API
 	*/
-	Insert_Report_Data: function() {
-
+	Insert_Report_Data: function(json) {
+		Report_Data.insert({accountId: 'fyS84mmYeNLqDuaSS', ...json})
 	},
 
 	/*
