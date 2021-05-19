@@ -6,18 +6,17 @@ import { ToolBar } from './toolBar'
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
 import useSubscription from '../../api/hooks'
-import { Report, TableColumn } from '../../api/types/reports';
+import { ReportStructure, TableColumn } from '../../api/types/reports';
 import {useParams} from 'react-router-dom';
-import { Report_Structure_Collection, StrapiClientCollectionNames } from '../../api/collections'
+import { Report_Structures } from '../../api/collections'
 
 export const Report_Builder = () => {
 	const { id } = useParams()
 
-	const loading = useSubscription('CollectionNames')
-	const loading2 = useSubscription('ClientData')
-	const loading3 = useSubscription('ReportStructure')
+	const loading1 = useSubscription('ReportData')
+	const loading2 = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState<Report>({_id: id, name: '', tables: [], formulas: []})
+	const [reportStructure, setReportStructure] = useState<ReportStructure>({_id: id, name: '', tables: [], formulas: []})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
@@ -26,16 +25,19 @@ export const Report_Builder = () => {
 	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
 
 	useEffect(() => {
-		if(!loading && !loading2 && !loading3) {
-			const query = StrapiClientCollectionNames.find().fetch()
-			if(query) setUserCollections(query)
+		if(!loading1 && !loading2) {
+
+			Meteor.call('Fetch_Collection_Names', (error, result) => {
+				if(error) console.log(error)
+				if(result) setUserCollections(result)
+			})
 
 			if(id) {
-				const reportQuery = Report_Structure_Collection.findOne({_id: id})
+				const reportQuery = Report_Structures.findOne({_id: id})
 				setReportStructure(reportQuery)
 			}
 		}
-	}, [loading, loading2, loading3])
+	}, [loading1, loading2])
 
 	useEffect(() => {
 		// console.log(reportStructure)

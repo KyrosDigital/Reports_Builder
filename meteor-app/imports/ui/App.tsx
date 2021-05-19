@@ -9,12 +9,6 @@ import { Report_List } from './Report_List/Report_List'
 
 export const App = () => (
   <div>
-		<form action="/hello" method="post" target="_blank">
-    <h2>API Test Form</h2>
-    <p className="subtitle">Paste or enter some text content to submit to the <code>/hello</code> endpoint.</p>
-    <textarea name="content" placeholder="Enter some sample input here..." rows={3}></textarea>
-    <button className="btn" type="submit">Submit to API</button>
-  </form>
 		<Toaster position="top-right"/>
 		<Router>
       <Navbar />

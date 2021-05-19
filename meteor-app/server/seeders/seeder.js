@@ -1,0 +1,103 @@
+import { Meteor } from "meteor/meteor"
+import { Client_Accounts, Report_Data } from "/imports/api/collections"
+
+export const seedUserData = () => {
+	if(Meteor.users.find().count() === 0) {
+
+		const createAccount = () => {
+			return new Promise((resolve, reject) => {
+				const accountId = Client_Accounts.insert({
+					name: 'City2Shore',
+					created_at: new Date(),
+				})
+				
+				if(accountId) {
+					console.log(`Seeder - Account created: ${accountId}`)
+					resolve(accountId)
+				} else {
+					reject('Failed to create Account!!')
+				}
+			})
+		}
+
+		const createEditor = (accountId) => {
+			return new Promise((resolve, reject) => {
+				const newUserId = Accounts.createUser({
+					username: 'NathanJean',
+					email: 'nathan@c2s.com',
+					password: 'password',
+					profile: {
+						first_name: 'Nathan',
+						last_name: 'Jean',
+					}
+				})
+
+				if(newUserId) {
+					console.log(`Seeder - Editor user created: ${accountId}`)
+					resolve(newUserId)
+				} else {
+					reject('Failed to create Editor user!!')
+				}
+				
+			}).then(result => {
+				if(result) Roles.addUsersToRoles(result, 'Editor')
+			})
+		}
+
+		const createViewers = (accountId) => {
+			return new Promise((resolve, reject) => {
+				const newUserId = Accounts.createUser({
+					username: 'CraigGeers',
+					email: 'craig@c2s.com',
+					password: 'password',
+					profile: {
+						first_name: 'Craig',
+						last_name: 'Geers',
+						agentId: 'xxxyyyzzz'
+					}
+				})
+
+				if(newUserId) {
+					console.log(`Seeder - View user created: ${accountId}`)
+					resolve(newUserId)
+				} else {
+					reject('Failed to create Viewer user!!')
+				}
+				
+			}).then(result => {
+				if(result) Roles.addUsersToRoles(result, 'Viewer')
+			})
+		}
+
+		const createReportData = (accountId) => {
+			return new Promise((resolve, reject) => {
+				const newObjectId = Report_Data.insert({
+					accountId: accountId,
+					collectionName: 'Transactions',
+					agentId: 'xxxyyyzzz',
+					price: 1000.00
+				})
+
+				if(newObjectId) {
+					console.log(`Seeder - Report Data created: ${newObjectId}`)
+					resolve(newObjectId)
+				} else {
+					reject('Failed to create Viewer user!!')
+				}
+			})
+		}
+
+
+		const run = async () => {
+			const accountId = await createAccount()
+			await createEditor(accountId)
+			await createViewers(accountId)
+			await createReportData(accountId)
+		}
+
+		run()
+
+	} else {
+		console.log("Skipping seed of users and data, as it already exists.")
+	}
+}

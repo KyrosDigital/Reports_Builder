@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
 import { Label } from '../components/labels'
-import { StrapiClientDataCollection } from '../../api/collections'
+import { Report_Data } from '../../api/collections'
 import toast from 'react-hot-toast';
 
 export const ColumnToolBar = ({
@@ -24,11 +24,14 @@ export const ColumnToolBar = ({
 			setFormulaValues(columnFormula.values)
 
 			const mapVariableArray = columnFormula.values.map(value => {
-				const query = StrapiClientDataCollection.findOne({"userId" : "60958c98857a7b14acb156d9", "collectionName" : value.collectionName}, {fields : {"collectionName" : 1, "data" : 1}})
+				// TODO:
+				const query = Report_Data.findOne({
+					// "accountId" : "60958c98857a7b14acb156d9", TODO:
+					"collectionName" : value.collectionName})
 				return {
 					char: value.key, 
 					collectionName: value.collectionName,
-					keys: query ? Object.keys(query.data) : [],
+					keys: query ? Object.keys(query) : [],
 					selectedKey: value.property,
 					queryModifier: value.queryModifier
 				}
@@ -66,7 +69,10 @@ export const ColumnToolBar = ({
 				operation: 'sum', // TODO: 
 				collectionName: variable.collectionName || null,
 				queryModifier: variable.queryModifier,
-				query: {"userId": "60958c98857a7b14acb156d9", "collectionName": variable.collectionName}, // TODO:
+				// TODO:
+				query: {
+					// "accountId": "60958c98857a7b14acb156d9", // TODO:
+					"collectionName": variable.collectionName}, 
 				property: variable.selectedKey || null
 			}
 		})
@@ -74,10 +80,13 @@ export const ColumnToolBar = ({
 	}, [formulaVariables])
 
 	const handleSelectCollectionForVariable = (collectionName, i) => {
-		const query = StrapiClientDataCollection.findOne({"userId" : "60958c98857a7b14acb156d9", "collectionName" : collectionName}, {fields : {"collectionName" : 1, "data" : 1}})
+		// TODO: 
+		const query = Report_Data.findOne({
+			// "accountId" : "60958c98857a7b14acb156d9", TODO:
+			"collectionName" : collectionName})
 		setFormulaVariables(prevState => {
 			prevState[i].collectionName = collectionName
-			prevState[i].keys = Object.keys(query.data)
+			prevState[i].keys = Object.keys(query)
 			return [...prevState]
 		});
 	}
@@ -172,8 +181,8 @@ export const ColumnToolBar = ({
 
 				return <div className="mb-4" key={i}>
 					<Label text={label} color={'indigo'}/>
-					{!variable.collectionName && userCollections.map((collection, y) => {
-						return <Button key={y} onClick={() => handleSelectCollectionForVariable(collection.collectionName, i)} text={collection.collectionName} color="green"/>
+					{!variable.collectionName && userCollections.map((collectionName, y) => {
+						return <Button key={y} onClick={() => handleSelectCollectionForVariable(collectionName, i)} text={collectionName} color="green"/>
 					})}
 					{!variable.selectedKey && variable.keys.map((key, x) => {
 						return <Button key={x} onClick={() => handleSelectedKey(key, i)} text={key} color="green"/>

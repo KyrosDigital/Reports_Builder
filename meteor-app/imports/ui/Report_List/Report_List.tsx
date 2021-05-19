@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/buttons'
 import useSubscription from '../../api/hooks'
-import { Report_Structure_Collection } from '../../api/collections'
+import { Report_Structures } from '../../api/collections'
 
 export const Report_List = () => {
 
@@ -11,7 +11,7 @@ export const Report_List = () => {
 
   useEffect(() => {
     if (!loading) {
-      let query = Report_Structure_Collection.find().fetch()
+      let query = Report_Structures.find().fetch()
       setReportCollection(query)
     }
   }, [loading])

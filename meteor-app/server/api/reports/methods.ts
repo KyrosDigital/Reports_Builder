@@ -1,26 +1,46 @@
 import { Meteor } from "meteor/meteor";
+import { _ } from "meteor/underscore";
 import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
-import { ClientData, StrapiClientDataCollection, Report_Structure_Collection } from '../../../imports/api/collections';
-import { Report, Table, TableColumn, FormulaValue } from '../../../imports/api/types/reports'
+import { Report_Data, Report_Structures } from '../../../imports/api/collections';
+import { ReportStructure, ReportData, Table, TableColumn, FormulaValue } from '../../../imports/api/types/reports'
 
 Meteor.methods({
 
 	/*
-		Used to create a new report, or to update one
-	
+		Used to create a new report data, from rest API
 	*/
-	Upsert_Report: function(report: Report) {
+	Insert_Report_Data: function() {
+
+	},
+
+	/*
+		Used to fetch distinct collection names belonging to an account
+		TODO: restrict to account and user roles
+	*/
+	Fetch_Collection_Names: function() {
+		let distinct = _.uniq(Report_Data.find({}, {
+			sort: {collectionName: 1}, fields: {collectionName: 1}
+		}).fetch().map(function(x) {
+				return x.collectionName;
+		}), true);
+	return distinct
+	},
+
+	/*
+		Used to create a new report, or to update one
+	*/
+	Upsert_Report: function(report: ReportStructure) {
 		let action = null;
 		if(!report._id) {
-			action = Report_Structure_Collection.insert(report)
+			action = Report_Structures.insert(report)
 			console.log('Created report', action)
-			return Report_Structure_Collection.findOne({_id: action})
+			return Report_Structures.findOne({_id: action})
 		}
 		if(report._id) {
-			action = Report_Structure_Collection.update({_id: report._id}, report)
+			action = Report_Structures.update({_id: report._id}, report)
 			console.log('Updated report', action)
-			return Report_Structure_Collection.findOne({_id: report._id})
+			return Report_Structures.findOne({_id: report._id})
 		}
 	},
 
@@ -41,13 +61,13 @@ Meteor.methods({
 		let report = null;
 
 		const setReportToDisplay = () => {
-			report = Report_Structure_Collection.findOne({_id: reportId})
+			report = Report_Structures.findOne({_id: reportId})
 		}
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
-			return StrapiClientDataCollection.find({
-				userId: '60958c98857a7b14acb156d9',
+			return Report_Data.find({
+				// accountId: '60958c98857a7b14acb156d9', // TODO:
 				collectionName: collection,
 			}).fetch()
 		}
@@ -59,13 +79,13 @@ Meteor.methods({
 				// a column should only have either a formula, or a property assigned, never both
 				if(!column.formulaId) {
 					type = 'property'
-					value = document.data[column.property]
+					value = document.[column.property]
 				}
 				if(column.formulaId) {
 					type = 'formula'
 				}
 				property = column.property
-				propertyValue = document.data[column.property]
+				propertyValue = document[column.property]
 				return { index: i, id: uuidv4(), type, property, propertyValue, value }
 			})
 		}
@@ -75,7 +95,7 @@ Meteor.methods({
 			// if type is "static", the rows should already be defined
 			if(table.type === 'collection') {
 				const collection = performQuery(table.collection)
-				return collection.map((document: ClientData) => ({
+				return collection.map((document: ReportData) => ({
 					id: uuidv4(),
 					cells: generateCells(table.columns, document)
 				}))
@@ -112,19 +132,19 @@ Meteor.methods({
 	
 								if(value.queryModifier) {
 									const cellPropertyValue = row.cells[formula.columnIndex].propertyValue
-									value.query[`data.${value.queryModifier}`] = cellPropertyValue
+									value.query[value.queryModifier] = cellPropertyValue
 								}
-								const query = StrapiClientDataCollection.find(value.query).fetch()
+								const query = Report_Data.find(value.query).fetch()
 
 								if(value.operation === 'sum') {
-									let values = query.map((obj: any) => obj.data[value.property])
+									let values = query.map((obj: any) => obj[value.property])
 									expression = expression.replace(value.key, math.sum(values))
 								}
 	
 							}
 	
 							if(value.type === 'query_count') {
-								const count = StrapiClientDataCollection.find(value.query).count()
+								const count = Report_Data.find(value.query).count()
 								expression = expression.replace(value.key, String(count))
 							}
 	
