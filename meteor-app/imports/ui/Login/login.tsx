@@ -8,7 +8,7 @@ export const Login = () => {
 
 	const history = useHistory()
 
-	const [user, setUser] = useContext(UserContext)
+	const [userId, setUserId] = useContext(UserContext)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -27,7 +27,7 @@ export const Login = () => {
 		Meteor.loginWithPassword(username, password, (error) => {
 			if(error) console.log(error);
 			else {
-				setUser(Meteor.userId())
+				setUserId(Meteor.userId())
 				history.push('report-list')
 			}
 		})
