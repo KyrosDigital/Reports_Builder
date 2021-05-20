@@ -27,14 +27,11 @@ export const Login = () => {
 		Meteor.loginWithPassword(username, password, (error) => {
 			if(error) console.log(error);
 			else {
-        var role = ""
-        Meteor.call('Get_User_Role', Meteor.userId(), (error : any, result : any) => {
+        Meteor.call('Get_User_Role', Meteor.userId(), (error : any, role : any) => {
           if (error) {
             console.log(error)
           } else {
-            role = result; 
-            console.log("result:", result)
-            console.log("role: ", role)
+            console.log("result:", role)
 				    setLoginInfo({"userId" : Meteor.userId(), "role" : role})
 				    history.push('report-list')
           }
