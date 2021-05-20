@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/buttons'
 import useSubscription from '../../api/hooks'
 import { Report_Structures } from '../../api/collections'
+import { UserContext } from '../../api/contexts/userContext';
 
 export const Report_List = () => {
 
   const loading = useSubscription('ReportStructure')
   const [reportCollection, setReportCollection] = useState([])
+  const [loginInfo, setLoginInfo] = useContext(UserContext)
+  const [editor, setEditor] = useState(false)
 
   useEffect(() => {
     if (!loading) {
@@ -16,11 +19,18 @@ export const Report_List = () => {
     }
   }, [loading])
 
+  useEffect(() => {
+    if (loginInfo != null) {
+      setEditor(loginInfo.role === "Editor")
+    }
+    
+  }, [loginInfo])
+
   return (
     <div className="space-y-4">
-        <Link to='/report-builder' className="mr-4">
+        {editor && <Link to='/report-builder' className="mr-4">
             <Button onClick={() => {}} text="Make New Report" color="blue"/>
-        </Link>
+        </Link>}
         <div></div>
         <h1 className="font-sans text-xl font-bold">Your Reports:</h1>
         {reportCollection.map((el, id) => {
@@ -29,9 +39,9 @@ export const Report_List = () => {
                     <Link to={'/report-view/' + el._id} className="mr-4">
                         <button className="border-black border-2 bg-yellow-200 font-sans rounded-md m-0.5 px-0.5">View Report</button>
                     </Link>
-                    <Link to={'/report-builder/' + el._id} className="mr-4">
+                    {editor && <Link to={'/report-builder/' + el._id} className="mr-4">
                         <button className="border-black border-2 bg-yellow-200 font-sans rounded-md m-0.5 px-0.5">Edit Report</button>
-                    </Link>
+                    </Link>}
             </div>
         })}
     </div>

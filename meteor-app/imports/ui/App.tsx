@@ -13,7 +13,7 @@ import { Viewers_List } from './Viewers_List/Viewers_List'
 export const App = () => {
 
 	useEffect(() => {
-		console.log(Meteor.userId())
+		console.log("userId: ", Meteor.userId())
 	}, [Meteor.userId()])
 
 	return (

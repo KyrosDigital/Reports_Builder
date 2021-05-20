@@ -261,7 +261,7 @@ export const Report_Builder = () => {
 			</div>
 			
 
-			<div>
+			<div className="flex w-3/4 overflow-auto">
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (

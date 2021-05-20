@@ -5,6 +5,15 @@ import { Client_Accounts } from "/imports/api/collections"
 
 Meteor.methods({
 
+
+	Get_User_Role: function(userId) {
+    console.log('this gets called at least')
+    var user = Roles.getRolesForUser(userId)
+    console.log("user :", user)
+    console.log("role: ", user[0])
+    return user[0]
+  },
+
 	Create_Account: function() {
 
 	},
