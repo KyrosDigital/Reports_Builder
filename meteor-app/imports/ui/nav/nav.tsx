@@ -26,6 +26,9 @@ const Navbar = () => {
 
 					{/* authed users */}
 					{userId ? <>
+						<Link to='/viewers' className="mr-4">
+							Viewers
+						</Link>
 						<Link to='/report-builder' className="mr-4">
 							Report Builder
 						</Link>

@@ -81,6 +81,13 @@ Meteor.methods({
 
 	},
 
+	Fetch_Viewers_For_Account: function() {
+		if(this.userId && Roles.userIsInRole(this.userId, ['Editor'])) {
+			let accountId = Meteor.users.findOne({_id: this.userId})?.profile.accountId
+			return Meteor.users.find({'profile.accountId': accountId}).fetch()
+		}
+	},
+
 	Modify_Viewer_User_Profile: function() {
 		
 	} 
