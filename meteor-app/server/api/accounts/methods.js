@@ -1,4 +1,5 @@
 import { Meteor } from "meteor/meteor";
+import { Mongo } from "meteor/mongo";
 
 Meteor.methods({
 
@@ -16,6 +17,14 @@ Meteor.methods({
 
 	Modify_Viewer_User_Profile: function() {
 		
-	} 
+  },
+  
+  Get_User_Role: function(userId) {
+    console.log('this gets called at least')
+    var user = Roles.getRolesForUser(userId)
+    console.log("user :", user)
+    console.log("role: ", user[0])
+    return user[0]
+  }
 
 })

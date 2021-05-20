@@ -8,7 +8,7 @@ export const Login = () => {
 
 	const history = useHistory()
 
-	const [userId, setUserId] = useContext(UserContext)
+	const [loginInfo, setLoginInfo] = useContext(UserContext)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -22,13 +22,24 @@ export const Login = () => {
   }
 
 	const handleSubmit = () => {
-		setUsername('')
+		setUsername('') 
 		setPassword('')
 		Meteor.loginWithPassword(username, password, (error) => {
 			if(error) console.log(error);
 			else {
-				setUserId(Meteor.userId())
-				history.push('report-list')
+        var role = ""
+        Meteor.call('Get_User_Role', Meteor.userId(), (error : any, result : any) => {
+          if (error) {
+            console.log(error)
+          } else {
+            role = result; 
+            console.log("result:", result)
+            console.log("role: ", role)
+				    setLoginInfo({"userId" : Meteor.userId(), "role" : role})
+				    history.push('report-list')
+          }
+        })
+        
 			}
 		})
 	}

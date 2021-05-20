@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { UserContext } from '/imports/api/contexts/userContext';
 
@@ -7,7 +7,8 @@ const Navbar = () => {
 
 	const history = useHistory()
 
-	const [userId, setUserId] = useContext(UserContext)
+  const [userId, setUserId] = useContext(UserContext)
+  const [editor, setEditor] = useState(false)
 
 	const logout = () => {
 		Meteor.logout((error) => {
@@ -17,7 +18,13 @@ const Navbar = () => {
 		})
 	}
 
-	useEffect(() => {}, [userId])
+  useEffect(() => {
+    if (userId) {
+      setEditor(Boolean(userId.role == "Editor"))
+    }
+  }, [userId])
+
+  
 
   return (
     <>
@@ -26,9 +33,9 @@ const Navbar = () => {
 
 					{/* authed users */}
 					{userId ? <>
-						<Link to='/report-builder' className="mr-4">
+						{editor && <Link to='/report-builder' className="mr-4">
 							Report Builder
-						</Link>
+						</Link>}
 						<Link to='/report-list' className="mr-4">
 							Report List
 						</Link>

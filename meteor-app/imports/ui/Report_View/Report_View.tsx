@@ -9,7 +9,7 @@ export const Report_View = () => {
 	const [report, setReport] = useState(null)
 
 	const makeReport = () => {	
-		Meteor.call('Compose_Report', id, (error, result) => {
+		Meteor.call('Compose_Report', id, (error : any, result : any) => {
 			if(error) console.log(error)
 			if(result) {console.log(result); setReport(result)}
 		})

@@ -12,7 +12,7 @@ export const ToolBar = ({
 }) => {
 
   return (
-    <div className="container h-3/4 w-3/12 p-4 absolute top-12 right-0 bg-gray-100">
+    <div className="container h-full w-1/4 p-4 absolute top-12 right-0 bg-gray-100">
       
 			{/* TODO: wire this up to keep track of if table is completed */}
 			<ProgressBar />
