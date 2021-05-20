@@ -41,14 +41,14 @@ Meteor.methods({
 
 	// used in api, creates a viewer user under an account
 	Create_Viewer_User: function(jwt, json) {
-		return new Promise((resolve, reject) => {
+		return new Promise<string>((resolve, reject) => {
 
 			const accountId = Client_Accounts.findOne({jwt})?._id
 			if(!accountId) reject('Failed to locate client account')
 
 			json.profile.accountId = accountId
 
-			let newUserId : string | null = null 
+			let newUserId = null 
 			
 			try {
 				newUserId = Accounts.createUser(json)
