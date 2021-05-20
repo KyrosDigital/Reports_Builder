@@ -7,24 +7,15 @@ const Navbar = () => {
 
 	const history = useHistory()
 
-  const [userId, setUserId] = useContext(UserContext)
-  const [editor, setEditor] = useState(false)
+  const [loginInfo, setLoginInfo] = useContext(UserContext)
 
 	const logout = () => {
 		Meteor.logout((error) => {
 			if(error) console.log(error)
-			setUserId(null)
+			setLoginInfo(null)
 			history.push('/login')
 		})
 	}
-
-  useEffect(() => {
-    if (userId) {
-      setEditor(Boolean(userId.role == "Editor"))
-    }
-  }, [userId])
-
-  
 
   return (
     <>
@@ -32,8 +23,11 @@ const Navbar = () => {
         <div className="flex items-center mr-4">
 
 					{/* authed users */}
-					{userId ? <>
-						{editor && <Link to='/report-builder' className="mr-4">
+					{loginInfo ? <>
+						{loginInfo.role === "Editor" && <Link to='/viewers' className="mr-4">
+							Viewers
+						</Link>}
+						{loginInfo.role === "Editor" && <Link to='/report-builder' className="mr-4">
 							Report Builder
 						</Link>}
 						<Link to='/report-list' className="mr-4">

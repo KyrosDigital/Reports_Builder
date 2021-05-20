@@ -13,6 +13,7 @@ export const seedUserData = () => {
 				const account = {
 					name: 'City2Shore',
 					created_at: new Date(),
+					updated_at: null,
 				}
 
 				account.jwt = jwt.sign(account, Meteor.settings.private.jwt_secret);

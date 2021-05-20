@@ -2,8 +2,8 @@ import { Meteor } from "meteor/meteor";
 import { _ } from "meteor/underscore";
 import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
-import { Report_Data, Report_Structures } from '../../../imports/api/collections';
-import { ReportStructure, ReportData, Table, TableColumn, FormulaValue } from '../../../imports/api/types/reports'
+import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
+import { ReportStructure, ReportData, Table, TableRow, TableColumn, FormulaValue } from '../../../../imports/api/types/reports'
 
 Meteor.methods({
 
@@ -58,7 +58,7 @@ Meteor.methods({
 
 	Compose_Report: function(reportId: string) {
 
-		let report = null;
+		let report: ReportStructure | null | undefined = null;
 
 		const setReportToDisplay = () => {
 			report = Report_Structures.findOne({_id: reportId})
@@ -73,19 +73,19 @@ Meteor.methods({
 		}
 
 		// generates cells, for a given row, if table is collection driven
-		const generateCells = (columns: Array<TableColumn>, document: ClientData) => {
+		const generateCells = (columns: Array<TableColumn>, document: ReportData) => {
 			return columns.map((column, i) => {
-				let type = '', property = null, propertyValue = null, value: number | string | null | undefined = 0;
+				let type = '', property = null, propertyValue = null, value: number | Object| string | null | undefined = 0;
 				// a column should only have either a formula, or a property assigned, never both
+				property = column.property
+				propertyValue = document[property]
 				if(!column.formulaId) {
 					type = 'property'
-					value = document.[column.property]
+					value = document[property]
 				}
 				if(column.formulaId) {
 					type = 'formula'
 				}
-				property = column.property
-				propertyValue = document[column.property]
 				return { index: i, id: uuidv4(), type, property, propertyValue, value }
 			})
 		}
@@ -104,8 +104,8 @@ Meteor.methods({
 
 		const createRowsInTable = () => {
 			// run for each table, ensuring proper amount of rows
-			report.tables.forEach((table: Table) => {
-				table.rows = generateRows(table)
+			report?.tables.forEach((table: Table) => {
+				table.rows = <Array<TableRow>> generateRows(table)
 				return table
 			});
 		}
@@ -113,13 +113,13 @@ Meteor.methods({
 		const computeFormulas = async () => {
 			
 			// we must loop over every table, row, so that formula results can be applied to individual cells, under a column
-			report.tables.forEach(table => {
+			report?.tables.forEach(table => {
 
 				table.rows.forEach(row => {
 
 					let expression = '';
 
-					report.formulas.forEach(formula => {
+					report?.formulas.forEach(formula => {
 						
 						expression = formula.expression;
 
