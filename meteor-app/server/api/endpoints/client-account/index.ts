@@ -1,16 +1,21 @@
 import { Meteor } from 'meteor/meteor'
 import { WebApp } from 'meteor/webapp'
-import parse from 'urlencoded-body-parser'
 import { getJson } from '../parser'
 import { validateJWT } from '../validate-jwt'
-
+import { Account } from '../../../../imports/api/types/accounts'
 
 /**
  * Updates a Client_Account
  * auth via jwt required
  */ 
-WebApp.connectHandlers.use('/client-account/update', async (req, res, next) => {
+WebApp.connectHandlers.use('/client-account/update', async (req, res) => {
   const { headers } = req
+
+	if(!headers.authorization) {
+		res.writeHead(401)
+		res.end('Auth failed - Missing authorization header')
+		return
+	}
 
 	// validate JWT before doing anything
 	const authToken = headers.authorization.split(" ")[1]
@@ -33,8 +38,11 @@ WebApp.connectHandlers.use('/client-account/update', async (req, res, next) => {
 	}
 
 	// fetch Client_Account
-	await Meteor.call("Update_Account", authToken, json.name, (error, result) => {
-		if(error) console.error('/client-account/update - err updating data:\n', error)
+	await Meteor.call("Update_Account", authToken, json.name, (error: Error, result: Account) => {
+		if(error) {
+			res.writeHead(403)
+  		res.end(`${JSON.stringify(error.message)}`)
+		}
 		if(result) {
 			res.writeHead(200)
   		res.end(`${JSON.stringify(result)}`)
@@ -47,8 +55,14 @@ WebApp.connectHandlers.use('/client-account/update', async (req, res, next) => {
  * Fetches a Client_Account
  * auth via jwt required
  */ 
-WebApp.connectHandlers.use('/client-account', async (req, res, next) => {
+WebApp.connectHandlers.use('/client-account', async (req, res) => {
   const { headers } = req
+
+	if(!headers.authorization) {
+		res.writeHead(401)
+		res.end('Auth failed - Missing authorization header')
+		return
+	}
 
 	// validate JWT before doing anything
 	const authToken = headers.authorization.split(" ")[1]
@@ -65,7 +79,7 @@ WebApp.connectHandlers.use('/client-account', async (req, res, next) => {
 	})
 
 	// fetch Client_Account
-	await Meteor.call("Fetch_Account", authToken, (error, result) => {
+	await Meteor.call("Fetch_Account", authToken, (error: Error, result: Account) => {
 		if(error) console.error('/client-account - err fetching account:\n', error)
 		if(result) {
 			res.writeHead(200)
