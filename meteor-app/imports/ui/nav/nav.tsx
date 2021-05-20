@@ -20,7 +20,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (userId) {
-      setEditor(Boolean(userId.role == "Editor"))
+      setEditor(userId.role === "Editor")
     }
   }, [userId])
 

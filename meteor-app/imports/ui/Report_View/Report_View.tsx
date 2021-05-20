@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { useState } from 'react';
 import {useParams} from 'react-router-dom';
 import { Button } from '../components/buttons';
+import { ReportStructure } from '/imports/api/types/reports';
 
 export const Report_View = () => {
 	const { id } = useParams()
@@ -9,7 +10,7 @@ export const Report_View = () => {
 	const [report, setReport] = useState(null)
 
 	const makeReport = () => {	
-		Meteor.call('Compose_Report', id, (error : any, result : any) => {
+		Meteor.call('Compose_Report', id, (error : Error, result : ReportStructure) => {
 			if(error) console.log(error)
 			if(result) {console.log(result); setReport(result)}
 		})

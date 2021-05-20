@@ -21,7 +21,7 @@ export const Report_List = () => {
 
   useEffect(() => {
     if (loginInfo != null) {
-      setEditor(Boolean(loginInfo.role == "Editor"))
+      setEditor(loginInfo.role === "Editor")
     }
     
   }, [loginInfo])
