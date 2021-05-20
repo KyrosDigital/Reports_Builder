@@ -12,9 +12,7 @@ import { Viewers_List } from './Viewers_List/Viewers_List'
 
 export const App = () => {
 
-	useEffect(() => {
-		console.log("userId: ", Meteor.userId())
-	}, [Meteor.userId()])
+	useEffect(() => {}, [Meteor.userId()])
 
 	return (
 		<div>
