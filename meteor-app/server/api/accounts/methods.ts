@@ -73,7 +73,7 @@ Meteor.methods({
 			console.log('Check if user is in Role "Viewer": ', checkRole)
 			if(checkRole) return userId
 		}).then(userId => {
-			return Meteor.users.findOne({_id: userId})
+			return Meteor.users.findOne({_id: userId})?.username
 		})
 	},
 
