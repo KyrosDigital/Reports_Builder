@@ -16,13 +16,25 @@ export const Viewers_List = () => {
 	return (
 		<div className="space-y-4">
 			<h1 className="font-sans text-xl font-bold">Viewers:</h1>
-			{viewers.map((viewer, i) => {
-				return <div key={i} className="">
-					<div>Name: {viewer.profile.first_name} {viewer.profile.last_name}</div>
-					<div>username: {viewer.username}</div>
-					<div>email: {viewer.emails[0].address}</div>
-				</div>
-			})}
+      <table className="table-auto">
+        <thead>
+          <tr>
+            <th className="px-4 text-pink-500 py-2">Name</th>
+            <th className="px-4 text-pink-500 py-2">Username</th>
+            <th className="px-4 text-pink-500 py-2">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+        {viewers.map((viewer, i) => {
+          return <tr key={i} className="">
+            <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.profile.first_name} {viewer.profile.last_name}</td>
+            <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.username}</td>
+            <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.emails[0].address}</td>
+          </tr>
+			  })}
+        </tbody>
+      </table>
+			
 		</div>
 	);
 };
