@@ -1,5 +1,7 @@
 import { Meteor } from "meteor/meteor";
-import { Client_Accounts } from "/imports/api/collections";
+import { Accounts } from 'meteor/accounts-base';
+import { Roles } from 'meteor/accounts-base';
+import { Client_Accounts } from "/imports/api/collections"
 
 Meteor.methods({
 
@@ -17,8 +19,8 @@ Meteor.methods({
 	// used in meteor server, to access a client account object for a given user
 	Fetch_Account_For_User: function() {
 		if(this.userId) {
-			const user = Meteor.users.findOne({_id: userId})
-			const accountId = user.profile.accountId
+			const user = Meteor.users.findOne({_id: this.userId})
+			const accountId = user?.profile.accountId
 			if(accountId) {
 				return Client_Accounts.findOne({_id: accountId})
 			}
@@ -41,11 +43,12 @@ Meteor.methods({
 	Create_Viewer_User: function(jwt, json) {
 		return new Promise((resolve, reject) => {
 
-			const accountId = Client_Accounts.findOne({jwt})._id
+			const accountId = Client_Accounts.findOne({jwt})?._id
+			if(!accountId) reject('Failed to locate client account')
 
 			json.profile.accountId = accountId
 
-			let newUserId = null 
+			let newUserId : string | null = null 
 			
 			try {
 				newUserId = Accounts.createUser(json)
@@ -65,7 +68,7 @@ Meteor.methods({
 				Roles.addUsersToRoles(userId, 'Viewer')
 				return userId
 			}
-		}).then((userId) => {
+		}).then(userId => {
 			const checkRole = Roles.userIsInRole(userId, ['Viewer'])
 			console.log('Check if user is in Role "Viewer": ', checkRole)
 			if(checkRole) return userId

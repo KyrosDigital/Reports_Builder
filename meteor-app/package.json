@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@types/mathjs": "^6.0.12",
-    "@types/meteor": "^1.4.49",
+    "@types/meteor": "^1.4.70",
     "@types/mocha": "^8.0.3",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
