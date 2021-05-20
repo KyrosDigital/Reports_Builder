@@ -21,8 +21,53 @@ WebApp.connectHandlers.use('/viewers/create', async (req, res, next) => {
     console.error('/viewers/create - err catch parsing JSON:\n', e)
  	})
 
-  res.writeHead(200)
-  res.end(`${JSON.stringify(json)}`)
+	if(!json.username) {
+		res.writeHead(400)
+		res.end('invalid Request - Missing "username: string"')
+		return
+	}
+
+	if(!json.email) {
+		res.writeHead(400)
+		res.end('invalid Request - Missing "email: string"')
+		return
+	}
+
+	if(!json.password) {
+		res.writeHead(400)
+		res.end('invalid Request - Missing "password: string"')
+		return
+	}
+
+	if(!json.profile) {
+		res.writeHead(400)
+		res.end('invalid Request - Missing "profile: Object"')
+		return
+	}
+
+	if(!json.profile.first_name) {
+		res.writeHead(400)
+		res.end('invalid Request - Missing "profile.first_name: string"')
+		return
+	}
+
+	if(!json.profile.last_name) {
+		res.writeHead(400)
+		res.end('invalid Request - Missing "profile.last_name: string"')
+		return
+	}
+
+	// create new viewer user
+	await Meteor.call("Create_Viewer_User", authToken, json, (error, result) => {
+		if(error) {
+			res.writeHead(403)
+  		res.end(`${JSON.stringify(error.message)}`)
+		}
+		if(result) {
+			res.writeHead(200)
+  		res.end(`${JSON.stringify(result)}`)
+		}
+	})
 })
 
 WebApp.connectHandlers.use('/viewers', async (req, res, next) => {

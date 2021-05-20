@@ -5,6 +5,10 @@ import { getJson } from '../parser'
 import { validateJWT } from '../validate-jwt'
 
 
+/**
+ * Updates a Client_Account
+ * auth via jwt required
+ */ 
 WebApp.connectHandlers.use('/client-account/update', async (req, res, next) => {
   const { headers } = req
 
@@ -22,10 +26,27 @@ WebApp.connectHandlers.use('/client-account/update', async (req, res, next) => {
     console.error('/client-account/update - err catch parsing JSON:\n', e)
  	})
 
-  res.writeHead(200)
-  res.end(`${JSON.stringify(json)}`)
+	if(!json.name) {
+		res.writeHead(400)
+		res.end('invalid Request - Missing "name: string"')
+		return
+	}
+
+	// fetch Client_Account
+	await Meteor.call("Update_Account", authToken, json.name, (error, result) => {
+		if(error) console.error('/client-account/update - err updating data:\n', error)
+		if(result) {
+			res.writeHead(200)
+  		res.end(`${JSON.stringify(result)}`)
+		}
+	})
 })
 
+
+/**
+ * Fetches a Client_Account
+ * auth via jwt required
+ */ 
 WebApp.connectHandlers.use('/client-account', async (req, res, next) => {
   const { headers } = req
 
@@ -43,12 +64,13 @@ WebApp.connectHandlers.use('/client-account', async (req, res, next) => {
     console.error('/client-account - err catch parsing JSON:\n', e)
 	})
 
-	// validate auth token
-	// fetch accountId
-	// await Meteor.call("Insert_Report_Data", json, (error) => {
-	// 	if(error) console.error('/client-account - err inserting data to db:\n', error)
-	// })
+	// fetch Client_Account
+	await Meteor.call("Fetch_Account", authToken, (error, result) => {
+		if(error) console.error('/client-account - err fetching account:\n', error)
+		if(result) {
+			res.writeHead(200)
+  		res.end(`${JSON.stringify(result)}`)
+		}
+	})
 
-  res.writeHead(200)
-  res.end(`${JSON.stringify(json)}`)
 })
