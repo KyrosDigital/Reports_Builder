@@ -4,7 +4,7 @@ import { getJson } from '../parser'
 import { validateJWT } from '../validate-jwt'
 
 
-WebApp.connectHandlers.use('/report-data/create', async (req, res) => {
+WebApp.connectHandlers.use('/v1/report-data/create', async (req, res) => {
   const { headers } = req
 
 	if(!headers.authorization) {
@@ -24,7 +24,7 @@ WebApp.connectHandlers.use('/report-data/create', async (req, res) => {
   // console.info('/report-data/create route - headers\n', headers)
 
 	const json = await getJson(req).catch(e => {
-    console.error('/report-data/create - err catch parsing JSON:\n', e)
+    console.error('/v1/report-data/create - err catch parsing JSON:\n', e)
 	})
 
 	// validate auth token
@@ -41,7 +41,7 @@ WebApp.connectHandlers.use('/report-data/create', async (req, res) => {
 })
 
 
-WebApp.connectHandlers.use('/report-data', async (req, res) => {
+WebApp.connectHandlers.use('/v1/report-data', async (req, res) => {
   const { headers } = req
 
 	if(!headers.authorization) {
@@ -61,7 +61,7 @@ WebApp.connectHandlers.use('/report-data', async (req, res) => {
   // console.info('/report-data route - headers\n', headers)
 
 	const json = await getJson(req).catch(e => {
-    console.error('/report-data - err catch parsing JSON:\n', e)
+    console.error('/v1/report-data - err catch parsing JSON:\n', e)
  	})
 
   res.writeHead(200)

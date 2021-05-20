@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Report_Data, Report_Structures } from '../../imports/api/collections';
+import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
 
 // TODO: retrict to account ownership of user
 Meteor.publish('ReportData', function () {

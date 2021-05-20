@@ -1,20 +1,20 @@
 import { Meteor } from 'meteor/meteor';
 
-// roles 
-import { configureRoles } from './startup/roles'
-
 // publications
-import './publications/publications';
+import './api/v1/publications/publications';
 
 // methods
-import './api/accounts/methods';
-import './api/reports/methods';
+import './api/v1/accounts/methods';
+import './api/v1/reports/methods';
 
 // api endpoints
-import './api/endpoints'
+import './api/v1/endpoints'
+
+// roles 
+import { configureRoles } from './api/v1/roles/roles'
 
 // seeders
-import { seedUserData } from './seeders/seeder'
+import { seedUserData } from './api/v1/seeders/seeder'
 
 Meteor.startup(() => {
 

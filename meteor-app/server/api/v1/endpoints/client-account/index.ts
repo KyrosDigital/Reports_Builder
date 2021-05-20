@@ -2,13 +2,13 @@ import { Meteor } from 'meteor/meteor'
 import { WebApp } from 'meteor/webapp'
 import { getJson } from '../parser'
 import { validateJWT } from '../validate-jwt'
-import { Account } from '../../../../imports/api/types/accounts'
+import { Account } from '../../../../../imports/api/types/accounts'
 
 /**
  * Updates a Client_Account
  * auth via jwt required
  */ 
-WebApp.connectHandlers.use('/client-account/update', async (req, res) => {
+WebApp.connectHandlers.use('/v1/client-account/update', async (req, res) => {
   const { headers } = req
 
 	if(!headers.authorization) {
@@ -25,10 +25,10 @@ WebApp.connectHandlers.use('/client-account/update', async (req, res) => {
 		return
 	}
 
-  console.info('/client-account/update route - headers\n', headers)
+  console.info('/v1/client-account/update route - headers\n', headers)
 
 	const json = await getJson(req).catch(e => {
-    console.error('/client-account/update - err catch parsing JSON:\n', e)
+    console.error('/v1/client-account/update - err catch parsing JSON:\n', e)
  	})
 
 	if(!json.name) {
@@ -55,7 +55,7 @@ WebApp.connectHandlers.use('/client-account/update', async (req, res) => {
  * Fetches a Client_Account
  * auth via jwt required
  */ 
-WebApp.connectHandlers.use('/client-account', async (req, res) => {
+WebApp.connectHandlers.use('/v1/client-account', async (req, res) => {
   const { headers } = req
 
 	if(!headers.authorization) {
@@ -72,15 +72,15 @@ WebApp.connectHandlers.use('/client-account', async (req, res) => {
 		return
 	}
 	
-  console.info('/client-account route - headers\n', headers)
+  console.info('/v1/client-account route - headers\n', headers)
 
 	const json = await getJson(req).catch(e => {
-    console.error('/client-account - err catch parsing JSON:\n', e)
+    console.error('/v1/client-account - err catch parsing JSON:\n', e)
 	})
 
 	// fetch Client_Account
 	await Meteor.call("Fetch_Account", authToken, (error: Error, result: Account) => {
-		if(error) console.error('/client-account - err fetching account:\n', error)
+		if(error) console.error('/v1/client-account - err fetching account:\n', error)
 		if(result) {
 			res.writeHead(200)
   		res.end(`${JSON.stringify(result)}`)

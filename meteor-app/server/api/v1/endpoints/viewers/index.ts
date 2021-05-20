@@ -8,7 +8,7 @@ import { validateJWT } from '../validate-jwt'
  * Creates a viewer user under an account
  * auth via jwt required
  */ 
-WebApp.connectHandlers.use('/viewers/create', async (req, res) => {
+WebApp.connectHandlers.use('/v1/viewers/create', async (req, res) => {
   const { headers } = req
 
 	if(!headers.authorization) {
@@ -26,7 +26,7 @@ WebApp.connectHandlers.use('/viewers/create', async (req, res) => {
 	}
 
 	const json = await getJson(req).catch(e => {
-    console.error('/viewers/create - err catch parsing JSON:\n', e)
+    console.error('/v1/viewers/create - err catch parsing JSON:\n', e)
  	})
 
 	if(!json.username) {
