@@ -37,6 +37,7 @@ Meteor.methods({
 
 	},
 
+	// used in api, creates a viewer user under an account
 	Create_Viewer_User: function(jwt, json) {
 		return new Promise((resolve, reject) => {
 

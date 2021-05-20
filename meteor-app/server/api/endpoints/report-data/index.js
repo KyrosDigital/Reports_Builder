@@ -16,7 +16,7 @@ WebApp.connectHandlers.use('/report-data/create', async (req, res, next) => {
 		return
 	}
 	
-  console.info('/report-data/create route - headers\n', headers)
+  // console.info('/report-data/create route - headers\n', headers)
 
 	const json = await getJson(req).catch(e => {
     console.error('/report-data/create - err catch parsing JSON:\n', e)
@@ -32,6 +32,7 @@ WebApp.connectHandlers.use('/report-data/create', async (req, res, next) => {
   res.end(`${JSON.stringify(json)}`)
 })
 
+
 WebApp.connectHandlers.use('/report-data', async (req, res, next) => {
   const { headers } = req
 
@@ -43,7 +44,7 @@ WebApp.connectHandlers.use('/report-data', async (req, res, next) => {
 		return
 	}
 
-  console.info('/report-data route - headers\n', headers)
+  // console.info('/report-data route - headers\n', headers)
 
 	const json = await getJson(req).catch(e => {
     console.error('/report-data - err catch parsing JSON:\n', e)

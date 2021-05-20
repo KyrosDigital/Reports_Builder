@@ -4,6 +4,11 @@ import parse from 'urlencoded-body-parser'
 import { getJson } from '../parser'
 import { validateJWT } from '../validate-jwt'
 
+
+/**
+ * Creates a viewer user under an account
+ * auth via jwt required
+ */ 
 WebApp.connectHandlers.use('/viewers/create', async (req, res, next) => {
   const { headers } = req
 
@@ -15,7 +20,7 @@ WebApp.connectHandlers.use('/viewers/create', async (req, res, next) => {
 		return
 	}
 
-  console.info('/viewers/create route - headers\n', headers)
+  // console.info('/viewers/create route - headers\n', headers)
 
 	const json = await getJson(req).catch(e => {
     console.error('/viewers/create - err catch parsing JSON:\n', e)
@@ -70,24 +75,4 @@ WebApp.connectHandlers.use('/viewers/create', async (req, res, next) => {
 	})
 })
 
-WebApp.connectHandlers.use('/viewers', async (req, res, next) => {
-  const { headers } = req
-
-	// validate JWT before doing anything
-	const authToken = headers.authorization.split(" ")[1]
-	if(!validateJWT(authToken)) {
-		res.writeHead(401)
-		res.end('Auth failed - Invalid token')
-		return
-	}
-
-  console.info('/viewers/create route - headers\n', headers)
-
-	const json = await getJson(req).catch(e => {
-    console.error('/viewers/create - err catch parsing JSON:\n', e)
- 	})
-
-  res.writeHead(200)
-  res.end(`${JSON.stringify(json)}`)
-})
 
