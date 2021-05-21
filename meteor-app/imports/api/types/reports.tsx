@@ -10,13 +10,14 @@ export interface Table {
 	type: string; // collection - a table that uses a collection for generating rows. static - user defined dimensions, non looping
 	columns: Array<TableColumn>; // the columns within a table
 	rows: Array<TableRow>; // the rows within a table, if type: collection, rows are generated, if type:static, rows are pre defined by user
-	collection: string; // the collection used if table is collection driven
+  collection: string; // the collection used if table is collection driven
+  filter: number; // index of the column that the filter is on. 
 }
 export interface TableColumn {
 	id: string; // the uuid of the column within a table
 	label: string; // used for display
 	formulaId?: string; // if the column has a formula applied to it
-	property: string; // the property of a mongo object, from collection driven tables
+  property: string; // the property of a mongo object, from collection driven tables
 	enum: string; // defines the intended enumeration for the cell under a column
 }
 export interface TableRow {

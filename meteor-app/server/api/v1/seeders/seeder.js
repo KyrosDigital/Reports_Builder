@@ -38,7 +38,8 @@ export const seedUserData = () => {
 					profile: {
 						first_name: 'Nathan',
 						last_name: 'Jean',
-						accountId: accountId
+            accountId: accountId,
+            viewer_id: ''
 					}
 				})
 
@@ -100,6 +101,20 @@ export const seedUserData = () => {
 					collectionName: 'Transactions',
 					agentId: 'xxxyyyzzz',
 					price: 1000.00
+				})
+
+				if(newObjectId) {
+					console.log(`Seeder - Report Data created: ${newObjectId}`)
+					resolve(newObjectId)
+				} else {
+					reject('Failed to create Viewer user!!')
+        }
+        
+        newObjectId = Report_Data.insert({
+					accountId: accountId,
+					collectionName: 'Transactions',
+					agentId: '2',
+					price: 800.00
 				})
 
 				if(newObjectId) {

@@ -9,6 +9,7 @@ export const Report_View = () => {
 	const { id } = useParams()
 
   const [report, setReport] = useState(null)
+  const [skipLine, setSkipLine] = useState(null)
   const { viewerId } = useContext(UserContext)
 
 	const makeReport = () => {	
@@ -44,13 +45,18 @@ export const Report_View = () => {
 							
 							{/* rows and cells - if static driven */}
 							{table.rows.map((row) => {
-								return <div key={row.id} className="flex">
-									{row.cells.map((cell) => {
-										return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
-											<div>{cell.value}</div>
-										</div>
-									})}
-								</div>
+                console.log("value: ", row.cells[0].value)
+                console.log("viewerId: ", viewerId)
+                if (row.cells[0].value == viewerId || viewerId ==  '') {
+                  
+                  return <div key={row.id} className="flex">
+                  {row.cells.map((cell) => {
+                    return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
+                      <div>{cell.value}</div>
+                    </div>
+                  })}
+                  </div>
+                } 
 							})}
 							
 						</div>
