@@ -1,13 +1,15 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {useParams} from 'react-router-dom';
 import { Button } from '../components/buttons';
+import { UserContext } from '/imports/api/contexts/userContext';
 import { ReportStructure } from '/imports/api/types/reports';
 
 export const Report_View = () => {
 	const { id } = useParams()
 
-	const [report, setReport] = useState(null)
+  const [report, setReport] = useState(null)
+  const { viewerId } = useContext(UserContext)
 
 	const makeReport = () => {	
 		Meteor.call('Compose_Report', id, (error : Error, result : ReportStructure) => {

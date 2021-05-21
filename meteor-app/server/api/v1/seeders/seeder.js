@@ -65,12 +65,13 @@ export const seedUserData = () => {
 				const newUserId = Accounts.createUser({
 					username: 'CraigGeers',
 					email: 'craig@c2s.com',
-					password: 'password',
+          password: 'password',
 					profile: {
 						first_name: 'Craig',
 						last_name: 'Geers',
 						agentId: 'xxxyyyzzz',
-						accountId: accountId,
+            accountId: accountId,
+            viewer_id: '2',
 					}
 				})
 
