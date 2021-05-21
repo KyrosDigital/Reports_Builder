@@ -20,17 +20,18 @@ export const Report_List = () => {
   }, [loading])
 
   return (
-    <div className='container p-6'>
-      
-			{role === "Editor" && <Link to='/report-builder' className="mr-4">
-        <Button onClick={() => {}} text="Make New Report" color="blue"/>
-      </Link>}
-
-      <h1 className="font-sans text-xl font-bold">Your Reports:</h1>
+    <div className='h-screen w-screen p-6 bg-gray-100'>
+			
+			<div className="flex justify-between">
+				<p className="text-md font-bold">Your Reports:</p>
+				{role === "Editor" && <Link to='/report-builder' className="mr-4">
+					<Button onClick={() => {}} text="Make New Report" color="blue"/>
+				</Link>}
+			</div>
 
       {reportCollection.map((el, id) => {
-        return <div key = {id} className="my-4 box-border  w-56 p-4 bg-gray-100 rounded-xl">
-          <h2 className="font-sans text-xl font-bold">{el.name}</h2>
+        return <div key = {id} className="my-4 box-border w-1/4 p-4 bg-white rounded filter drop-shadow-md">
+          <h2 className="text-md">{el.name}</h2>
 					<div className="flex py-2">
 						<Link to={'/report-view/' + el._id}>
 							<Button onClick={() => {}} text="View" color="blue"/>

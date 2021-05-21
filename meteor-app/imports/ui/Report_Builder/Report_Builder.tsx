@@ -229,7 +229,7 @@ export const Report_Builder = () => {
 	}
 
   return (
-    <div className='container p-6'>
+    <div className='h-screen p-6 bg-gray-100'>
 
 			{/* ToolBar */}
 			{showToolBar && 
@@ -251,11 +251,11 @@ export const Report_Builder = () => {
 				/>
 			}
 			
-			<div className="flex">
+			<div className="flex justify-between mx-2 mb-5 w-9/12">
 				<Input placeholder={'Enter Report Name'} label={'Report Name'} value={reportStructure.name} flex={'flex'}
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
-				<div className="ml-6">
+				<div className="ml-6 mr-4">
 					<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
 					<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
 					<Button onClick={() => saveReport()} text="Save Report" color="blue"/>
@@ -263,14 +263,18 @@ export const Report_Builder = () => {
 			</div>
 			
 
-			<div className="flex-col w-3/4 overflow-auto">
+			<div className="flex-col w-9/12 pr-1 overflow-auto">
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (
-					<div key={table.id} className="my-10 p-4 bg-indigo-50 rounded">
+					<div key={table.id} className="mb-8 mx-2 p-4 bg-white rounded filter drop-shadow-md">
 
-						<p className="text-xl font-medium">{table.title}</p>
-						<Button onClick={() => toggleToolBarForTable(table)} text="Edit ✏️" color="indigo"/>
+						<div className="flex justify-between">
+							<p className="text-md font-medium mb-3">{table.title}</p>
+							<Button onClick={() => toggleToolBarForTable(table)} text="Edit ✏️" color="indigo"/>
+						</div>
+						
+
 						<div>
 
 							{/* column headers */}
