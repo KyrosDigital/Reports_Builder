@@ -270,7 +270,7 @@ export const Report_Builder = () => {
 					<div key={table.id} className="my-10 p-4 bg-indigo-50 rounded">
 
 						<p className="text-xl font-medium">{table.title}</p>
-						<Button onClick={() => toggleToolBarForTable(table)} text="✏️" color="indigo"/>
+						<Button onClick={() => toggleToolBarForTable(table)} text="Edit ✏️" color="indigo"/>
 						<div>
 
 							{/* column headers */}
@@ -278,7 +278,7 @@ export const Report_Builder = () => {
 								{table.columns.map((col, i) => {
 									return <div 
 										key={col.id} 
-										className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" 
+										className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md bg-white cursor-pointer" 
 										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
 										<span>{col.label}</span>
 									</div>
@@ -289,7 +289,8 @@ export const Report_Builder = () => {
 							{table.rows.map((row) => {
 								return <div key={row.id} className="flex">
 									{row.cells.map((cell) => {
-										return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
+										return <div key={cell.id} className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md bg-white cursor-pointer" 
+											onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
 											<div></div>
 										</div>
 									})}
@@ -300,7 +301,7 @@ export const Report_Builder = () => {
 							{table.type === 'collection' && Array.from([1, 2]).map((col, x) => {
 								return <div key={Math.random()} className="flex">
 									{table.columns.map((i) => {
-										return <div key={Math.random()} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-100 border-dashed rounded-md bg-white">
+										return <div key={Math.random()} className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-100 border-dashed rounded-md bg-white">
 											<div className="text-indigo-100">data</div>
 										</div>
 									})}
