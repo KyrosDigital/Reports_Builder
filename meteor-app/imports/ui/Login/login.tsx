@@ -2,13 +2,10 @@ import { Meteor } from 'meteor/meteor';
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from '../components/buttons'
-import { UserContext } from '/imports/api/contexts/userContext';
 
 export const Login = () => {
 
 	const history = useHistory()
-
-	const [loginInfo, setLoginInfo] = useContext(UserContext)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -26,18 +23,7 @@ export const Login = () => {
 		setPassword('')
 		Meteor.loginWithPassword(username, password, (error) => {
 			if(error) console.log(error);
-			else {
-        Meteor.call('Get_User_Role', (e: Error, role: string) => {
-          if (e) {
-            console.log(e)
-          } else {
-            console.log("result:", role)
-				    setLoginInfo({"userId" : Meteor.userId(), "role" : role})
-				    history.push('report-list')
-          }
-        })
-        
-			}
+			else history.push('report-list')
 		})
 	}
     

@@ -10,3 +10,12 @@ Meteor.publish('ReportData', function () {
 Meteor.publish('ReportStructure', function () {
 	return Report_Structures.find()
 })
+
+// publishes the roles assigned to a user who is logged in
+Meteor.publish(null, function () {
+  if (this.userId) {
+    return Meteor.roleAssignment.find({ 'user._id': this.userId });
+  } else {
+    this.ready()
+  }
+})

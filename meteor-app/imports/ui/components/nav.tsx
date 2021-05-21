@@ -7,12 +7,11 @@ const Navbar = () => {
 
 	const history = useHistory()
 
-  const [loginInfo, setLoginInfo] = useContext(UserContext)
+  const {isLoggedIn, role} = useContext(UserContext)
 
 	const logout = () => {
 		Meteor.logout((error) => {
 			if(error) console.log(error)
-			setLoginInfo(null)
 			history.push('/login')
 		})
 	}
@@ -23,24 +22,33 @@ const Navbar = () => {
         <div className="flex items-center mr-4">
 
 					{/* authed users */}
-					{loginInfo ? <>
-						{loginInfo.role === "Editor" && <Link to='/viewers' className="mr-4">
-							Viewers
-						</Link>}
-						{loginInfo.role === "Editor" && <Link to='/report-builder' className="mr-4">
-							Report Builder
-						</Link>}
+					{isLoggedIn && <>
+						{/* Editor Links */}
+						{role === "Editor" && <>
+							<Link to='/viewers' className="mr-4">
+								Viewers
+							</Link>
+							<Link to='/report-builder' className="mr-4">
+								Report Builder
+							</Link>
+						</>
+						}
+						{/* Viewer & Editor Links */}
 						<Link to='/report-list' className="mr-4">
 							Report List
 						</Link>
 						<Link to='#' className="mr-4" onClick={logout}>
 							Logout
 						</Link>
-					</> : <> {/* non-authed users */}
+					</>} 
+
+					{/* non-authed users */}
+					{!isLoggedIn && <> 
 						<Link to='/login' className="mr-4">
 							Login
 						</Link>
 					</>}
+				
           
         </div>
       </div>
