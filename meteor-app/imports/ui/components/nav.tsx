@@ -18,25 +18,32 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="bg-gray-200 h-12 flex justify-between p-2 pl-6">
+      <div className="bg-indigo-900 text-white text-sm h-12 flex justify-between p-2 pl-6">
+
+			<div className="flex items-center mr-4">
+				{/* authed users */}
+				{isLoggedIn && <>
+					{/* Editor Links */}
+					{role === "Editor" && <>
+						<Link to='/viewers' className="mr-4 active:text-indigo-600">
+							Viewers
+						</Link>
+						<Link to='/report-builder' className="mr-4">
+							Report Builder
+						</Link>
+					</>
+					}
+					{/* Viewer & Editor Links */}
+					<Link to='/report-list' className="mr-4">
+						Report List
+					</Link>
+				</>} 
+			</div>
+
         <div className="flex items-center mr-4">
 
 					{/* authed users */}
-					{isLoggedIn && <>
-						{/* Editor Links */}
-						{role === "Editor" && <>
-							<Link to='/viewers' className="mr-4">
-								Viewers
-							</Link>
-							<Link to='/report-builder' className="mr-4">
-								Report Builder
-							</Link>
-						</>
-						}
-						{/* Viewer & Editor Links */}
-						<Link to='/report-list' className="mr-4">
-							Report List
-						</Link>
+					{isLoggedIn && <>						
 						<Link to='#' className="mr-4" onClick={logout}>
 							Logout
 						</Link>
@@ -48,7 +55,6 @@ const Navbar = () => {
 							Login
 						</Link>
 					</>}
-				
           
         </div>
       </div>

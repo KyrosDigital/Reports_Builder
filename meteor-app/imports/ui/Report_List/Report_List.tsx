@@ -20,23 +20,28 @@ export const Report_List = () => {
   }, [loading])
 
   return (
-    <div className="space-y-4">
-        {role === "Editor" && <Link to='/report-builder' className="mr-4">
-            <Button onClick={() => {}} text="Make New Report" color="blue"/>
-        </Link>}
-        <div></div>
-        <h1 className="font-sans text-xl font-bold">Your Reports:</h1>
-        {reportCollection.map((el, id) => {
-          return <div key = {id} className="mx-4 box-border h-32 w-56 p-4 border-4 border-black bg-green-100 rounded-xl space-y-2">
-                    <h2 className="font-sans text-xl font-bold">{el.name}</h2>
-                    <Link to={'/report-view/' + el._id} className="mr-4">
-                        <button className="border-black border-2 bg-yellow-200 font-sans rounded-md m-0.5 px-0.5">View Report</button>
-                    </Link>
-                    {role === "Editor" && <Link to={'/report-builder/' + el._id} className="mr-4">
-                        <button className="border-black border-2 bg-yellow-200 font-sans rounded-md m-0.5 px-0.5">Edit Report</button>
-                    </Link>}
-            </div>
-        })}
+    <div className='container p-6'>
+      
+			{role === "Editor" && <Link to='/report-builder' className="mr-4">
+        <Button onClick={() => {}} text="Make New Report" color="blue"/>
+      </Link>}
+
+      <h1 className="font-sans text-xl font-bold">Your Reports:</h1>
+
+      {reportCollection.map((el, id) => {
+        return <div key = {id} className="my-4 box-border  w-56 p-4 bg-gray-100 rounded-xl">
+          <h2 className="font-sans text-xl font-bold">{el.name}</h2>
+					<div className="flex py-2">
+						<Link to={'/report-view/' + el._id}>
+							<Button onClick={() => {}} text="View" color="blue"/>
+						</Link>
+						{role === "Editor" && <Link to={'/report-builder/' + el._id}>
+							<Button onClick={() => {}} text="Edit" color="blue"/>
+						</Link>}
+					</div>
+      	</div>
+    	})}
+
     </div>
   );
 };

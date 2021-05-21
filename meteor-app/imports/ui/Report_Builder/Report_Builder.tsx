@@ -252,12 +252,14 @@ export const Report_Builder = () => {
 			}
 			
 			<div className="flex">
-				<Input placeholder={'Enter Report Name'} label={null} value={reportStructure.name} 
+				<Input placeholder={'Enter Report Name'} label={'Report Name'} value={reportStructure.name} flex={'flex'}
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
-				<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
-				<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
-				<Button onClick={() => saveReport()} text="Save Report" color="blue"/>
+				<div className="ml-6">
+					<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
+					<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
+					<Button onClick={() => saveReport()} text="Save Report" color="blue"/>
+				</div>
 			</div>
 			
 
