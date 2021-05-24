@@ -47,7 +47,7 @@ export const Report_View = () => {
 							{table.rows.map((row) => {
                 console.log("value: ", row.cells[0].value)
                 console.log("viewerId: ", viewerId)
-                if (row.cells[0].value == viewerId || viewerId ==  '') {
+                if (table.filter === null || row.cells[table.filter].value === viewerId || viewerId ==  '') {
                   
                   return <div key={row.id} className="flex">
                   {row.cells.map((cell) => {

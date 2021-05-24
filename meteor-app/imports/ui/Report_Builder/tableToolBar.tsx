@@ -8,6 +8,15 @@ export const TableToolBar = ({
 	addColumnToTable, addRowToTable, deleteTable
 }) => {
 
+  const [showFilter, setShowFilter] = useState(false)
+  const [removeFilter, setRemoveFilter] = useState(!(table.filter === null))
+
+  const propertySelector = (index : number) => {
+    setShowFilter(false)
+    table.filter = index
+    setRemoveFilter(true)
+  }
+
 	return (
 		<>
 			{/* Table type */}
@@ -54,8 +63,25 @@ export const TableToolBar = ({
 					{table.type === 'static' && 
 						<Button onClick={() => addRowToTable(table.id)} text="+ Row" color="green"/>
 					}
+
+          
 				</div>
 			</div>
+      <Button onClick={() => setShowFilter(true)} text="Viewer Filter" color="blue"/>
+      <hr/>
+      {showFilter && table.columns.map((col, index : number) => {
+        if (!(col.property === '')) {
+          return <div key={index}>
+            <button  onClick={() => propertySelector(index)}> {col.property} </button>
+            </div>
+        }
+      })}
+      {removeFilter && <div>
+        <Button onClick={() => { setRemoveFilter(false); table.filter = null}}
+        text="remove Filter" color="blue"/>
+        <h1> Table Filter: {table.columns[table.filter].label} </h1>
+        </div>
+      }
 
 			{/* delete table */}
 			<Button onClick={() => deleteTable(table.id)} text="Delete table" color="red"/>

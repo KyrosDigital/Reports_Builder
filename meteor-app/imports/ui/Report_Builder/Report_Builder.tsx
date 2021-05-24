@@ -51,7 +51,7 @@ export const Report_Builder = () => {
 			columns: [{id: uuidv4(), label: '', property: '', enum: ''}],
 			rows: [], 
       collection: '',
-      filter: 0 // I hardcoded this in for testing
+      filter: null // I hardcoded this in for testing
 		}
 		setReportStructure(prevState => {
 			return { ...prevState,  tables: [...reportStructure.tables, table] }
