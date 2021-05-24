@@ -98,9 +98,25 @@ export const seedUserData = () => {
 			return new Promise((resolve, reject) => {
 				const newObjectId = Report_Data.insert({
 					accountId: accountId,
-					collectionName: 'Transactions',
+          collectionName: 'Transactions',
+          viewerId: '2',
 					agentId: 'xxxyyyzzz',
-					price: 1000.00
+					price: 1500.00
+				})
+
+				if(newObjectId) {
+					console.log(`Seeder - Report Data created: ${newObjectId}`)
+					resolve(newObjectId)
+				} else {
+					reject('Failed to create Viewer user!!')
+        }
+
+        newObjectId = Report_Data.insert({
+					accountId: accountId,
+          collectionName: 'Transactions',
+          viewerId: '3',
+					agentId: 'xxxyyyzzz',
+					price: 700.00
 				})
 
 				if(newObjectId) {
@@ -110,19 +126,34 @@ export const seedUserData = () => {
 					reject('Failed to create Viewer user!!')
         }
         
-        newObjectId = Report_Data.insert({
+        const newObjectId2 = Report_Data.insert({
+					accountId: accountId,
+          collectionName: 'Transactions',
+          viewerId: 'xxxyyyzzz',
+					agentId: '2',
+					price: 750.00
+				})
+
+				if(newObjectId2) {
+					console.log(`Seeder - Report Data created: ${newObjectId2}`)
+					resolve(newObjectId2)
+				} else {
+					reject('Failed to create Viewer user!!')
+        }
+
+        newObjectId2 = Report_Data.insert({
 					accountId: accountId,
 					collectionName: 'Transactions',
 					agentId: '2',
-					price: 800.00
+					price: 1200.00
 				})
 
-				if(newObjectId) {
-					console.log(`Seeder - Report Data created: ${newObjectId}`)
-					resolve(newObjectId)
+				if(newObjectId2) {
+					console.log(`Seeder - Report Data created: ${newObjectId2}`)
+					resolve(newObjectId2)
 				} else {
 					reject('Failed to create Viewer user!!')
-				}
+        }
 			})
 		}
 

@@ -16,13 +16,14 @@ export const Report_Builder = () => {
 	const loading1 = useSubscription('ReportData')
 	const loading2 = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState<ReportStructure>({_id: id, name: '', tables: [], formulas: []})
+	const [reportStructure, setReportStructure] = useState<ReportStructure>({_id: id, name: '', tables: [], formulas: [], public: false})
 	const [cellSelected, setCellSelected] = useState({tableId: '', cellId: ''})
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
 	const [selectedTable, setSelectedTable] = useState(null)
 	const [selectedColumn, setSelectedColumn] = useState(null)
-	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
+  const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
+  const [access, setAccess] = useState('Make Public')
 
 	useEffect(() => {
 		if(!loading1 && !loading2) {
@@ -50,8 +51,7 @@ export const Report_Builder = () => {
 			type: type,
 			columns: [{id: uuidv4(), label: '', property: '', enum: ''}],
 			rows: [], 
-      collection: '',
-      filter: null // I hardcoded this in for testing
+      collection: ''
 		}
 		setReportStructure(prevState => {
 			return { ...prevState,  tables: [...reportStructure.tables, table] }
@@ -95,7 +95,21 @@ export const Report_Builder = () => {
 		setReportStructure(prevState => {
 			return { ...prevState,  tables: updatedTables }
 		});
-	}
+  }
+  
+  const handleAccess = () => {
+    if (access === 'Make Public') {
+      setAccess('Make Private')
+      setReportStructure(prevState => {
+				return { ...prevState,  public: true }
+			});
+    } else {
+      setAccess('Make Public')
+      setReportStructure(prevState => {
+				return { ...prevState,  public: false }
+			});
+    }
+  }
 
 	// deleting a column also means deleting coresponding formulas
 	const deleteColumn = (tableId, columnIndex) => {
@@ -257,6 +271,7 @@ export const Report_Builder = () => {
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
 				<div className="ml-6">
+          <Button onClick={() => handleAccess()} text={access} color="blue"/>
 					<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green"/>
 					<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green"/>
 					<Button onClick={() => saveReport()} text="Save Report" color="blue"/>

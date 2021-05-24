@@ -45,18 +45,14 @@ export const Report_View = () => {
 							
 							{/* rows and cells - if static driven */}
 							{table.rows.map((row) => {
-                console.log("value: ", row.cells[0].value)
-                console.log("viewerId: ", viewerId)
-                if (table.filter === null || row.cells[table.filter].value === viewerId || viewerId ==  '') {
                   
-                  return <div key={row.id} className="flex">
-                  {row.cells.map((cell) => {
-                    return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
-                      <div>{cell.value}</div>
-                    </div>
-                  })}
+                return <div key={row.id} className="flex">
+                {row.cells.map((cell) => {
+                  return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
+                    <div>{cell.value}</div>
                   </div>
-                } 
+                })}
+                </div>
 							})}
 							
 						</div>

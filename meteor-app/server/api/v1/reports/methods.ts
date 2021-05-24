@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
 import { ReportStructure, ReportData, Table, TableRow, TableColumn, FormulaValue } from '../../../../imports/api/types/reports'
+import { Roles } from 'meteor/alanning:roles'
 
 Meteor.methods({
 
@@ -58,6 +59,12 @@ Meteor.methods({
 
 	Compose_Report: function(reportId: string) {
 
+    let user = Meteor.user()
+    let viewer_id = ''
+    if (user) viewer_id = user['profile']['viewer_id']
+    let role = Roles.getRolesForUser(this.userId)
+    role = role[0]
+
 		let report: ReportStructure | null | undefined = null;
 
 		const setReportToDisplay = () => {
@@ -66,10 +73,19 @@ Meteor.methods({
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
-			return Report_Data.find({
-				// accountId: '60958c98857a7b14acb156d9', // TODO:
-				collectionName: collection,
-			}).fetch()
+      if (report.public || role === 'Editor') {
+        return Report_Data.find({
+          // accountId: '60958c98857a7b14acb156d9', // TODO:
+          collectionName: collection 
+        }).fetch()
+      } else { // must be viewer if not editor. Will need to change if more roles are added
+        return Report_Data.find({
+          // accountId: '60958c98857a7b14acb156d9', // TODO:
+          collectionName: collection,
+          $or: [{viewerId: viewer_id}, {viewerId: {$exists: false}}]
+        }).fetch()
+      }
+      
 		}
 
 		// generates cells, for a given row, if table is collection driven

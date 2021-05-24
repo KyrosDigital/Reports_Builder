@@ -2,7 +2,8 @@ export interface ReportStructure {
 	_id: string | null | undefined; // the mongoId of the report object
 	name: string;
 	tables: Array<Table>; // all the tables within a report
-	formulas: Array<Formula>; // the formulas to process when viewing a report
+  formulas: Array<Formula>; // the formulas to process when viewing a report
+  public: boolean;
 }
 export interface Table {
 	id: string; // unique id of the table within a report
@@ -11,7 +12,6 @@ export interface Table {
 	columns: Array<TableColumn>; // the columns within a table
 	rows: Array<TableRow>; // the rows within a table, if type: collection, rows are generated, if type:static, rows are pre defined by user
   collection: string; // the collection used if table is collection driven
-  filter: number; // index of the column that the filter is on. 
 }
 export interface TableColumn {
 	id: string; // the uuid of the column within a table
@@ -60,7 +60,8 @@ export interface FormulaQuery {
 
 export interface ReportData {
   _id: string | undefined;
-	collectionName: string;
+  collectionName: string;
+  viewerId?: string;
 	[key: string]: string | number | Object | null | undefined;
 
 }
