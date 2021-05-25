@@ -66,7 +66,7 @@ Meteor.methods({
 		let report: ReportStructure | null | undefined = null;
 
 		const setReportToDisplay = () => {
-			report = Report_Structures.findOne({_id: reportId})
+			report = Report_Structures.findOne({ _id: reportId, account_id: user?.account_id })
 		}
 
 		// used to generate rows, if table is collection driven
@@ -122,6 +122,17 @@ Meteor.methods({
 				table.rows = <Array<TableRow>> generateRows(table)
 				return table
 			});
+		}
+
+		const sortTables = () => {
+			// run for each table, ensuring each table is sorted
+			report?.tables.forEach((table: Table) => {
+				if (table.sort_by) {
+					const sortedRows = table.rows.sort((a, b) => a.cells.find(c => c.property === table.sort_by)?.propertyValue - b.cells.find(c => c.property === table.sort_by)?.propertyValue)
+					table.rows = sortedRows
+					return table
+				}
+			})
 		}
 
 		const computeFormulas = async () => {
@@ -183,6 +194,8 @@ Meteor.methods({
 
 			createRowsInTable()
 			await computeFormulas()
+
+			await sortTables()
 			// return the mutated report, containing the accurate values to display
 			return report
 		}

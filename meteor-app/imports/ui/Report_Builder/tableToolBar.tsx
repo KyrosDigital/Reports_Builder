@@ -5,13 +5,9 @@ import { Label } from '../components/labels'
 
 export const TableToolBar = ({
 	table, userCollections, setCollectionForTable, handleTableTitleUpdate,
-	addColumnToTable, addRowToTable, deleteTable
+	handleTableSort, addColumnToTable, addRowToTable, deleteTable
 }) => {
 
-  
-  
-
-  
 
 	return (
 		<>
@@ -49,6 +45,16 @@ export const TableToolBar = ({
 					<Label text={table.collection} color={'yellow'}/>
 				</div> 
 			}
+
+			{/* Sort by */}
+			<div className="mb-4">
+				<Input
+					placeholder={'Enter collection property'}
+					label={"Sort by:"}
+					value={table.sort_by}
+					onChange={(e) => handleTableSort(table.id, e.target.value)}
+				/>
+			</div>
 
 			{/* controls */}
 			<div className="mb-4">

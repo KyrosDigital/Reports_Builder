@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+import moment from 'moment'
 import { UserContext } from '/imports/api/contexts/userContext';
 import { ReportStructure } from '/imports/api/types/reports';
 
@@ -15,9 +15,23 @@ export const Report_View = () => {
 	useEffect(() => {
 		Meteor.call('Compose_Report', id, (error : Error, result : ReportStructure) => {
 			if(error) console.log(error)
-			if(result) {console.log(result); setReport(result)}
+			if (result) setReport(result)
 		})
 	}, [])
+
+	const handleValue = (value) => {
+		if (typeof value === 'string') {
+			return value
+		}
+		if (typeof value === 'number') {
+			return value
+		}
+		if (typeof value === "object") { // is an object
+			if (typeof value.getMonth === 'function') { // object is a date
+				return moment(value, 'YYYY-MM-DD').format('LL')
+			}
+		}
+	}
 
   return (
     <div className='h-screen p-6 bg-gray-100'>
@@ -50,7 +64,7 @@ export const Report_View = () => {
                 return <div key={row.id} className="flex">
                 {row.cells.map((cell) => {
                   return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
-                    <div>{cell.value}</div>
+										<div>{handleValue(cell.value)}</div>
                   </div>
                 })}
                 </div>

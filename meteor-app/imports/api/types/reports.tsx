@@ -14,6 +14,7 @@ export interface Table {
 	columns: Array<TableColumn>; // the columns within a table
 	rows: Array<TableRow>; // the rows within a table, if type: collection, rows are generated, if type:static, rows are pre defined by user
 	collection: string; // the collection used if table is collection driven
+	sort_by: string; // defines how the data should be sorted when viewing a report
 }
 export interface TableColumn {
 	id: string; // the uuid of the column within a table

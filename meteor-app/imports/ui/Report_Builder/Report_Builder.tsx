@@ -50,7 +50,8 @@ export const Report_Builder = () => {
 			type: type,
 			columns: [{ id: uuidv4(), label: '', property: '', enum: '' }],
 			rows: [],
-			collection: ''
+			collection: '',
+			sort_by: ''
 		}
 		setReportStructure(prevState => {
 			return { ...prevState, tables: [...reportStructure.tables, table] }
@@ -177,6 +178,14 @@ export const Report_Builder = () => {
 		});
 	}
 
+	const handleTableSort = (tableId, sortBy) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+		reportStructure.tables[tableIndex].sort_by = sortBy
+		setReportStructure(prevState => {
+			return { ...prevState, tables: reportStructure.tables }
+		});
+	}
+
 	const handleFormulaUpdate = (formula) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === formula.tableId)
 		let existingFormula = reportStructure.formulas.find(each => (each.tableId === formula.tableId && each.columnId === formula.columnId))
@@ -248,6 +257,7 @@ export const Report_Builder = () => {
 				<ToolBar
 					table={selectedTable}
 					handleTableTitleUpdate={handleTableTitleUpdate}
+				handleTableSort={handleTableSort}
 					userCollections={userCollections}
 					setCollectionForTable={setCollectionForTable}
 					deleteTable={deleteTable}
