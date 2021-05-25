@@ -3,10 +3,12 @@ import React, { createRef } from 'react'
 export const Tooltip = ({ children, tooltipText }) => {
 	const tipRef = createRef(null);
 	function handleMouseEnter() {
+		tipRef.current.style.visibility = 'visible';
 		tipRef.current.style.opacity = 1;
 		tipRef.current.style.marginLeft = "20px";
 	}
 	function handleMouseLeave() {
+		tipRef.current.style.visibility = 'hidden';
 		tipRef.current.style.opacity = 0;
 		tipRef.current.style.marginLeft = "10px";
 	}
