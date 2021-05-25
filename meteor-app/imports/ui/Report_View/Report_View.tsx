@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment'
 import { UserContext } from '/imports/api/contexts/userContext';
 import { ReportStructure } from '/imports/api/types/reports';
+import { Tooltip } from '../components/tooltips'
 
 export const Report_View = () => {
 	const { id } = useParams()
@@ -52,9 +53,11 @@ export const Report_View = () => {
 							{/* column headers */}
 							<div className="flex"> 
 								{table.columns.map((col, i) => {
-									return <div key={col.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white">
-										<span>{col.label}</span>
-									</div>
+									return <Tooltip key={col.id} tooltipText={`filter: ${table.collection}.${col.property}`}>
+										<div className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white">
+											<span>{col.label}</span>
+										</div>
+									</Tooltip>
 								})}
 							</div>
 							
