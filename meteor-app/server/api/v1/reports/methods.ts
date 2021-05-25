@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
 import { ReportStructure, ReportData, Table, TableRow, TableColumn, FormulaValue } from '../../../../imports/api/types/reports'
-import { Roles } from 'meteor/alanning:roles'
 import { getUserDetails } from "./functions";
 
 Meteor.methods({
