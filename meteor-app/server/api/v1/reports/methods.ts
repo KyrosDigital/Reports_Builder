@@ -60,8 +60,11 @@ Meteor.methods({
 	Compose_Report: function(reportId: string) {
 
     let user = Meteor.user()
-    let viewer_id = ''
-    if (user) viewer_id = user['profile']['viewer_id']
+		let viewer_id = null, account_id = null;
+		if (user) {
+			viewer_id = user['profile']['viewer_id']
+			account_id = user['profile']['account_id']
+		}
     let role = Roles.getRolesForUser(this.userId)
     role = role[0]
 
@@ -75,14 +78,14 @@ Meteor.methods({
 		const performQuery = (collection: string) => {
       if (report.public || role === 'Editor') {
         return Report_Data.find({
-          // accountId: '60958c98857a7b14acb156d9', // TODO:
+					accountId: account_id,
           collectionName: collection 
         }).fetch()
       } else { // must be viewer if not editor. Will need to change if more roles are added
         return Report_Data.find({
-          // accountId: '60958c98857a7b14acb156d9', // TODO:
+					accountId: account_id,
           collectionName: collection,
-          $or: [{viewerId: viewer_id}, {viewerId: {$exists: false}}]
+					$or: [{ viewer_id: viewer_id }, { viewer_id: { $exists: false } }]
         }).fetch()
       }
       
