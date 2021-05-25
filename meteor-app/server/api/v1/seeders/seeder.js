@@ -7,11 +7,11 @@ export const seedUserData = () => {
 
 		const jwt = require('jsonwebtoken')
 
-		const createAccount = () => {
+		const createAccount = (accountName) => {
 			return new Promise((resolve, reject) => {
 
 				const account = {
-					name: 'City2Shore',
+					name: accountName,
 					created_at: new Date(),
 					updated_at: null,
 				}
@@ -29,17 +29,17 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createEditor = (accountId) => {
+		const createEditor = (accountId, username, email, first_name, last_name) => {
 			return new Promise((resolve, reject) => {
 				const newUserId = Accounts.createUser({
-					username: 'NathanJean',
-					email: 'nathan@c2s.com',
+					username: username,
+					email: email,
 					password: 'password',
 					profile: {
-						first_name: 'Nathan',
-						last_name: 'Jean',
+						first_name: first_name,
+						last_name: last_name,
 						accountId: accountId,
-						viewer_id: ''
+						viewer_id: null
 					}
 				})
 
@@ -61,18 +61,17 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createViewers = (accountId) => {
+		const createViewers = (accountId, viewer_id, username, email, first_name, last_name) => {
 			return new Promise((resolve, reject) => {
 				const newUserId = Accounts.createUser({
-					username: 'CraigGeers',
-					email: 'craig@c2s.com',
+					username: username,
+					email: email,
 					password: 'password',
 					profile: {
-						first_name: 'Craig',
-						last_name: 'Geers',
-						agentId: 'xxxyyyzzz',
+						first_name: first_name,
+						last_name: last_name,
 						accountId: accountId,
-						viewer_id: '2',
+						viewer_id: viewer_id
 					}
 				})
 
@@ -94,75 +93,34 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createReportData = (accountId) => {
+		const createReportData = (accountId, price, viewer_id) => {
 			return new Promise((resolve, reject) => {
 				const newObjectId = Report_Data.insert({
 					accountId: accountId,
 					collectionName: 'Transactions',
-					viewer_id: '2',
-					agentId: 'xxxyyyzzz',
-					price: 1500.00
+					viewer_id: viewer_id,
+					price: price
 				})
 
 				if (newObjectId) {
 					console.log(`Seeder - Report Data created: ${newObjectId}`)
 					resolve(newObjectId)
 				} else {
-					reject('Failed to create Viewer user!!')
-				}
-
-				newObjectId = Report_Data.insert({
-					accountId: accountId,
-					collectionName: 'Transactions',
-					viewer_id: '3',
-					agentId: 'xxxyyyzzz',
-					price: 700.00
-				})
-
-				if (newObjectId) {
-					console.log(`Seeder - Report Data created: ${newObjectId}`)
-					resolve(newObjectId)
-				} else {
-					reject('Failed to create Viewer user!!')
-				}
-
-				const newObjectId2 = Report_Data.insert({
-					accountId: accountId,
-					collectionName: 'Transactions',
-					viewer_id: 'xxxyyyzzz',
-					agentId: '2',
-					price: 750.00
-				})
-
-				if (newObjectId2) {
-					console.log(`Seeder - Report Data created: ${newObjectId2}`)
-					resolve(newObjectId2)
-				} else {
-					reject('Failed to create Viewer user!!')
-				}
-
-				newObjectId2 = Report_Data.insert({
-					accountId: accountId,
-					collectionName: 'Transactions',
-					agentId: '2',
-					price: 1200.00
-				})
-
-				if (newObjectId2) {
-					console.log(`Seeder - Report Data created: ${newObjectId2}`)
-					resolve(newObjectId2)
-				} else {
-					reject('Failed to create Viewer user!!')
+					reject('Failed to create Report_Data!!')
 				}
 			})
 		}
 
 
 		const run = async () => {
-			const accountId = await createAccount()
-			await createEditor(accountId)
-			await createViewers(accountId)
-			await createReportData(accountId)
+			const accountId = await createAccount('City2Shore')
+			await createEditor(accountId, 'NathanJean', 'nathan@c2s.com', 'Nate', 'Jean')
+			await createViewers(accountId, 'xxxyyyzzz', 'CraigGeers', 'craig@c2s.com', 'Craig', 'Geers')
+			await createViewers(accountId, 'bbbcccaaa', 'ShelleyFrody', 'shelly@c2s.com', 'Shelley', 'Frody')
+			await createReportData(accountId, 500, 'xxxyyyzzz')
+			await createReportData(accountId, 100, 'xxxyyyzzz')
+			await createReportData(accountId, 200, 'bbbcccaaa')
+			await createReportData(accountId, 300, 'bbbcccaaa')
 		}
 
 		run()
