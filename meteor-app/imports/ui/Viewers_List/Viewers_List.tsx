@@ -14,7 +14,7 @@ export const Viewers_List = () => {
 	}, [])
 
 	return (
-		<div className='container p-6'>
+		<div className='container p-6 bg-gray-50'>
 			<h1 className="font-sans text-xl font-bold">Viewers:</h1>
       <table className="table-auto">
         <thead>
