@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useState, useContext } from 'react';
+
+import React, { useEffect, useState, useContext } from 'react';
 import {useParams} from 'react-router-dom';
 import { Button } from '../components/buttons';
 import { UserContext } from '/imports/api/contexts/userContext';
@@ -12,25 +13,26 @@ export const Report_View = () => {
   const [skipLine, setSkipLine] = useState(null)
   const { viewerId } = useContext(UserContext)
 
-	const makeReport = () => {	
+	useEffect(() => {
 		Meteor.call('Compose_Report', id, (error : Error, result : ReportStructure) => {
 			if(error) console.log(error)
 			if(result) {console.log(result); setReport(result)}
 		})
-	}
+	}, [])
 
   return (
-    <div className='container p-6'>
-      <h2 className="text-xl font-bold">{report?.name}</h2>
+    <div className='h-screen p-6 bg-gray-100'>
 
-			<Button onClick={makeReport} text="Make Report" color="indigo"/>
+      <h2 className="mb-5 text-md font-bold">{report?.name}</h2>
 
 			<div>
 
 				{report && report.tables.map((table) => {
-					return <div key={table.id} className="my-10 p-4 bg-indigo-50 rounded">
+					return <div key={table.id} className="mb-8 p-4 bg-white rounded filter drop-shadow-md">
 
-						<p className="text-xl font-medium">{table.title}</p>
+						<div className="flex justify-between">
+							<p className="text-md font-medium mb-3">{table.title}</p>
+						</div>
 
 						<div>
 
