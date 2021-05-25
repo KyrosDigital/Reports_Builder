@@ -97,7 +97,7 @@ export const seedUserData = () => {
 			return new Promise((resolve, reject) => {
 				const newObjectId = Report_Data.insert({
 					account_id: account_id,
-					collectionName: 'Transactions',
+					collection_name: 'Transactions',
 					viewer_id: viewer_id,
 					price: price
 				})

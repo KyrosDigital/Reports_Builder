@@ -21,9 +21,9 @@ Meteor.methods({
 	*/
 	Fetch_Collection_Names: function() {
 		let distinct = _.uniq(Report_Data.find({}, {
-			sort: {collectionName: 1}, fields: {collectionName: 1}
+			sort: { collection_name: 1 }, fields: { collection_name: 1 }
 		}).fetch().map(function(x) {
-				return x.collectionName;
+			return x.collection_name;
 		}), true);
 	return distinct
 	},
@@ -72,12 +72,12 @@ Meteor.methods({
 			if (report.public || user.role === 'Editor') {
         return Report_Data.find({
 					account_id: user.account_id,
-          collectionName: collection 
+					collection_name: collection
         }).fetch()
       } else { // must be viewer if not editor. Will need to change if more roles are added
         return Report_Data.find({
 					account_id: user.account_id,
-          collectionName: collection,
+					collection_name: collection,
 					$or: [{ viewer_id: user.viewer_id }, { viewer_id: { $exists: false } }]
         }).fetch()
 			}

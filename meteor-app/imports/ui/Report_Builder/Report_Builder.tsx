@@ -65,9 +65,9 @@ export const Report_Builder = () => {
 		});
 	}
 
-	const setCollectionForTable = (tableId: string, collectionName: string) => {
+	const setCollectionForTable = (tableId: string, collection_name: string) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
-		reportStructure.tables[tableIndex].collection = collectionName
+		reportStructure.tables[tableIndex].collection = collection_name
 		setReportStructure(prevState => {
 			return { ...prevState, tables: reportStructure.tables }
 		});
