@@ -78,17 +78,16 @@ Meteor.methods({
 		const performQuery = (collection: string) => {
       if (report.public || role === 'Editor') {
         return Report_Data.find({
-					accountId: account_id,
+					account_id: account_id,
           collectionName: collection 
         }).fetch()
       } else { // must be viewer if not editor. Will need to change if more roles are added
         return Report_Data.find({
-					accountId: account_id,
+					account_id: account_id,
           collectionName: collection,
 					$or: [{ viewer_id: viewer_id }, { viewer_id: { $exists: false } }]
         }).fetch()
-      }
-      
+			}
 		}
 
 		// generates cells, for a given row, if table is collection driven
@@ -114,6 +113,7 @@ Meteor.methods({
 			// if type is "static", the rows should already be defined
 			if(table.type === 'collection') {
 				const collection = performQuery(table.collection)
+
 				return collection.map((document: ReportData) => ({
 					id: uuidv4(),
 					cells: generateCells(table.columns, document)
