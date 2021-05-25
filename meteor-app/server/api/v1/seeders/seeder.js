@@ -93,14 +93,15 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createReportData = (account_id, price, viewer_id, date) => {
+		const createReportData = (account_id, price, viewer_id, date, commission) => {
 			return new Promise((resolve, reject) => {
 				const newObjectId = Report_Data.insert({
 					account_id: account_id,
 					collection_name: 'Transactions',
 					viewer_id: viewer_id,
 					price: price,
-					date: date
+					date: date,
+					commission: commission
 				})
 
 				if (newObjectId) {
@@ -118,10 +119,10 @@ export const seedUserData = () => {
 			await createEditor(account_id, 'NathanJean', 'nathan@c2s.com', 'Nate', 'Jean')
 			await createViewers(account_id, 'xxxyyyzzz', 'CraigGeers', 'craig@c2s.com', 'Craig', 'Geers')
 			await createViewers(account_id, 'bbbcccaaa', 'ShelleyFrody', 'shelly@c2s.com', 'Shelley', 'Frody')
-			await createReportData(account_id, 500, 'xxxyyyzzz', new Date(2021, 03, 02))
-			await createReportData(account_id, 100, 'xxxyyyzzz', new Date(2021, 03, 01))
-			await createReportData(account_id, 200, 'bbbcccaaa', new Date(2021, 04, 01))
-			await createReportData(account_id, 300, 'bbbcccaaa', new Date(2021, 04, 02))
+			await createReportData(account_id, 500, 'xxxyyyzzz', new Date(2021, 03, 02), .5)
+			await createReportData(account_id, 100, 'xxxyyyzzz', new Date(2021, 03, 01), .1)
+			await createReportData(account_id, 200, 'bbbcccaaa', new Date(2021, 04, 01), .25)
+			await createReportData(account_id, 300, 'bbbcccaaa', new Date(2021, 04, 02), 1)
 		}
 
 		run()
