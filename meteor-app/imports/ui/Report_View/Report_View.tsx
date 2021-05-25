@@ -11,7 +11,7 @@ export const Report_View = () => {
 
   const [report, setReport] = useState(null)
   const [skipLine, setSkipLine] = useState(null)
-  const { viewerId } = useContext(UserContext)
+	const { viewer_id } = useContext(UserContext)
 
 	useEffect(() => {
 		Meteor.call('Compose_Report', id, (error : Error, result : ReportStructure) => {
