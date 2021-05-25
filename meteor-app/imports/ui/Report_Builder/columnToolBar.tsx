@@ -27,10 +27,11 @@ export const ColumnToolBar = ({
 				// TODO:
 				const query = Report_Data.findOne({
 					// "accountId" : "60958c98857a7b14acb156d9", TODO:
-					"collectionName" : value.collectionName})
+					"collection_name": value.collection_name
+				})
 				return {
 					char: value.key, 
-					collectionName: value.collectionName,
+					collection_name: value.collection_name,
 					keys: query ? Object.keys(query) : [],
 					selectedKey: value.property,
 					queryModifier: value.queryModifier
@@ -54,7 +55,7 @@ export const ColumnToolBar = ({
 		})
 		Array.from(formulaString).forEach(char => {
 			if(alphabet.includes(char) && formulaVariables.filter(variable => variable.char === char).length === 0) {
-				setFormulaVariables(oldArray => [...oldArray, {char: char, collectionName: null, keys: [], slectedKey: null, queryModifier: null}]);
+				setFormulaVariables(oldArray => [...oldArray, { char: char, collection_name: null, keys: [], slectedKey: null, queryModifier: null }]);
 			}
 		})
 
@@ -67,25 +68,27 @@ export const ColumnToolBar = ({
 				key: variable.char,
 				type: 'query', // TODO:
 				operation: 'sum', // TODO: 
-				collectionName: variable.collectionName || null,
+				collection_name: variable.collection_name || null,
 				queryModifier: variable.queryModifier,
 				// TODO:
 				query: {
 					// "accountId": "60958c98857a7b14acb156d9", // TODO:
-					"collectionName": variable.collectionName}, 
+					"collection_name": variable.collection_name
+				},
 				property: variable.selectedKey || null
 			}
 		})
 		setFormulaValues(values)
 	}, [formulaVariables])
 
-	const handleSelectCollectionForVariable = (collectionName, i) => {
+	const handleSelectCollectionForVariable = (collection_name, i) => {
 		// TODO: 
 		const query = Report_Data.findOne({
 			// "accountId" : "60958c98857a7b14acb156d9", TODO:
-			"collectionName" : collectionName})
+			"collection_name": collection_name
+		})
 		setFormulaVariables(prevState => {
-			prevState[i].collectionName = collectionName
+			prevState[i].collection_name = collection_name
 			prevState[i].keys = Object.keys(query)
 			return [...prevState]
 		});
@@ -176,13 +179,13 @@ export const ColumnToolBar = ({
 			{formulaVariables.map((variable, i) => {
 
 				let label = `${variable.char}`
-				if(variable.collectionName) label = `${variable.char} = ${variable.collectionName}`
-				if(variable.selectedKey) label = `${variable.char} = ${variable.collectionName}.${variable.selectedKey}`
+				if (variable.collection_name) label = `${variable.char} = ${variable.collection_name}`
+				if (variable.selectedKey) label = `${variable.char} = ${variable.collection_name}.${variable.selectedKey}`
 
 				return <div className="mb-4" key={i}>
 					<Label text={label} color={'indigo'}/>
-					{!variable.collectionName && userCollections.map((collectionName, y) => {
-						return <Button key={y} onClick={() => handleSelectCollectionForVariable(collectionName, i)} text={collectionName} color="green"/>
+					{!variable.collection_name && userCollections.map((collection_name, y) => {
+						return <Button key={y} onClick={() => handleSelectCollectionForVariable(collection_name, i)} text={collection_name} color="green" />
 					})}
 					{!variable.selectedKey && variable.keys.map((key, x) => {
 						return <Button key={x} onClick={() => handleSelectedKey(key, i)} text={key} color="green"/>

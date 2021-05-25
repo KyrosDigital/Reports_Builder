@@ -3,54 +3,55 @@ import { Meteor } from "meteor/meteor"
 import { Client_Accounts, Report_Data } from "/imports/api/collections"
 
 export const seedUserData = () => {
-	if(Meteor.users.find().count() === 0) {
+	if (Meteor.users.find().count() === 0) {
 
 		const jwt = require('jsonwebtoken')
 
-		const createAccount = () => {
+		const createAccount = (accountName) => {
 			return new Promise((resolve, reject) => {
 
 				const account = {
-					name: 'City2Shore',
+					name: accountName,
 					created_at: new Date(),
 					updated_at: null,
 				}
 
 				account.jwt = jwt.sign(account, Meteor.settings.private.jwt_secret);
 
-				const accountId = Client_Accounts.insert(account)
+				const account_id = Client_Accounts.insert(account)
 
-				if(accountId) {
-					console.log(`Seeder - Account created: ${accountId}`)
-					resolve(accountId)
+				if (account_id) {
+					console.log(`Seeder - Account created: ${account_id}`)
+					resolve(account_id)
 				} else {
 					reject('Failed to create Account!!')
 				}
 			})
 		}
 
-		const createEditor = (accountId) => {
+		const createEditor = (account_id, username, email, first_name, last_name) => {
 			return new Promise((resolve, reject) => {
 				const newUserId = Accounts.createUser({
-					username: 'NathanJean',
-					email: 'nathan@c2s.com',
+					username: username,
+					email: email,
 					password: 'password',
 					profile: {
-						first_name: 'Nathan',
-						last_name: 'Jean',
-						accountId: accountId
+						first_name: first_name,
+						last_name: last_name,
+						account_id: account_id,
+						viewer_id: null
 					}
 				})
 
-				if(newUserId) {
+				if (newUserId) {
 					console.log(`Seeder - Editor user created: ${newUserId}`)
 					resolve(newUserId)
 				} else {
 					reject('Failed to create Editor user!!')
 				}
-				
+
 			}).then(userId => {
-				if(userId) {
+				if (userId) {
 					Roles.addUsersToRoles(userId, 'Editor')
 					return userId
 				}
@@ -60,29 +61,29 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createViewers = (accountId) => {
+		const createViewers = (account_id, viewer_id, username, email, first_name, last_name) => {
 			return new Promise((resolve, reject) => {
 				const newUserId = Accounts.createUser({
-					username: 'CraigGeers',
-					email: 'craig@c2s.com',
+					username: username,
+					email: email,
 					password: 'password',
 					profile: {
-						first_name: 'Craig',
-						last_name: 'Geers',
-						agentId: 'xxxyyyzzz',
-						accountId: accountId,
+						first_name: first_name,
+						last_name: last_name,
+						account_id: account_id,
+						viewer_id: viewer_id
 					}
 				})
 
-				if(newUserId) {
+				if (newUserId) {
 					console.log(`Seeder - View user created: ${newUserId}`)
 					resolve(newUserId)
 				} else {
 					reject('Failed to create Viewer user!!')
 				}
-				
+
 			}).then(userId => {
-				if(userId) {
+				if (userId) {
 					Roles.addUsersToRoles(userId, 'Viewer')
 					return userId
 				}
@@ -92,30 +93,34 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createReportData = (accountId) => {
+		const createReportData = (account_id, price, viewer_id) => {
 			return new Promise((resolve, reject) => {
 				const newObjectId = Report_Data.insert({
-					accountId: accountId,
-					collectionName: 'Transactions',
-					agentId: 'xxxyyyzzz',
-					price: 1000.00
+					account_id: account_id,
+					collection_name: 'Transactions',
+					viewer_id: viewer_id,
+					price: price
 				})
 
-				if(newObjectId) {
+				if (newObjectId) {
 					console.log(`Seeder - Report Data created: ${newObjectId}`)
 					resolve(newObjectId)
 				} else {
-					reject('Failed to create Viewer user!!')
+					reject('Failed to create Report_Data!!')
 				}
 			})
 		}
 
 
 		const run = async () => {
-			const accountId = await createAccount()
-			await createEditor(accountId)
-			await createViewers(accountId)
-			await createReportData(accountId)
+			const account_id = await createAccount('City2Shore')
+			await createEditor(account_id, 'NathanJean', 'nathan@c2s.com', 'Nate', 'Jean')
+			await createViewers(account_id, 'xxxyyyzzz', 'CraigGeers', 'craig@c2s.com', 'Craig', 'Geers')
+			await createViewers(account_id, 'bbbcccaaa', 'ShelleyFrody', 'shelly@c2s.com', 'Shelley', 'Frody')
+			await createReportData(account_id, 500, 'xxxyyyzzz')
+			await createReportData(account_id, 100, 'xxxyyyzzz')
+			await createReportData(account_id, 200, 'bbbcccaaa')
+			await createReportData(account_id, 300, 'bbbcccaaa')
 		}
 
 		run()

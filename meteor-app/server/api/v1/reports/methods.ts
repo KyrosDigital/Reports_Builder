@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
 import { ReportStructure, ReportData, Table, TableRow, TableColumn, FormulaValue } from '../../../../imports/api/types/reports'
+import { getUserDetails } from "./functions";
 
 Meteor.methods({
 
@@ -20,9 +21,9 @@ Meteor.methods({
 	*/
 	Fetch_Collection_Names: function() {
 		let distinct = _.uniq(Report_Data.find({}, {
-			sort: {collectionName: 1}, fields: {collectionName: 1}
+			sort: { collection_name: 1 }, fields: { collection_name: 1 }
 		}).fetch().map(function(x) {
-				return x.collectionName;
+			return x.collection_name;
 		}), true);
 	return distinct
 	},
@@ -58,6 +59,8 @@ Meteor.methods({
 
 	Compose_Report: function(reportId: string) {
 
+		let user = getUserDetails(Meteor.user())
+
 		let report: ReportStructure | null | undefined = null;
 
 		const setReportToDisplay = () => {
@@ -66,10 +69,18 @@ Meteor.methods({
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
-			return Report_Data.find({
-				// accountId: '60958c98857a7b14acb156d9', // TODO:
-				collectionName: collection,
-			}).fetch()
+			if (report.public || user.role === 'Editor') {
+        return Report_Data.find({
+					account_id: user.account_id,
+					collection_name: collection
+        }).fetch()
+      } else { // must be viewer if not editor. Will need to change if more roles are added
+        return Report_Data.find({
+					account_id: user.account_id,
+					collection_name: collection,
+					$or: [{ viewer_id: user.viewer_id }, { viewer_id: { $exists: false } }]
+        }).fetch()
+			}
 		}
 
 		// generates cells, for a given row, if table is collection driven
@@ -95,6 +106,7 @@ Meteor.methods({
 			// if type is "static", the rows should already be defined
 			if(table.type === 'collection') {
 				const collection = performQuery(table.collection)
+
 				return collection.map((document: ReportData) => ({
 					id: uuidv4(),
 					cells: generateCells(table.columns, document)

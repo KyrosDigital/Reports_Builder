@@ -3,6 +3,8 @@ export interface ReportStructure {
 	name: string;
 	tables: Array<Table>; // all the tables within a report
 	formulas: Array<Formula>; // the formulas to process when viewing a report
+	public: boolean;	// makes all tables in report public
+	permissions: Array<string>; // These are the permissable tags for viewers
 }
 export interface Table {
 	id: string; // unique id of the table within a report
@@ -44,7 +46,7 @@ export interface FormulaValue {
 	key: string; // points to a position in the formula, id like string xxxxxxxxxxxxxxxxxx
 	type: string; // query - "a mongo query", query_count - "a number of objects from a query", pointer - 'grabs the value of another cell or field in the table'
 	operation: string; // sum, min, max, mean - "math.sum, math.min, ..."
-	collectionName: string; // user defined collection, used for display purposes
+	collection_name: string; // user defined collection, used for display purposes
 	queryModifier?: string; // a modifier for a query, selected from the collection that drives the table
 	query: FormulaQuery; // a json formatted query object for slamming into mongo.find().fetch()
 	property: string; // the property we want to use, when fetching objects in a collection
@@ -58,8 +60,9 @@ export interface FormulaQuery {
 }
 
 export interface ReportData {
-  _id: string | undefined;
-	collectionName: string;
+	_id: string | undefined;
+	collection_name: string;
+	viewer_id?: string;
 	[key: string]: string | number | Object | null | undefined;
 
 }

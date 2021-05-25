@@ -9,15 +9,15 @@
     "build:css": "tailwind build styles/global.css -o client/tailwind.css"
   },
   "dependencies": {
-    "@babel/runtime": "^7.11.2",
+    "@babel/runtime": "^7.14.0",
     "bcrypt": "^5.0.1",
     "content-type": "^1.0.4",
     "jsonwebtoken": "^8.5.1",
     "mathjs": "^9.3.2",
     "meteor-node-stubs": "^1.0.1",
     "raw-body": "^2.4.1",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "react-hot-toast": "^1.0.2",
     "react-icons": "^4.2.0",
     "react-router-dom": "^5.2.0",

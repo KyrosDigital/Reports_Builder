@@ -45,7 +45,13 @@ WebApp.connectHandlers.use('/v1/viewers/create', async (req, res) => {
 		res.writeHead(400)
 		res.end('invalid Request - Missing "password: string"')
 		return
-	}
+  }
+  
+  if(!json.viewer_id) {
+    res.writeHead(400)
+		res.end('invalid Request - Missing "viewer_id: string"')
+		return
+  }
 
 	if(!json.profile) {
 		res.writeHead(400)

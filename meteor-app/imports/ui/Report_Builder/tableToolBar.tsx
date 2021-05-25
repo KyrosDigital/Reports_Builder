@@ -8,6 +8,11 @@ export const TableToolBar = ({
 	addColumnToTable, addRowToTable, deleteTable
 }) => {
 
+  
+  
+
+  
+
 	return (
 		<>
 			{/* Table type */}
@@ -30,9 +35,9 @@ export const TableToolBar = ({
 			{table.type === 'collection' && (table.collection.length === 0) && 
 				<div className="mb-4">
 					<Label text={`Choose Collection:`} color={'indigo'}/>
-					{table.type === 'collection' && userCollections.map((collectionName, i) => {
-						return <Button key={i} onClick={() => setCollectionForTable(table.id, collectionName)} 
-							text={collectionName} color="yellow"
+				{table.type === 'collection' && userCollections.map((collection_name, i) => {
+					return <Button key={i} onClick={() => setCollectionForTable(table.id, collection_name)}
+						text={collection_name} color="yellow"
 						/>
 					})}
 				</div>
@@ -54,8 +59,11 @@ export const TableToolBar = ({
 					{table.type === 'static' && 
 						<Button onClick={() => addRowToTable(table.id)} text="+ Row" color="green"/>
 					}
+
+          
 				</div>
 			</div>
+      
 
 			{/* delete table */}
 			<Button onClick={() => deleteTable(table.id)} text="Delete table" color="red"/>
