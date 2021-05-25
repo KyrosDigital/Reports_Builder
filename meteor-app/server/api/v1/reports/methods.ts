@@ -32,8 +32,10 @@ Meteor.methods({
 		Used to create a new report, or to update one
 	*/
 	Upsert_Report: function(report: ReportStructure) {
+		const user = getUserDetails(Meteor.user())
 		let action = null;
 		if(!report._id) {
+			report.account_id = user.account_id // set the account_id
 			action = Report_Structures.insert(report)
 			console.log('Created report', action)
 			return Report_Structures.findOne({_id: action})

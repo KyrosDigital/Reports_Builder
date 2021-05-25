@@ -1,5 +1,6 @@
 export interface ReportStructure {
 	_id: string | null | undefined; // the mongoId of the report object
+	account_id: string; // the account the report belongs to
 	name: string;
 	tables: Array<Table>; // all the tables within a report
 	formulas: Array<Formula>; // the formulas to process when viewing a report
