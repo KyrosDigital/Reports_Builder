@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import React, { useEffect, useState, useContext } from 'react';
-import {useParams} from 'react-router-dom';
-import { Button } from '../components/buttons';
+import { useParams } from 'react-router-dom';
 import { UserContext } from '/imports/api/contexts/userContext';
 import { ReportStructure } from '/imports/api/types/reports';
 
@@ -10,7 +9,7 @@ export const Report_View = () => {
 	const { id } = useParams()
 
   const [report, setReport] = useState(null)
-  const [skipLine, setSkipLine] = useState(null)
+
 	const { viewer_id } = useContext(UserContext)
 
 	useEffect(() => {
