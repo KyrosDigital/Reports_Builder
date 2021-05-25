@@ -5,6 +5,7 @@ import math from 'mathjs'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
 import { ReportStructure, ReportData, Table, TableRow, TableColumn, FormulaValue } from '../../../../imports/api/types/reports'
 import { Roles } from 'meteor/alanning:roles'
+import { getUserDetails } from "./functions";
 
 Meteor.methods({
 
@@ -59,14 +60,7 @@ Meteor.methods({
 
 	Compose_Report: function(reportId: string) {
 
-    let user = Meteor.user()
-		let viewer_id = null, account_id = null;
-		if (user) {
-			viewer_id = user['profile']['viewer_id']
-			account_id = user['profile']['account_id']
-		}
-    let role = Roles.getRolesForUser(this.userId)
-    role = role[0]
+		let user = getUserDetails(Meteor.user())
 
 		let report: ReportStructure | null | undefined = null;
 
@@ -76,16 +70,16 @@ Meteor.methods({
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
-      if (report.public || role === 'Editor') {
+			if (report.public || user.role === 'Editor') {
         return Report_Data.find({
-					account_id: account_id,
+					account_id: user.account_id,
           collectionName: collection 
         }).fetch()
       } else { // must be viewer if not editor. Will need to change if more roles are added
         return Report_Data.find({
-					account_id: account_id,
+					account_id: user.account_id,
           collectionName: collection,
-					$or: [{ viewer_id: viewer_id }, { viewer_id: { $exists: false } }]
+					$or: [{ viewer_id: user.viewer_id }, { viewer_id: { $exists: false } }]
         }).fetch()
 			}
 		}
