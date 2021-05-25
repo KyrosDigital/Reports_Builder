@@ -7,11 +7,12 @@ export interface Account {
 export interface Viewer {
 	_id: string;
 	username: string;
-  emails: Array<ViewerEmail>;
+	emails: Array<ViewerEmail>;
+	tags: Array<string>;
 	profile: {
 		first_name: string;
-    last_name: string;
-    viewer_id: string;
+		last_name: string;
+		viewer_id: string;
 		[key: string]: string | number | Object | null | undefined;
 	}
 }

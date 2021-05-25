@@ -3,7 +3,7 @@ import { Meteor } from "meteor/meteor"
 import { Client_Accounts, Report_Data } from "/imports/api/collections"
 
 export const seedUserData = () => {
-	if(Meteor.users.find().count() === 0) {
+	if (Meteor.users.find().count() === 0) {
 
 		const jwt = require('jsonwebtoken')
 
@@ -20,7 +20,7 @@ export const seedUserData = () => {
 
 				const accountId = Client_Accounts.insert(account)
 
-				if(accountId) {
+				if (accountId) {
 					console.log(`Seeder - Account created: ${accountId}`)
 					resolve(accountId)
 				} else {
@@ -38,20 +38,20 @@ export const seedUserData = () => {
 					profile: {
 						first_name: 'Nathan',
 						last_name: 'Jean',
-            accountId: accountId,
-            viewer_id: ''
+						accountId: accountId,
+						viewer_id: ''
 					}
 				})
 
-				if(newUserId) {
+				if (newUserId) {
 					console.log(`Seeder - Editor user created: ${newUserId}`)
 					resolve(newUserId)
 				} else {
 					reject('Failed to create Editor user!!')
 				}
-				
+
 			}).then(userId => {
-				if(userId) {
+				if (userId) {
 					Roles.addUsersToRoles(userId, 'Editor')
 					return userId
 				}
@@ -66,25 +66,25 @@ export const seedUserData = () => {
 				const newUserId = Accounts.createUser({
 					username: 'CraigGeers',
 					email: 'craig@c2s.com',
-          password: 'password',
+					password: 'password',
 					profile: {
 						first_name: 'Craig',
 						last_name: 'Geers',
 						agentId: 'xxxyyyzzz',
-            accountId: accountId,
-            viewer_id: '2',
+						accountId: accountId,
+						viewer_id: '2',
 					}
 				})
 
-				if(newUserId) {
+				if (newUserId) {
 					console.log(`Seeder - View user created: ${newUserId}`)
 					resolve(newUserId)
 				} else {
 					reject('Failed to create Viewer user!!')
 				}
-				
+
 			}).then(userId => {
-				if(userId) {
+				if (userId) {
 					Roles.addUsersToRoles(userId, 'Viewer')
 					return userId
 				}
@@ -98,62 +98,62 @@ export const seedUserData = () => {
 			return new Promise((resolve, reject) => {
 				const newObjectId = Report_Data.insert({
 					accountId: accountId,
-          collectionName: 'Transactions',
-          viewerId: '2',
+					collectionName: 'Transactions',
+					viewer_id: '2',
 					agentId: 'xxxyyyzzz',
 					price: 1500.00
 				})
 
-				if(newObjectId) {
+				if (newObjectId) {
 					console.log(`Seeder - Report Data created: ${newObjectId}`)
 					resolve(newObjectId)
 				} else {
 					reject('Failed to create Viewer user!!')
-        }
+				}
 
-        newObjectId = Report_Data.insert({
+				newObjectId = Report_Data.insert({
 					accountId: accountId,
-          collectionName: 'Transactions',
-          viewerId: '3',
+					collectionName: 'Transactions',
+					viewer_id: '3',
 					agentId: 'xxxyyyzzz',
 					price: 700.00
 				})
 
-				if(newObjectId) {
+				if (newObjectId) {
 					console.log(`Seeder - Report Data created: ${newObjectId}`)
 					resolve(newObjectId)
 				} else {
 					reject('Failed to create Viewer user!!')
-        }
-        
-        const newObjectId2 = Report_Data.insert({
+				}
+
+				const newObjectId2 = Report_Data.insert({
 					accountId: accountId,
-          collectionName: 'Transactions',
-          viewerId: 'xxxyyyzzz',
+					collectionName: 'Transactions',
+					viewer_id: 'xxxyyyzzz',
 					agentId: '2',
 					price: 750.00
 				})
 
-				if(newObjectId2) {
+				if (newObjectId2) {
 					console.log(`Seeder - Report Data created: ${newObjectId2}`)
 					resolve(newObjectId2)
 				} else {
 					reject('Failed to create Viewer user!!')
-        }
+				}
 
-        newObjectId2 = Report_Data.insert({
+				newObjectId2 = Report_Data.insert({
 					accountId: accountId,
 					collectionName: 'Transactions',
 					agentId: '2',
 					price: 1200.00
 				})
 
-				if(newObjectId2) {
+				if (newObjectId2) {
 					console.log(`Seeder - Report Data created: ${newObjectId2}`)
 					resolve(newObjectId2)
 				} else {
 					reject('Failed to create Viewer user!!')
-        }
+				}
 			})
 		}
 
