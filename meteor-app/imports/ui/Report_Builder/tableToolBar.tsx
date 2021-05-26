@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '../components/buttons'
 import { DataPicker } from '../components/dataPicker';
 import { Input } from '../components/inputs'
 import { Label } from '../components/labels'
 
 export const TableToolBar = ({
-	table, userCollections, setCollectionForTable, handleTableTitleUpdate,
+	table, setCollectionForTable, handleTableTitleUpdate,
 	handleTableSort, addColumnToTable, addRowToTable, deleteTable
 }) => {
 

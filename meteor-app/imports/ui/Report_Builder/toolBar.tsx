@@ -21,8 +21,7 @@ export const ToolBar = ({
 				<TableToolBar 
 					table={table}
 					handleTableTitleUpdate={handleTableTitleUpdate}
-				handleTableSort={handleTableSort}
-					userCollections={userCollections}
+					handleTableSort={handleTableSort}
 					setCollectionForTable={setCollectionForTable}
 					addColumnToTable={addColumnToTable}
 					addRowToTable={addRowToTable}

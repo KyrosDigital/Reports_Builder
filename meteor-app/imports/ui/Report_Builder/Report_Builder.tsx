@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
+import { ToggleSwitch } from '../components/toggleSwitch'
 import useSubscription from '../../api/hooks'
 import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
@@ -273,25 +274,29 @@ export const Report_Builder = () => {
 				/>
 			}
 
-			<div className="flex justify-between mx-2 mb-5 w-9/12">
+			<div className="flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
+				<ToggleSwitch enabled={!reportStructure.public} setEnabled={() => handleAccess()} />
+				<Button onClick={() => saveReport()} text="Save Report" color="blue" />
+			</div>
+
+			<div className="flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<Input placeholder={'Enter Report Name'} label={'Report Name'} value={reportStructure.name} flex={'flex'}
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
-
-				<div className="ml-6 mr-4">
-					<Button onClick={() => handleAccess()} text={reportStructure.public ? "Make Tables Private" : "Make Tables Public"} color="blue" />
+				
+				<div className="ml-4 ">
 					<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green" />
 					<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green" />
-					<Button onClick={() => saveReport()} text="Save Report" color="blue" />
 				</div>
+
 			</div>
 
 
-			<div className="flex-col w-9/12 pr-1 overflow-auto">
+			<div className="flex-col w-9/12  overflow-auto">
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (
-					<div key={table.id} className="mb-8 mx-2 p-4 bg-white rounded filter drop-shadow-md">
+					<div key={table.id} className="mb-8 p-4 bg-white rounded filter drop-shadow-md">
 
 						<div className="flex justify-between">
 							<p className="text-md font-medium mb-3">{table.title}</p>
