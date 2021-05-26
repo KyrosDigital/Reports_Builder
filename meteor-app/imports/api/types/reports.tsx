@@ -4,7 +4,7 @@ export interface ReportStructure {
 	tables: Array<Table>; // all the tables within a report
 	formulas: Array<Formula>; // the formulas to process when viewing a report
 	public: boolean;	// makes all tables in report public
-	permissions: Array<string>; // These are the permissable tags for viewers
+	tags: Array<string>; // These are the permissable tags for viewers
 }
 export interface Table {
 	id: string; // unique id of the table within a report

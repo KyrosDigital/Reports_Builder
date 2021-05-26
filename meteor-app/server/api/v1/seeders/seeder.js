@@ -14,6 +14,7 @@ export const seedUserData = () => {
 					name: 'City2Shore',
 					created_at: new Date(),
 					updated_at: null,
+					tags: ['agent', 'manager']
 				}
 
 				account.jwt = jwt.sign(account, Meteor.settings.private.jwt_secret);
@@ -39,6 +40,7 @@ export const seedUserData = () => {
 						first_name: 'Nathan',
 						last_name: 'Jean',
 						accountId: accountId,
+						tags: ['manager'],
 						viewer_id: ''
 					}
 				})
@@ -72,6 +74,7 @@ export const seedUserData = () => {
 						last_name: 'Geers',
 						agentId: 'xxxyyyzzz',
 						accountId: accountId,
+						tags: ['agent'],
 						viewer_id: '2',
 					}
 				})

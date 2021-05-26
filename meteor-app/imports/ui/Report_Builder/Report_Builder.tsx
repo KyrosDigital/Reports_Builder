@@ -16,13 +16,14 @@ export const Report_Builder = () => {
 	const loading1 = useSubscription('ReportData')
 	const loading2 = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false })
+	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false, tags: [] })
 	const [cellSelected, setCellSelected] = useState({ tableId: '', cellId: '' })
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
 	const [selectedTable, setSelectedTable] = useState(null)
 	const [selectedColumn, setSelectedColumn] = useState(null)
 	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
+	const [tags, setTags] = useState([])
 
 	useEffect(() => {
 		if (!loading1 && !loading2) {
@@ -240,6 +241,26 @@ export const Report_Builder = () => {
 		})
 	}
 
+	const add_tag = (el) => {
+		const updatedTags = reportStructure.tags
+		updatedTags.push(el)
+		let index = tags.indexOf(el)
+		let temp_tags = tags
+		temp_tags.splice(index, 1)
+		setTags(temp_tags)
+
+		setReportStructure(prevState => {
+			return { ...prevState, tags: updatedTags }
+		});
+	}
+
+	function map_tags(error, result) {
+		if (error) console.log(error)
+		if (result) {
+			setTags(result)
+		}
+	}
+
 	return (
 		<div className='h-screen p-6 bg-gray-100'>
 
@@ -268,14 +289,34 @@ export const Report_Builder = () => {
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
 
+
 				<div className="ml-6 mr-4">
 					<Button onClick={() => handleAccess()} text={reportStructure.public ? "Make Private" : "Make Public"} color="blue" />
 					<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green" />
 					<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green" />
+					<Button onClick={() => {
+						Meteor.call('Get_Tags', (error, result) => map_tags(error, result)); setReportStructure(prevState => {
+							return { ...prevState, tags: [] }
+						})
+					}} text="Set tags" color="blue" />
 					<Button onClick={() => saveReport()} text="Save Report" color="blue" />
+					<div>
+						<h1> Potential Tags: </h1>
+						{tags.map((el, i) => {
+							return <div key={i}>
+								<button onClick={() => add_tag(el)}> {el} </button>
+							</div>
+						})}
+					</div>
 				</div>
-			</div>
 
+			</div>
+			<div>
+				<h2> Implemented viewer tags: </h2>
+				{reportStructure.tags.map((el, i) => {
+					return <p key={i}>{el}</p>
+				})}
+			</div>
 
 			<div className="flex-col w-9/12 pr-1 overflow-auto">
 

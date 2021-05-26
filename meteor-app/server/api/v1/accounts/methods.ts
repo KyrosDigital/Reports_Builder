@@ -35,12 +35,17 @@ Meteor.methods({
 	},
 
 	Get_Tags: function () {
-		// meteor won't let me call Fetch_Account_For_User straight up, but I don't want repeat code
+		// I don't want repeat code, but meteor won't let me call Fetch_Account_For_User 
 		let account;
-		Meteor.call('Fetch_Account_For_User', (error, result) => {
-			if (result) account = result
-		})
-		return account.tags
+		if (this.userId) {
+			const user = Meteor.users.findOne({ _id: this.userId })
+			const accountId = user?.profile.accountId
+			if (accountId) {
+				account = Client_Accounts.findOne({ _id: accountId })
+			}
+			return account?.tags
+		}
+
 	},
 
 	// used in api, retrieves the client account
