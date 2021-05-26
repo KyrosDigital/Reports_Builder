@@ -39,9 +39,9 @@ Meteor.methods({
 		let account;
 		if (this.userId) {
 			const user = Meteor.users.findOne({ _id: this.userId })
-			const accountId = user?.profile.accountId
-			if (accountId) {
-				account = Client_Accounts.findOne({ _id: accountId })
+			const account_id = user?.profile.account_id
+			if (account_id) {
+				account = Client_Accounts.findOne({ _id: account_id })
 			}
 			return account?.tags
 		}

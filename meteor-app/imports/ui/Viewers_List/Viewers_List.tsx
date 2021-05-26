@@ -1,17 +1,22 @@
-import { Meteor } from 'meteor/meteor'
-import React, { useState, useEffect } from 'react'
+import { Meteor } from 'meteor/meteor';
+import { useTracker } from 'meteor/react-meteor-data'
+import React, { useState, useEffect, useContext } from 'react'
 import { Viewer } from '../../api/types/accounts'
+import { UserContext } from '../../api/contexts/userContext';
+
+const usePage = (account_id) => useTracker(() => {
+	const subscription = Meteor.subscribe('AccountViewers')
+	let viewers = Meteor.users.find({ 'profile.account_id': account_id }).fetch()
+	return {
+		viewers,
+		isLoading: !subscription.ready()
+	}
+}, [])
 
 export const Viewers_List = () => {
 
-	const [viewers, setViewers] = useState<Array<Viewer>>([])
-
-	useEffect(() => {
-		Meteor.call("Fetch_Viewers_For_Account", (error: Error, result: Array<Viewer>) => {
-			if (error) console.log(error)
-			if (result) setViewers(result)
-		})
-	}, [])
+	const { account_id } = useContext(UserContext)
+	const { isLoading, viewers } = usePage(account_id)
 
 	return (
 		<div className='container p-6 bg-gray-50'>
@@ -25,7 +30,7 @@ export const Viewers_List = () => {
           </tr>
         </thead>
         <tbody>
-        {viewers.map((viewer, i) => {
+					{!isLoading && viewers.map((viewer, i) => {
           return <tr key={i} className="">
             <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.profile.first_name} {viewer.profile.last_name}</td>
             <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.username}</td>

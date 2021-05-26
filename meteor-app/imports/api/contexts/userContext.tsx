@@ -5,12 +5,13 @@ import { withTracker } from 'meteor/react-meteor-data'
 export const UserContext = createContext({ user: {}, userId: '', role: '', viewer_id: '', tags: [''], isLoggedIn: false })
 
 export const withAccount = withTracker((props) => {
-	let viewer_id = ''
+	let viewer_id = '', account_id
 	let tags = []
 	const user = Meteor.isServer ? null : Meteor.user()
 	if (user) {
 		viewer_id = user.profile.viewer_id
 		tags = user.profile.tags
+		account_id = user.profile.account_id
 	}
 	const userId = Meteor.isServer ? null : Meteor.userId()
 	const roleAssignment = Meteor.roleAssignment.findOne({ 'user._id': userId })
@@ -23,6 +24,7 @@ export const withAccount = withTracker((props) => {
 		userId,
 		role,
 		viewer_id,
+		account_id,
 		tags,
 		isLoggedIn: !!userId
 	}

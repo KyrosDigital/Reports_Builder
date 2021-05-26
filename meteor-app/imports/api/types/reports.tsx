@@ -1,5 +1,6 @@
 export interface ReportStructure {
 	_id: string | null | undefined; // the mongoId of the report object
+	account_id: string; // the account the report belongs to
 	name: string;
 	tables: Array<Table>; // all the tables within a report
 	formulas: Array<Formula>; // the formulas to process when viewing a report
@@ -13,6 +14,7 @@ export interface Table {
 	columns: Array<TableColumn>; // the columns within a table
 	rows: Array<TableRow>; // the rows within a table, if type: collection, rows are generated, if type:static, rows are pre defined by user
 	collection: string; // the collection used if table is collection driven
+	sort_by: string; // defines how the data should be sorted when viewing a report
 }
 export interface TableColumn {
 	id: string; // the uuid of the column within a table
@@ -46,7 +48,7 @@ export interface FormulaValue {
 	key: string; // points to a position in the formula, id like string xxxxxxxxxxxxxxxxxx
 	type: string; // query - "a mongo query", query_count - "a number of objects from a query", pointer - 'grabs the value of another cell or field in the table'
 	operation: string; // sum, min, max, mean - "math.sum, math.min, ..."
-	collectionName: string; // user defined collection, used for display purposes
+	collection_name: string; // user defined collection, used for display purposes
 	queryModifier?: string; // a modifier for a query, selected from the collection that drives the table
 	query: FormulaQuery; // a json formatted query object for slamming into mongo.find().fetch()
 	property: string; // the property we want to use, when fetching objects in a collection
@@ -61,7 +63,11 @@ export interface FormulaQuery {
 
 export interface ReportData {
 	_id: string | undefined;
+<<<<<<< HEAD
 	collectionName: string;
+=======
+	collection_name: string;
+>>>>>>> dev
 	viewer_id?: string;
 	[key: string]: string | number | Object | null | undefined;
 

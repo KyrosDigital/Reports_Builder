@@ -4,12 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 import math from 'mathjs'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
 import { ReportStructure, ReportData, Table, TableRow, TableColumn, FormulaValue } from '../../../../imports/api/types/reports'
-import { Roles } from 'meteor/alanning:roles'
+import { getUserDetails } from "./functions";
 
 Meteor.methods({
 
 	/*
 		Used to create a new report data, from rest API
+		TODO: restrict to account and user roles
 	*/
 	Insert_Report_Data: function(json) {
 		Report_Data.insert({accountId: 'fyS84mmYeNLqDuaSS', ...json})
@@ -17,23 +18,59 @@ Meteor.methods({
 
 	/*
 		Used to fetch distinct collection names belonging to an account
-		TODO: restrict to account and user roles
+		TODO: restrict to user roles
 	*/
 	Fetch_Collection_Names: function() {
-		let distinct = _.uniq(Report_Data.find({}, {
-			sort: {collectionName: 1}, fields: {collectionName: 1}
+		const user = getUserDetails(Meteor.user())
+		let distinct = _.uniq(Report_Data.find({ account_id: user.account_id }, {
+			sort: { collection_name: 1 }, fields: { collection_name: 1 }
 		}).fetch().map(function(x) {
-				return x.collectionName;
+			return x.collection_name;
 		}), true);
 	return distinct
+	},
+
+	/*
+		Used to fetch distinct collection names belonging to an account
+		TODO: restrict to account and user roles
+	*/
+	Fetch_Collection_Keys: function () {
+
+		const user = getUserDetails(Meteor.user())
+
+		let distinctCollections = _.uniq(Report_Data.find({}, {
+			sort: { collection_name: 1 }, fields: { collection_name: 1 }
+		}).fetch().map(function (x) {
+			return x.collection_name;
+		}), true);
+
+		return distinctCollections.map(collection => {
+			let keys = []
+
+			let obj = Report_Data.findOne({ account_id: user.account_id, collection_name: collection })
+
+			_.each(obj, function (val, key) {
+				if (val) {
+					keys.push(key);
+				}
+			});
+
+			return {
+				collection_name: collection,
+				keys: keys
+			}
+		})
+
 	},
 
 	/*
 		Used to create a new report, or to update one
 	*/
 	Upsert_Report: function(report: ReportStructure) {
+		const user = getUserDetails(Meteor.user())
 		let action = null;
 		if(!report._id) {
+			report.account_id = user.account_id // set the account_id
 			action = Report_Structures.insert(report)
 			console.log('Created report', action)
 			return Report_Structures.findOne({_id: action})
@@ -59,33 +96,28 @@ Meteor.methods({
 
 	Compose_Report: function(reportId: string) {
 
-    let user = Meteor.user()
-    let viewer_id = ''
-    if (user) viewer_id = user['profile']['viewer_id']
-    let role = Roles.getRolesForUser(this.userId)
-    role = role[0]
+		let user = getUserDetails(Meteor.user())
 
 		let report: ReportStructure | null | undefined = null;
 
 		const setReportToDisplay = () => {
-			report = Report_Structures.findOne({_id: reportId})
+			report = Report_Structures.findOne({ _id: reportId, account_id: user?.account_id })
 		}
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
-      if (report.public || role === 'Editor') {
+			if (report.public || user.role === 'Editor') {
         return Report_Data.find({
-          // accountId: '60958c98857a7b14acb156d9', // TODO:
-          collectionName: collection 
+					account_id: user.account_id,
+					collection_name: collection
         }).fetch()
       } else { // must be viewer if not editor. Will need to change if more roles are added
         return Report_Data.find({
-          // accountId: '60958c98857a7b14acb156d9', // TODO:
-          collectionName: collection,
-          $or: [{viewerId: viewer_id}, {viewerId: {$exists: false}}]
+					account_id: user.account_id,
+					collection_name: collection,
+					$or: [{ viewer_id: user.viewer_id }, { viewer_id: { $exists: false } }]
         }).fetch()
-      }
-      
+			}
 		}
 
 		// generates cells, for a given row, if table is collection driven
@@ -111,6 +143,7 @@ Meteor.methods({
 			// if type is "static", the rows should already be defined
 			if(table.type === 'collection') {
 				const collection = performQuery(table.collection)
+
 				return collection.map((document: ReportData) => ({
 					id: uuidv4(),
 					cells: generateCells(table.columns, document)
@@ -124,6 +157,17 @@ Meteor.methods({
 				table.rows = <Array<TableRow>> generateRows(table)
 				return table
 			});
+		}
+
+		const sortTables = () => {
+			// run for each table, ensuring each table is sorted
+			report?.tables.forEach((table: Table) => {
+				if (table.sort_by) {
+					const sortedRows = table.rows.sort((a, b) => a.cells.find(c => c.property === table.sort_by)?.propertyValue - b.cells.find(c => c.property === table.sort_by)?.propertyValue)
+					table.rows = sortedRows
+					return table
+				}
+			})
 		}
 
 		const computeFormulas = async () => {
@@ -185,6 +229,8 @@ Meteor.methods({
 
 			createRowsInTable()
 			await computeFormulas()
+
+			await sortTables()
 			// return the mutated report, containing the accurate values to display
 			return report
 		}

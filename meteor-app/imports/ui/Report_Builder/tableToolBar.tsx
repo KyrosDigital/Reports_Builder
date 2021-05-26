@@ -1,20 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '../components/buttons'
+import { DataPicker } from '../components/dataPicker';
 import { Input } from '../components/inputs'
 import { Label } from '../components/labels'
 
 export const TableToolBar = ({
-	table, userCollections, setCollectionForTable, handleTableTitleUpdate,
-	addColumnToTable, addRowToTable, deleteTable
+	table, setCollectionForTable, handleTableTitleUpdate,
+	handleTableSort, addColumnToTable, addRowToTable, deleteTable
 }) => {
 
-  
-  
+	const [toggleDataPicker, setToggleDataPicker] = useState(false)
+	const [target, setTarget] = useState(null)
+	const [collectionOnly, setCollectionOnly] = useState(false)
 
-  
+	const handleDataPicker = (target) => {
+		if (target === 'collection') {
+			setCollectionOnly(true)
+		}
+		setTarget(target)
+		setToggleDataPicker(true)
+	}
+
+	const handleDataPickerResult = (value) => {
+		if (target === 'sort_by') {
+			handleTableSort(table.id, value.key)
+		}
+		if (target === 'collection') {
+			setCollectionForTable(table.id, value.collection_name)
+		}
+		setTarget(null)
+		setCollectionOnly(false)
+	}
 
 	return (
 		<>
+
+			{/* Modal for selecting data */}
+			<DataPicker callback={(value) => handleDataPickerResult(value)} open={toggleDataPicker} setOpen={setToggleDataPicker} collectionOnly={collectionOnly} />
+
 			{/* Table type */}
 			<div className="flex">
 				<Label text={`Table Type:`} color={'indigo'}/>
@@ -32,23 +55,26 @@ export const TableToolBar = ({
 			</div>
 
 			{/* collection table - select collection to drive the table */}
-			{table.type === 'collection' && (table.collection.length === 0) && 
-				<div className="mb-4">
-					<Label text={`Choose Collection:`} color={'indigo'}/>
-					{table.type === 'collection' && userCollections.map((collectionName, i) => {
-						return <Button key={i} onClick={() => setCollectionForTable(table.id, collectionName)} 
-							text={collectionName} color="yellow"
-						/>
-					})}
-				</div>
-			}
+			{table.type === 'collection' && <div className="mb-4">
+				<Input
+					placeholder={'Select Collection'}
+					label={"Choose Collection:"}
+					value={table.collection}
+					onClick={() => handleDataPicker('collection')}
+					disabled={true}
+				/>
+			</div>}
 
-			{table.type === 'collection' && (table.collection.length > 0) &&
-				<div className="flex">
-					<Label text={`Collection Selected:`} color={'indigo'}/>
-					<Label text={table.collection} color={'yellow'}/>
-				</div> 
-			}
+			{/* Sort by */}
+			<div className="mb-4">
+				<Input
+					placeholder={'Enter collection property'}
+					label={"Sort by:"}
+					value={table.sort_by}
+					onClick={() => handleDataPicker('sort_by')}
+					disabled={true}
+				/>
+			</div>
 
 			{/* controls */}
 			<div className="mb-4">

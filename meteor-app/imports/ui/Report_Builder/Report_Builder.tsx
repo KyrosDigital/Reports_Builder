@@ -1,12 +1,13 @@
-import { Meteor } from 'meteor/meteor';
-import React, { useState, useEffect } from 'react';
+import { Meteor } from 'meteor/meteor'
+import React, { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
+import { ToggleSwitch } from '../components/toggleSwitch'
 import useSubscription from '../../api/hooks'
-import { ReportStructure, TableColumn } from '../../api/types/reports';
+import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
 
@@ -16,7 +17,7 @@ export const Report_Builder = () => {
 	const loading1 = useSubscription('ReportData')
 	const loading2 = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false, tags: [] })
+	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false, tags: [''] })
 	const [cellSelected, setCellSelected] = useState({ tableId: '', cellId: '' })
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
@@ -51,7 +52,8 @@ export const Report_Builder = () => {
 			type: type,
 			columns: [{ id: uuidv4(), label: '', property: '', enum: '' }],
 			rows: [],
-			collection: ''
+			collection: '',
+			sort_by: ''
 		}
 		setReportStructure(prevState => {
 			return { ...prevState, tables: [...reportStructure.tables, table] }
@@ -66,9 +68,9 @@ export const Report_Builder = () => {
 		});
 	}
 
-	const setCollectionForTable = (tableId: string, collectionName: string) => {
+	const setCollectionForTable = (tableId: string, collection_name: string) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
-		reportStructure.tables[tableIndex].collection = collectionName
+		reportStructure.tables[tableIndex].collection = collection_name
 		setReportStructure(prevState => {
 			return { ...prevState, tables: reportStructure.tables }
 		});
@@ -178,6 +180,14 @@ export const Report_Builder = () => {
 		});
 	}
 
+	const handleTableSort = (tableId, sortBy) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+		reportStructure.tables[tableIndex].sort_by = sortBy
+		setReportStructure(prevState => {
+			return { ...prevState, tables: reportStructure.tables }
+		});
+	}
+
 	const handleFormulaUpdate = (formula) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === formula.tableId)
 		let existingFormula = reportStructure.formulas.find(each => (each.tableId === formula.tableId && each.columnId === formula.columnId))
@@ -269,6 +279,7 @@ export const Report_Builder = () => {
 				<ToolBar
 					table={selectedTable}
 					handleTableTitleUpdate={handleTableTitleUpdate}
+					handleTableSort={handleTableSort}
 					userCollections={userCollections}
 					setCollectionForTable={setCollectionForTable}
 					deleteTable={deleteTable}
@@ -298,31 +309,30 @@ export const Report_Builder = () => {
 						Meteor.call('Get_Tags', (error, result) => map_tags(error, result)); setReportStructure(prevState => {
 							return { ...prevState, tags: [] }
 						})
-					}} text="Set tags" color="blue" />
+					}} text="Show Potential Tags" color="blue" />
 					<Button onClick={() => saveReport()} text="Save Report" color="blue" />
-					<div>
-						<h1> Potential Tags: </h1>
+				</div>
+
+			</div>
+			<div>
+				<h2 className="text-blue-500 text-base font-semibold"> Potential Tags: </h2>
 						{tags.map((el, i) => {
 							return <div key={i}>
 								<button onClick={() => add_tag(el)}> {el} </button>
 							</div>
 						})}
-					</div>
-				</div>
-
-			</div>
-			<div>
-				<h2> Implemented viewer tags: </h2>
+				<h2 className="text-blue-500 text-base font-semibold"> Implemented viewer tags: </h2>
 				{reportStructure.tags.map((el, i) => {
 					return <p key={i}>{el}</p>
 				})}
 			</div>
 
-			<div className="flex-col w-9/12 pr-1 overflow-auto">
+
+			<div className="flex-col w-9/12  overflow-auto">
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (
-					<div key={table.id} className="mb-8 mx-2 p-4 bg-white rounded filter drop-shadow-md">
+					<div key={table.id} className="mb-8 p-4 bg-white rounded filter drop-shadow-md">
 
 						<div className="flex justify-between">
 							<p className="text-md font-medium mb-3">{table.title}</p>
@@ -337,7 +347,7 @@ export const Report_Builder = () => {
 								{table.columns.map((col, i) => {
 									return <div
 										key={col.id}
-										className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md bg-white cursor-pointer"
+										className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md bg-white text-xs cursor-pointer"
 										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
 										<span>{col.label}</span>
 									</div>
@@ -361,7 +371,7 @@ export const Report_Builder = () => {
 								return <div key={Math.random()} className="flex">
 									{table.columns.map((i) => {
 										return <div key={Math.random()} className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-100 border-dashed rounded-md bg-white">
-											<div className="text-indigo-100">data</div>
+											<div className="text-indigo-100 text-xs">data</div>
 										</div>
 									})}
 								</div>

@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.14.0",
+    "@headlessui/react": "^1.2.0",
     "bcrypt": "^5.0.1",
     "content-type": "^1.0.4",
     "jsonwebtoken": "^8.5.1",
     "mathjs": "^9.3.2",
     "meteor-node-stubs": "^1.0.1",
+    "moment": "^2.29.1",
     "raw-body": "^2.4.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",

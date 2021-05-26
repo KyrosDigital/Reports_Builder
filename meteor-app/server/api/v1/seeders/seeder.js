@@ -7,11 +7,11 @@ export const seedUserData = () => {
 
 		const jwt = require('jsonwebtoken')
 
-		const createAccount = () => {
+		const createAccount = (accountName) => {
 			return new Promise((resolve, reject) => {
 
 				const account = {
-					name: 'City2Shore',
+					name: accountName,
 					created_at: new Date(),
 					updated_at: null,
 					tags: ['agent', 'manager']
@@ -19,29 +19,29 @@ export const seedUserData = () => {
 
 				account.jwt = jwt.sign(account, Meteor.settings.private.jwt_secret);
 
-				const accountId = Client_Accounts.insert(account)
+				const account_id = Client_Accounts.insert(account)
 
-				if (accountId) {
-					console.log(`Seeder - Account created: ${accountId}`)
-					resolve(accountId)
+				if (account_id) {
+					console.log(`Seeder - Account created: ${account_id}`)
+					resolve(account_id)
 				} else {
 					reject('Failed to create Account!!')
 				}
 			})
 		}
 
-		const createEditor = (accountId) => {
+		const createEditor = (account_id, username, email, first_name, last_name) => {
 			return new Promise((resolve, reject) => {
 				const newUserId = Accounts.createUser({
-					username: 'NathanJean',
-					email: 'nathan@c2s.com',
+					username: username,
+					email: email,
 					password: 'password',
 					profile: {
-						first_name: 'Nathan',
-						last_name: 'Jean',
-						accountId: accountId,
+						first_name: first_name,
+						last_name: last_name,
+						account_id: account_id,
 						tags: ['manager'],
-						viewer_id: ''
+						viewer_id: null
 					}
 				})
 
@@ -63,19 +63,18 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createViewers = (accountId) => {
+		const createViewers = (account_id, viewer_id, username, email, first_name, last_name) => {
 			return new Promise((resolve, reject) => {
 				const newUserId = Accounts.createUser({
-					username: 'CraigGeers',
-					email: 'craig@c2s.com',
+					username: username,
+					email: email,
 					password: 'password',
 					profile: {
-						first_name: 'Craig',
-						last_name: 'Geers',
-						agentId: 'xxxyyyzzz',
-						accountId: accountId,
+						first_name: first_name,
+						last_name: last_name,
+						account_id: account_id,
 						tags: ['agent'],
-						viewer_id: '2',
+						viewer_id: viewer_id
 					}
 				})
 
@@ -97,21 +96,17 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createReportData = (accountId) => {
+		const createReportData = (data) => {
 			return new Promise((resolve, reject) => {
 				const newObjectId = Report_Data.insert({
-					accountId: accountId,
-					collectionName: 'Transactions',
-					viewer_id: '2',
-					agentId: 'xxxyyyzzz',
-					price: 1500.00
+					...data
 				})
 
 				if (newObjectId) {
 					console.log(`Seeder - Report Data created: ${newObjectId}`)
 					resolve(newObjectId)
 				} else {
-					reject('Failed to create Viewer user!!')
+					reject('Failed to create Report_Data!!')
 				}
 
 				newObjectId = Report_Data.insert({
@@ -162,10 +157,16 @@ export const seedUserData = () => {
 
 
 		const run = async () => {
-			const accountId = await createAccount()
-			await createEditor(accountId)
-			await createViewers(accountId)
-			await createReportData(accountId)
+			const account_id = await createAccount('City2Shore')
+			await createEditor(account_id, 'NathanJean', 'nathan@c2s.com', 'Nate', 'Jean')
+			await createViewers(account_id, 'xxxyyyzzz', 'CraigGeers', 'craig@c2s.com', 'Craig', 'Geers')
+			await createViewers(account_id, 'bbbcccaaa', 'ShelleyFrody', 'shelly@c2s.com', 'Shelley', 'Frody')
+			await createReportData({ account_id, collection_name: 'Transactions', price: 500, viewer_id: 'xxxyyyzzz', date: new Date(2021, 03, 02), commission: .5 })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 100, viewer_id: 'xxxyyyzzz', date: new Date(2021, 03, 01), commission: .1 })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 200, viewer_id: 'bbbcccaaa', date: new Date(2021, 04, 01), commission: .25 })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 300, viewer_id: 'bbbcccaaa', date: new Date(2021, 04, 02), commission: 1 })
+			await createReportData({ account_id, collection_name: 'Agents', viewer_id: 'xxxyyyzzz', first_name: 'Craig', last_name: 'Geers' })
+			await createReportData({ account_id, collection_name: 'Agents', viewer_id: 'bbbcccaaa', first_name: 'Shelley', last_name: 'Frody' })
 		}
 
 		run()
