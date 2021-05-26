@@ -309,19 +309,19 @@ export const Report_Builder = () => {
 						Meteor.call('Get_Tags', (error, result) => map_tags(error, result)); setReportStructure(prevState => {
 							return { ...prevState, tags: [] }
 						})
-					}} text="Show Potential Tags" color="blue" />
+					}} text="Show Available Tags" color="blue" />
 					<Button onClick={() => saveReport()} text="Save Report" color="blue" />
 				</div>
 
 			</div>
 			<div>
-				<h2 className="text-blue-500 text-base font-semibold"> Potential Tags: </h2>
+				<h2 className="text-blue-500 text-base font-semibold"> Available Tags: </h2>
 						{tags.map((el, i) => {
 							return <div key={i}>
-								<button onClick={() => add_tag(el)}> {el} </button>
+								<button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => add_tag(el)}> {el} </button>
 							</div>
 						})}
-				<h2 className="text-blue-500 text-base font-semibold"> Implemented viewer tags: </h2>
+				<h2 className="text-blue-500 text-base font-semibold"> Assigned Viewer Tags: </h2>
 				{reportStructure.tags.map((el, i) => {
 					return <p key={i}>{el}</p>
 				})}
