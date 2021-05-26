@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.14.0",
+    "@headlessui/react": "^1.2.0",
     "bcrypt": "^5.0.1",
     "content-type": "^1.0.4",
     "jsonwebtoken": "^8.5.1",

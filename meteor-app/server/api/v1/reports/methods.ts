@@ -10,6 +10,7 @@ Meteor.methods({
 
 	/*
 		Used to create a new report data, from rest API
+		TODO: restrict to account and user roles
 	*/
 	Insert_Report_Data: function(json) {
 		Report_Data.insert({accountId: 'fyS84mmYeNLqDuaSS', ...json})
@@ -17,15 +18,49 @@ Meteor.methods({
 
 	/*
 		Used to fetch distinct collection names belonging to an account
-		TODO: restrict to account and user roles
+		TODO: restrict to user roles
 	*/
 	Fetch_Collection_Names: function() {
-		let distinct = _.uniq(Report_Data.find({}, {
+		const user = getUserDetails(Meteor.user())
+		let distinct = _.uniq(Report_Data.find({ account_id: user.account_id }, {
 			sort: { collection_name: 1 }, fields: { collection_name: 1 }
 		}).fetch().map(function(x) {
 			return x.collection_name;
 		}), true);
 	return distinct
+	},
+
+	/*
+		Used to fetch distinct collection names belonging to an account
+		TODO: restrict to account and user roles
+	*/
+	Fetch_Collection_Keys: function () {
+
+		const user = getUserDetails(Meteor.user())
+
+		let distinctCollections = _.uniq(Report_Data.find({}, {
+			sort: { collection_name: 1 }, fields: { collection_name: 1 }
+		}).fetch().map(function (x) {
+			return x.collection_name;
+		}), true);
+
+		return distinctCollections.map(collection => {
+			let keys = []
+
+			let obj = Report_Data.findOne({ account_id: user.account_id, collection_name: collection })
+
+			_.each(obj, function (val, key) {
+				if (val) {
+					keys.push(key);
+				}
+			});
+
+			return {
+				collection_name: collection,
+				keys: keys
+			}
+		})
+
 	},
 
 	/*

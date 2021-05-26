@@ -1,14 +1,15 @@
-import { Meteor } from 'meteor/meteor';
-import React, { useState, useEffect } from 'react';
+import { Meteor } from 'meteor/meteor'
+import React, { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
 import useSubscription from '../../api/hooks'
-import { ReportStructure, TableColumn } from '../../api/types/reports';
+import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
+import { DataPicker } from '../components/dataPicker'
 
 export const Report_Builder = () => {
 	const { id } = useParams()
@@ -252,12 +253,15 @@ export const Report_Builder = () => {
 	return (
 		<div className='h-screen p-6 bg-gray-100'>
 
+			{/* Modal for selecting data */}
+			<DataPicker callback={() => { }} />
+
 			{/* ToolBar */}
 			{showToolBar &&
 				<ToolBar
 					table={selectedTable}
 					handleTableTitleUpdate={handleTableTitleUpdate}
-				handleTableSort={handleTableSort}
+					handleTableSort={handleTableSort}
 					userCollections={userCollections}
 					setCollectionForTable={setCollectionForTable}
 					deleteTable={deleteTable}
@@ -306,7 +310,7 @@ export const Report_Builder = () => {
 								{table.columns.map((col, i) => {
 									return <div
 										key={col.id}
-										className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md bg-white cursor-pointer"
+										className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md bg-white text-xs cursor-pointer"
 										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
 										<span>{col.label}</span>
 									</div>
@@ -330,7 +334,7 @@ export const Report_Builder = () => {
 								return <div key={Math.random()} className="flex">
 									{table.columns.map((i) => {
 										return <div key={Math.random()} className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-100 border-dashed rounded-md bg-white">
-											<div className="text-indigo-100">data</div>
+											<div className="text-indigo-100 text-xs">data</div>
 										</div>
 									})}
 								</div>

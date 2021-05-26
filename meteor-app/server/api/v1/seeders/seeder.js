@@ -93,15 +93,10 @@ export const seedUserData = () => {
 			})
 		}
 
-		const createReportData = (account_id, price, viewer_id, date, commission) => {
+		const createReportData = (data) => {
 			return new Promise((resolve, reject) => {
 				const newObjectId = Report_Data.insert({
-					account_id: account_id,
-					collection_name: 'Transactions',
-					viewer_id: viewer_id,
-					price: price,
-					date: date,
-					commission: commission
+					...data
 				})
 
 				if (newObjectId) {
@@ -119,10 +114,12 @@ export const seedUserData = () => {
 			await createEditor(account_id, 'NathanJean', 'nathan@c2s.com', 'Nate', 'Jean')
 			await createViewers(account_id, 'xxxyyyzzz', 'CraigGeers', 'craig@c2s.com', 'Craig', 'Geers')
 			await createViewers(account_id, 'bbbcccaaa', 'ShelleyFrody', 'shelly@c2s.com', 'Shelley', 'Frody')
-			await createReportData(account_id, 500, 'xxxyyyzzz', new Date(2021, 03, 02), .5)
-			await createReportData(account_id, 100, 'xxxyyyzzz', new Date(2021, 03, 01), .1)
-			await createReportData(account_id, 200, 'bbbcccaaa', new Date(2021, 04, 01), .25)
-			await createReportData(account_id, 300, 'bbbcccaaa', new Date(2021, 04, 02), 1)
+			await createReportData({ account_id, collection_name: 'Transactions', price: 500, viewer_id: 'xxxyyyzzz', date: new Date(2021, 03, 02), commission: .5 })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 100, viewer_id: 'xxxyyyzzz', date: new Date(2021, 03, 01), commission: .1 })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 200, viewer_id: 'bbbcccaaa', date: new Date(2021, 04, 01), commission: .25 })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 300, viewer_id: 'bbbcccaaa', date: new Date(2021, 04, 02), commission: 1 })
+			await createReportData({ account_id, collection_name: 'Agents', viewer_id: 'xxxyyyzzz', first_name: 'Craig', last_name: 'Geers' })
+			await createReportData({ account_id, collection_name: 'Agents', viewer_id: 'bbbcccaaa', first_name: 'Shelley', last_name: 'Frody' })
 		}
 
 		run()

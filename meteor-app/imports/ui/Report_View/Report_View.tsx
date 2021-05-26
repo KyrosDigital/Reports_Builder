@@ -54,7 +54,7 @@ export const Report_View = () => {
 							<div className="flex"> 
 								{table.columns.map((col, i) => {
 									return <Tooltip key={col.id} tooltipText={`filter: ${table.collection}.${col.property}`}>
-										<div className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white">
+										<div className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white cursor-pointer">
 											<span>{col.label}</span>
 										</div>
 									</Tooltip>
