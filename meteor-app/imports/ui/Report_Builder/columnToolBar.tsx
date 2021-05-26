@@ -7,7 +7,7 @@ import { Report_Data } from '../../api/collections'
 import toast from 'react-hot-toast';
 
 export const ColumnToolBar = ({
-	column, columnIndex, tableId, 
+	reportStructure, column, columnIndex, tableId, 
 	handleColumnLabelChange, handleColumnPropertyChange,
 	handleFormulaUpdate, handleFormulaRemoval, columnFormula,
 	deleteColumn, userCollections
@@ -142,7 +142,12 @@ export const ColumnToolBar = ({
 		<>
 
 			{/* Modal for selecting data */}
-			<DataPicker callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.key)} open={toggleDataPicker} setOpen={setToggleDataPicker} collectionOnly={false} />
+			<DataPicker 
+				callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.key)} 
+				open={toggleDataPicker} setOpen={setToggleDataPicker} 
+				collectionOnly={false} 
+				forcedCollection={reportStructure?.tables.find(table => table.id === tableId).collection} 
+			/>
 
 			{/* Column type */}
 			<div className="flex">

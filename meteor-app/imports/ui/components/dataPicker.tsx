@@ -4,7 +4,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Button } from './buttons'
 import { Label } from './labels'
 
-export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
+export const DataPicker = ({ callback, open, setOpen, collectionOnly. forcedCollection }) => {
 
 	const [collections, setCollections] = useState([])
 	const [selectedCollection, setSelectedCollection] = useState(null)
@@ -17,11 +17,12 @@ export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
 			Meteor.call('Fetch_Collection_Keys', (error, result) => {
 				if (error) console.log(error)
 				if (result) {
-					console.log(result)
 					setCollections(result)
+					if(forcedCollection) {
+						setSelectedCollection(result.find(collection => collection.collection_name === forcedCollection))
+					}
 				}
 			})
-			console.log(open)
 		}
 	}, [open])
 
@@ -40,7 +41,7 @@ export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
 	}
 
 	const handleReset = () => {
-		setSelectedCollection(null)
+		if(!forcedCollection) setSelectedCollection(null)
 		setSelectedKey(null)
 	}
 

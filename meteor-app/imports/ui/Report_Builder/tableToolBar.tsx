@@ -12,10 +12,12 @@ export const TableToolBar = ({
 	const [toggleDataPicker, setToggleDataPicker] = useState(false)
 	const [target, setTarget] = useState(null)
 	const [collectionOnly, setCollectionOnly] = useState(false)
+	const [forcedCollection, setForcedCollection] = useState(null)
 
 	const handleDataPicker = (target) => {
 		if (target === 'collection') {
 			setCollectionOnly(true)
+			setForcedCollection(null)
 		}
 		setTarget(target)
 		setToggleDataPicker(true)
@@ -27,7 +29,10 @@ export const TableToolBar = ({
 		}
 		if (target === 'collection') {
 			setCollectionForTable(table.id, value.collection_name)
+			setForcedCollection(value.collection_name)
+			handleTableSort(table.id, '') // reset the sort if changing collections
 		}
+		
 		setTarget(null)
 		setCollectionOnly(false)
 	}
@@ -36,7 +41,12 @@ export const TableToolBar = ({
 		<>
 
 			{/* Modal for selecting data */}
-			<DataPicker callback={(value) => handleDataPickerResult(value)} open={toggleDataPicker} setOpen={setToggleDataPicker} collectionOnly={collectionOnly} />
+			<DataPicker 
+				callback={(value) => handleDataPickerResult(value)} 
+				open={toggleDataPicker} setOpen={setToggleDataPicker} 
+				collectionOnly={collectionOnly} 
+				forcedCollection={table.collection ? forcedCollection : null}
+			/>
 
 			{/* Table type */}
 			<div className="flex">
@@ -66,7 +76,7 @@ export const TableToolBar = ({
 			</div>}
 
 			{/* Sort by */}
-			<div className="mb-4">
+			{table.collection && <div className="mb-4">
 				<Input
 					placeholder={'Enter collection property'}
 					label={"Sort by:"}
@@ -74,7 +84,7 @@ export const TableToolBar = ({
 					onClick={() => handleDataPicker('sort_by')}
 					disabled={true}
 				/>
-			</div>
+			</div>}
 
 			{/* controls */}
 			<div className="mb-4">
