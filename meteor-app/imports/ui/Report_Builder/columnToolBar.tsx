@@ -16,6 +16,7 @@ export const ColumnToolBar = ({
 	const [formulaString, setFormulaString] = useState('')
 	const [formulaVariables, setFormulaVariables] = useState([])
 	const [formulaValues, setFormulaValues] = useState([])
+	const [toggleDataPicker, setToggleDataPicker] = useState(false)
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
 	// preload data from loaded report structure
@@ -133,8 +134,16 @@ export const ColumnToolBar = ({
 		toast.success('Formula Removed!')
 	}
 
+	const handleDataPicker = () => {
+		setToggleDataPicker(true)
+	}
+
 	return (
 		<>
+
+			{/* Modal for selecting data */}
+			<DataPicker callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.key)} open={toggleDataPicker} setOpen={setToggleDataPicker} collectionOnly={false} />
+
 			{/* Column type */}
 			<div className="flex">
 				<Label text={`Column Type:`} color={'indigo'}/>
@@ -159,7 +168,8 @@ export const ColumnToolBar = ({
 						placeholder={'Enter column property'}
 						label={"Column Property:"} 
 						value={column.property} 
-						onChange={(e) => handleColumnPropertyChange(tableId, columnIndex, e.target.value)}
+						onClick={() => handleDataPicker()}
+						disabled={true}
 						/>
 				</div>
 			}

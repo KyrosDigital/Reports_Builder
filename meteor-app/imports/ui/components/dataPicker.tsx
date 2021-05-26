@@ -32,6 +32,13 @@ export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
 		setSelectedKey(null)
 	}
 
+	const handleRemove = () => {
+		callback({ collection_name: '', key: '' })
+		setOpen(false)
+		setSelectedCollection(null)
+		setSelectedKey(null)
+	}
+
 	const handleReset = () => {
 		setSelectedCollection(null)
 		setSelectedKey(null)
@@ -115,6 +122,14 @@ export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
 									// ref={cancelButtonRef}
 								>
 									Reset
+                </button>
+								<button
+									type="button"
+									className="mt-3 w-full inline-flex justify-center rounded-md border bg-red-600 shadow-sm px-4 py-2 bg-white text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+									onClick={() => handleRemove()}
+									// ref={cancelButtonRef}
+								>
+									Remove
                 </button>
 							</div>
 						</div>
