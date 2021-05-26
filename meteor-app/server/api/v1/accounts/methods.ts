@@ -2,6 +2,8 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles'
 import { Client_Accounts } from "/imports/api/collections"
+import { getUserDetails } from "../reports/functions";
+import { getAccount } from "./functions";
 
 Meteor.methods({
 
@@ -25,27 +27,12 @@ Meteor.methods({
 
 	// used in meteor server, to access a client account object for a given user
 	Fetch_Account_For_User: function () {
-		if (this.userId) {
-			const user = Meteor.users.findOne({ _id: this.userId })
-			const accountId = user?.profile.accountId
-			if (accountId) {
-				return Client_Accounts.findOne({ _id: accountId })
-			}
-		}
+		return getAccount(this.userId)
 	},
 
 	Get_Tags: function () {
-		// I don't want repeat code, but meteor won't let me call Fetch_Account_For_User 
-		let account;
-		if (this.userId) {
-			const user = Meteor.users.findOne({ _id: this.userId })
-			const account_id = user?.profile.account_id
-			if (account_id) {
-				account = Client_Accounts.findOne({ _id: account_id })
-			}
-			return account?.tags
-		}
-
+		let account = getAccount(this.userId)
+		return account?.tags
 	},
 
 	// used in api, retrieves the client account
