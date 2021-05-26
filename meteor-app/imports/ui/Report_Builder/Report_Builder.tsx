@@ -9,7 +9,6 @@ import useSubscription from '../../api/hooks'
 import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
-import { DataPicker } from '../components/dataPicker'
 
 export const Report_Builder = () => {
 	const { id } = useParams()
@@ -252,9 +251,6 @@ export const Report_Builder = () => {
 
 	return (
 		<div className='h-screen p-6 bg-gray-100'>
-
-			{/* Modal for selecting data */}
-			<DataPicker callback={() => { }} />
 
 			{/* ToolBar */}
 			{showToolBar &&

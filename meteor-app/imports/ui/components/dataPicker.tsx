@@ -4,9 +4,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Button } from './buttons'
 import { Label } from './labels'
 
-export const DataPicker = ({ callback }) => {
+export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
 
-	const [open, setOpen] = useState(true)
 	const [collections, setCollections] = useState([])
 	const [selectedCollection, setSelectedCollection] = useState(null)
 	const [selectedKey, setSelectedKey] = useState(null)
@@ -14,18 +13,23 @@ export const DataPicker = ({ callback }) => {
 	const cancelButtonRef = useRef(null)
 
 	useEffect(() => {
-		Meteor.call('Fetch_Collection_Keys', (error, result) => {
-			if (error) console.log(error)
-			if (result) {
-				console.log(result)
-				setCollections(result)
-			}
-		})
-	}, [])
+		if (open) {
+			Meteor.call('Fetch_Collection_Keys', (error, result) => {
+				if (error) console.log(error)
+				if (result) {
+					console.log(result)
+					setCollections(result)
+				}
+			})
+			console.log(open)
+		}
+	}, [open])
 
 	const handleApply = () => {
 		callback({ collection_name: selectedCollection.collection_name, key: selectedKey })
 		setOpen(false)
+		setSelectedCollection(null)
+		setSelectedKey(null)
 	}
 
 	const handleReset = () => {
@@ -39,7 +43,7 @@ export const DataPicker = ({ callback }) => {
 				as="div"
 				static
 				className="fixed z-10 inset-0 overflow-y-auto"
-				initialFocus={cancelButtonRef}
+				// initialFocus={cancelButtonRef}
 				open={open}
 				onClose={setOpen}
 			>
@@ -82,7 +86,7 @@ export const DataPicker = ({ callback }) => {
 											{!selectedCollection && collections.map(collection => {
 												return <Button key={collection.collection_name} onClick={() => setSelectedCollection(collection)} text={collection.collection_name} color="indigo" />
 											})}
-											{selectedCollection && !selectedKey && selectedCollection.keys.map((key, i) => {
+											{selectedCollection && !selectedKey && !collectionOnly && selectedCollection.keys.map((key, i) => {
 												return <Button key={i} onClick={() => setSelectedKey(key)} text={key} color="indigo" />
 											})}
 										</div>
@@ -90,20 +94,25 @@ export const DataPicker = ({ callback }) => {
 								</div>
 							</div>
 							<div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-								{selectedCollection && selectedKey &&
-									<button
+								{collectionOnly && selectedCollection && <button
+									type="button"
+									className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+									onClick={() => handleApply()}
+								>
+									Apply
+                </button>}
+								{!collectionOnly && selectedCollection && selectedKey && <button
 										type="button"
 										className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
 										onClick={() => handleApply()}
 									>
-										Apply
-                </button>
-								}
+									Apply
+                </button>}
 								<button
 									type="button"
 									className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
 									onClick={() => handleReset()}
-									ref={cancelButtonRef}
+									// ref={cancelButtonRef}
 								>
 									Reset
                 </button>
