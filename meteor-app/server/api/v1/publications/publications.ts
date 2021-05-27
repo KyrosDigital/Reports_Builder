@@ -1,12 +1,22 @@
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
+import { getAccount } from '../accounts/functions';
 
 
 Meteor.publish('AccountViewers', function () {
 	if (this.userId && Roles.userIsInRole(this.userId, ['Editor'])) {
 		let account_id = Meteor.users.findOne({ _id: this.userId })?.profile.account_id
 		return Meteor.users.find({ 'profile.account_id': account_id })
+	} else {
+		this.ready()
+	}
+})
+
+Meteor.publish('AccountTags', function() {
+	if (this.userId) {
+		let account = getAccount(this.userId)
+		return account?.tags
 	} else {
 		this.ready()
 	}

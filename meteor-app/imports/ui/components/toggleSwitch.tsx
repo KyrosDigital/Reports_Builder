@@ -2,7 +2,7 @@ import React, from 'react'
 import { Switch } from '@headlessui/react'
 
 export const ToggleSwitch = ({enabled, setEnabled}) => {
-	console.log(enabled)
+	//console.log(enabled)
   return (
     <Switch.Group>
       <div className="flex items-center">

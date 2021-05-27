@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
@@ -10,12 +10,16 @@ import useSubscription from '../../api/hooks'
 import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
+import { Listbox, Transition } from '@headlessui/react'
+import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+
 
 export const Report_Builder = () => {
 	const { id } = useParams()
 
 	const loading1 = useSubscription('ReportData')
 	const loading2 = useSubscription('ReportStructure')
+	const loading3 = useSubscription('AccountTags')
 
 	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false, tags: [''] })
 	const [cellSelected, setCellSelected] = useState({ tableId: '', cellId: '' })
@@ -25,6 +29,18 @@ export const Report_Builder = () => {
 	const [selectedColumn, setSelectedColumn] = useState(null)
 	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
 	const [tags, setTags] = useState([])
+	const [showChoices, setShowChoices] = useState(false)
+	
+
+	useEffect(() => {
+		if (loading3) {
+			Meteor.call('Get_Tags', (error, result) => {
+				if (error) console.log(error)
+				if (result) setTags(result)
+			})
+		}
+
+	}, [loading3])
 
 	useEffect(() => {
 		if (!loading1 && !loading2) {
@@ -251,28 +267,63 @@ export const Report_Builder = () => {
 		})
 	}
 
-	const add_tag = (el) => {
+	const update_tag = (tag) => {
 		const updatedTags = reportStructure.tags
-		updatedTags.push(el)
-		let index = tags.indexOf(el)
-		let temp_tags = tags
-		temp_tags.splice(index, 1)
-		setTags(temp_tags)
-
+		if (reportStructure.tags.includes(tag)) {
+			let index = reportStructure.tags.indexOf(tag)
+			updatedTags.splice(index, 1)
+		} else {
+			updatedTags.push(tag)
+		}
 		setReportStructure(prevState => {
 			return { ...prevState, tags: updatedTags }
 		});
 	}
 
-	function map_tags(error, result) {
-		if (error) console.log(error)
-		if (result) {
-			setTags(result)
-		}
+
+	function TagSelector() {
+		return (
+			<div className="relative z-40 mt-1">
+				<button className="relative w-full py-2 pl-3 pr-10 border-black border-solid text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm"
+				onClick={()=> {showChoices? setShowChoices(false) : setShowChoices(true)}}>
+					<span className="block truncate">Tags</span>
+					<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+						<SelectorIcon
+							className="w-5 h-5 text-gray-400"
+							aria-hidden="true"
+						/>
+					</span>
+				</button>
+				{showChoices && <div className="relative w-full max-h-24 py-1 mt-1 z-40 overflow-auto text-base bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+					{tags.map((tag, tagIdx) => (
+						<div
+							key={tagIdx}
+							className="text-amber-900 bg-amber-100 cursor-default select-none relative py-2 pl-10 pr-4 hover:text-gray-900"
+							onClick={() => update_tag(tag)}
+						>
+							{tag}
+								<span
+									className={`${
+										reportStructure.tags.includes(tag) ? 'font-medium' : 'font-normal'
+									} block truncate`}
+								>
+								</span>
+								{reportStructure.tags.includes(tag)? (
+									<span
+										className='text-amber-600 absolute inset-y-0 left-0 flex items-center pl-3'
+									>
+										<CheckIcon className="w-5 h-5" aria-hidden="true" />
+									</span>
+								) : null}
+						</div>
+					))}
+				</div>}
+			</div>
+		)
 	}
 
 	return (
-		<div className='h-screen p-6 bg-gray-100'>
+		<div className='relative h-screen p-6 bg-gray-100'>
 
 			{/* ToolBar */}
 			{showToolBar &&
@@ -297,10 +348,11 @@ export const Report_Builder = () => {
 
 			<div className="flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<ToggleSwitch enabled={!reportStructure.public} setEnabled={() => handleAccess()} />
+				<TagSelector/>
 				<Button onClick={() => saveReport()} text="Save Report" color="blue" />
 			</div>
 
-			<div className="flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
+			<div className="relative flex z-10 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<Input placeholder={'Enter Report Name'} label={'Report Name'} value={reportStructure.name} flex={'flex'}
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
@@ -309,27 +361,11 @@ export const Report_Builder = () => {
 				<div className="ml-4">
 					<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green" />
 					<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green" />
-					<Button onClick={() => {
-						Meteor.call('Get_Tags', (error, result) => map_tags(error, result)); setReportStructure(prevState => {
-							return { ...prevState, tags: [] }
-						})
-					}} text="Show Available Tags" color="blue" />
-					<Button onClick={() => saveReport()} text="Save Report" color="blue" />
+					
 				</div>
 
 			</div>
-			<div>
-				<h2 className="text-blue-500 text-base font-semibold"> Available Tags: </h2>
-						{tags.map((el, i) => {
-							return <div key={i}>
-								<button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" onClick={() => add_tag(el)}> {el} </button>
-							</div>
-						})}
-				<h2 className="text-blue-500 text-base font-semibold"> Assigned Viewer Tags: </h2>
-				{reportStructure.tags.map((el, i) => {
-					return <p key={i}>{el}</p>
-				})}
-			</div>
+			
 
 
 			<div className="flex-col w-9/12  overflow-auto">

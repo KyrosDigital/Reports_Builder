@@ -30,6 +30,7 @@ Meteor.methods({
 		return getAccount(this.userId)
 	},
 
+	// this might not be neccessary now that I'm just publishing it directly
 	Get_Tags: function () {
 		let account = getAccount(this.userId)
 		return account?.tags

@@ -33,19 +33,19 @@ export const Report_List = () => {
 				</Link>}
 			</div>
 
-			{!isLoading && reports.map((el, id) => {
+			{!isLoading && reports.map((report, id) => {
 				let hasTag = false
-				tags.forEach((element) => {
-					if (el.tags.includes(element)) hasTag = true
+				tags.forEach((tag) => {
+					if (report.tags.includes(tag)) hasTag = true
 				})
 				if (hasTag || role === 'Editor') {
 					return <div key={id} className="my-4 box-border w-1/4 p-4 bg-white rounded filter drop-shadow-md">
-						<h2 className="text-md">{el.name}</h2>
+						<h2 className="text-md">{report.name}</h2>
 						<div className="flex py-2">
-							<Link to={'/report-view/' + el._id}>
+							<Link to={'/report-view/' + report._id}>
 								<Button onClick={() => { }} text="View" color="blue" />
 							</Link>
-							{role === "Editor" && <Link to={'/report-builder/' + el._id}>
+							{role === "Editor" && <Link to={'/report-builder/' + report._id}>
 								<Button onClick={() => { }} text="Edit" color="blue" />
 							</Link>}
 						</div>
