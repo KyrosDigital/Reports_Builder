@@ -5,7 +5,7 @@ export interface ReportStructure {
 	tables: Array<Table>; // all the tables within a report
 	formulas: Array<Formula>; // the formulas to process when viewing a report
 	public: boolean;	// makes all tables in report public
-	permissions: Array<string>; // These are the permissable tags for viewers
+	tags: Array<string>; // These are the permissable tags for viewers
 }
 export interface Table {
 	id: string; // unique id of the table within a report
@@ -22,6 +22,7 @@ export interface TableColumn {
 	formulaId?: string; // if the column has a formula applied to it
 	property: string; // the property of a mongo object, from collection driven tables
 	enum: string; // defines the intended enumeration for the cell under a column
+	symbol?: string;
 }
 export interface TableRow {
 	id: string; // the uuid of the row

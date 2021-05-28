@@ -19,7 +19,7 @@ const usePage = () => useTracker(() => {
 
 export const Report_List = () => {
 
-	const { role } = useContext(UserContext)
+	const { role, tags } = useContext(UserContext)
 	
 	const { isLoading, reports } = usePage()
 
@@ -29,24 +29,30 @@ export const Report_List = () => {
 			<div className="flex justify-between">
 				<p className="text-md font-bold">Your Reports:</p>
 				{role === "Editor" && <Link to='/report-builder' className="mr-4">
-					<Button onClick={() => {}} text="Make New Report" color="blue"/>
+					<Button onClick={() => { }} text="Make New Report" color="blue" />
 				</Link>}
 			</div>
 
-			{!isLoading && reports.map((el, id) => {
-        return <div key = {id} className="my-4 box-border w-1/4 p-4 bg-white rounded filter drop-shadow-md">
-          <h2 className="text-md">{el.name}</h2>
-					<div className="flex py-2">
-						<Link to={'/report-view/' + el._id}>
-							<Button onClick={() => {}} text="View" color="blue"/>
-						</Link>
-						{role === "Editor" && <Link to={'/report-builder/' + el._id}>
-							<Button onClick={() => {}} text="Edit" color="blue"/>
-						</Link>}
+			{!isLoading && reports.map((report, id) => {
+				let hasTag = false
+				tags.forEach((tag) => {
+					if (report.tags.includes(tag)) hasTag = true
+				})
+				if (hasTag || role === 'Editor') {
+					return <div key={id} className="my-4 box-border w-1/4 p-4 bg-white rounded filter drop-shadow-md">
+						<h2 className="text-md">{report.name}</h2>
+						<div className="flex py-2">
+							<Link to={'/report-view/' + report._id}>
+								<Button onClick={() => { }} text="View" color="blue" />
+							</Link>
+							{role === "Editor" && <Link to={'/report-builder/' + report._id}>
+								<Button onClick={() => { }} text="Edit" color="blue" />
+							</Link>}
+						</div>
 					</div>
-      	</div>
-    	})}
+				}
+			})}
 
-    </div>
-  );
+		</div>
+	);
 };

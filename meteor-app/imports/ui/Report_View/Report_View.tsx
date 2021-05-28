@@ -20,11 +20,15 @@ export const Report_View = () => {
 		})
 	}, [])
 
-	const handleValue = (value) => {
+	const handleValue = (value, symbol) => {
 		if (typeof value === 'string') {
 			return value
 		}
 		if (typeof value === 'number') {
+			if (symbol) {
+				if (symbol == '$') return '$' + value
+				if (symbol == '%') return (value * 100) + '%'
+			}
 			return value
 		}
 		if (typeof value === "object") { // is an object
@@ -63,11 +67,10 @@ export const Report_View = () => {
 							
 							{/* rows and cells - if static driven */}
 							{table.rows.map((row) => {
-                  
                 return <div key={row.id} className="flex">
                 {row.cells.map((cell) => {
                   return <div key={cell.id} className="flex justify-center items-center h-10 w-40 max-w-sm m-1 border-2 border-indigo-200 rounded-md bg-white" onClick={() => setCellSelected({tableId: table.id, cellId: cell.id})}>
-										<div>{handleValue(cell.value)}</div>
+										<div>{ handleValue(cell.value, table.columns[cell.index].symbol) }</div>
                   </div>
                 })}
                 </div>

@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
+import { getAccount } from '../accounts/functions';
 
 
 Meteor.publish('AccountViewers', function () {
@@ -11,6 +12,7 @@ Meteor.publish('AccountViewers', function () {
 		this.ready()
 	}
 })
+
 
 Meteor.publish('ReportData', function () {
 	if (this.userId && Roles.userIsInRole(this.userId, ['Editor'])) {

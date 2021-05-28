@@ -14,6 +14,7 @@ export const seedUserData = () => {
 					name: accountName,
 					created_at: new Date(),
 					updated_at: null,
+					tags: ['agent', 'manager']
 				}
 
 				account.jwt = jwt.sign(account, Meteor.settings.private.jwt_secret);
@@ -39,6 +40,7 @@ export const seedUserData = () => {
 						first_name: first_name,
 						last_name: last_name,
 						account_id: account_id,
+						tags: ['manager'],
 						viewer_id: null
 					}
 				})
@@ -71,6 +73,7 @@ export const seedUserData = () => {
 						first_name: first_name,
 						last_name: last_name,
 						account_id: account_id,
+						tags: ['agent'],
 						viewer_id: viewer_id
 					}
 				})
@@ -104,6 +107,50 @@ export const seedUserData = () => {
 					resolve(newObjectId)
 				} else {
 					reject('Failed to create Report_Data!!')
+				}
+
+				newObjectId = Report_Data.insert({
+					accountId: accountId,
+					collectionName: 'Transactions',
+					viewer_id: '3',
+					agentId: 'xxxyyyzzz',
+					price: 700.00
+				})
+
+				if (newObjectId) {
+					console.log(`Seeder - Report Data created: ${newObjectId}`)
+					resolve(newObjectId)
+				} else {
+					reject('Failed to create Viewer user!!')
+				}
+
+				const newObjectId2 = Report_Data.insert({
+					accountId: accountId,
+					collectionName: 'Transactions',
+					viewer_id: 'xxxyyyzzz',
+					agentId: '2',
+					price: 750.00
+				})
+
+				if (newObjectId2) {
+					console.log(`Seeder - Report Data created: ${newObjectId2}`)
+					resolve(newObjectId2)
+				} else {
+					reject('Failed to create Viewer user!!')
+				}
+
+				newObjectId2 = Report_Data.insert({
+					accountId: accountId,
+					collectionName: 'Transactions',
+					agentId: '2',
+					price: 1200.00
+				})
+
+				if (newObjectId2) {
+					console.log(`Seeder - Report Data created: ${newObjectId2}`)
+					resolve(newObjectId2)
+				} else {
+					reject('Failed to create Viewer user!!')
 				}
 			})
 		}

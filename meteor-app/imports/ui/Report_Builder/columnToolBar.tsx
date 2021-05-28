@@ -10,14 +10,17 @@ export const ColumnToolBar = ({
 	reportStructure, column, columnIndex, tableId, 
 	handleColumnLabelChange, handleColumnPropertyChange,
 	handleFormulaUpdate, handleFormulaRemoval, columnFormula,
-	deleteColumn, userCollections
+	deleteColumn, userCollections, handleColumnSymbol
 }) => {
 
 	const [formulaString, setFormulaString] = useState('')
 	const [formulaVariables, setFormulaVariables] = useState([])
 	const [formulaValues, setFormulaValues] = useState([])
+	const [symbolState, setSymbolState] = useState('')
+	const [colProperty, setColProperty] = useState()
 	const [toggleDataPicker, setToggleDataPicker] = useState(false)
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
+	const symbols = ['$', '%']
 
 	// preload data from loaded report structure
 	useEffect(() => {
@@ -46,6 +49,11 @@ export const ColumnToolBar = ({
 			setFormulaVariables([])
 		}
 	}, [columnFormula])
+	useEffect(() => {
+		if (column.symbol) {
+			setSymbolState(column.symbol)
+		}
+	}, [column.symbol])
 
 	// if the formula string, or formula values change
 	useEffect(() => {
@@ -134,6 +142,17 @@ export const ColumnToolBar = ({
 		toast.success('Formula Removed!')
 	}
 
+
+	const add_symbol = (symbol) => {
+		if (symbolState == symbol) {
+			setSymbolState('')
+			handleColumnSymbol(tableId, columnIndex, null)
+		} else {
+			setSymbolState(symbol)
+			handleColumnSymbol(tableId, columnIndex, symbol)
+		}
+  }
+
 	const handleDataPicker = () => {
 		setToggleDataPicker(true)
 	}
@@ -180,7 +199,8 @@ export const ColumnToolBar = ({
 			}
 
 			{/* formula - if no property*/}
-			{!column.property && 
+			{
+			!colProperty && 
 				<div className="mb-4">
 					<Input 
 						placeholder={'(2 * x) / y'}
@@ -226,13 +246,25 @@ export const ColumnToolBar = ({
 			{formulaString && 
 				<div className="flex">
 					<Button onClick={() => saveFormula()} text={'Save Formula'} color="blue"/>
-					<Button onClick={() => removeFormula()} text={'Remove Formula'} color="blue"/>
+					<Button onClick={() => removeFormula()} text={'Remove Formula'} color="red"/>
 				</div>
 			}
 			
-
-			{/* delete table */}
 			<div>
+				<span className="whitespace-nowrap text-xs font-semibold inline-block py-1 px-2 rounded text-indigo-600 bg-indigo-200 last:mr-0 mr-1">
+						Symbol For Viewing:
+				</span>
+				<div className="flex content-start items-stretch m-4">
+					{symbols.map((symbol, i) => {
+						return <div className="self-end" key={i}>
+							<button onClick={() => add_symbol(symbol)} className={`flex ${symbolState == symbol? 'bg-gray-300 text-black' : 'bg-transparent text-gray-600'} px-2 py-2 mx-2 font-bold hover:bg-gray-200 border-2 border-gray-500 rounded`}
+						>{symbol}</button>
+						</div>
+					})}
+				</div>
+			</div>
+			{/* delete table */}
+			<div className="flex">
 				<Button onClick={() => deleteColumn(tableId, columnIndex)} text="Delete Column" color="red"/>
 			</div>
 			

@@ -10,6 +10,8 @@ import useSubscription from '../../api/hooks'
 import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
+import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+
 
 export const Report_Builder = () => {
 	const { id } = useParams()
@@ -17,13 +19,23 @@ export const Report_Builder = () => {
 	const loading1 = useSubscription('ReportData')
 	const loading2 = useSubscription('ReportStructure')
 
-	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false })
+	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false, tags: [''] })
 	const [cellSelected, setCellSelected] = useState({ tableId: '', cellId: '' })
 	const [userCollections, setUserCollections] = useState([])
 	const [showToolBar, setShowToolBar] = useState(false)
 	const [selectedTable, setSelectedTable] = useState(null)
 	const [selectedColumn, setSelectedColumn] = useState(null)
 	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
+	const [tags, setTags] = useState([])
+	const [showChoices, setShowChoices] = useState(false)
+	
+
+	useEffect(() => {
+		Meteor.call('Get_Tags', (error, result) => {
+			if (error) console.log(error)
+			if (result) setTags(result)
+		})
+	}, [])
 
 	useEffect(() => {
 		if (!loading1 && !loading2) {
@@ -150,6 +162,15 @@ export const Report_Builder = () => {
 		});
 	}
 
+	const handleColumnSymbol = (tableId, columnIndex, symbol) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+
+		reportStructure.tables[tableIndex].columns[columnIndex].symbol = symbol
+		setReportStructure(prevState => {
+			return { ...prevState, tables: reportStructure.tables }
+		});
+	}
+
 	const handleColumnPropertyChange = (tableId, columnIndex, property) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 
@@ -251,6 +272,61 @@ export const Report_Builder = () => {
 		})
 	}
 
+	const update_tag = (tag) => {
+		const updatedTags = reportStructure.tags
+		if (reportStructure.tags.includes(tag)) {
+			let index = reportStructure.tags.indexOf(tag)
+			updatedTags.splice(index, 1)
+		} else {
+			updatedTags.push(tag)
+		}
+		setReportStructure(prevState => {
+			return { ...prevState, tags: updatedTags }
+		});
+	}
+
+
+	function TagSelector() {
+		return (
+			<div className="relative z-20 self-end">
+				<button className="flex w-full py-2 pl-3 pr-10 border-black border-solid text-left bg-white rounded-lg shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm"
+				onClick={()=> {showChoices? setShowChoices(false) : setShowChoices(true)}}>
+					<span className="block truncate">Tags</span>
+					<span className="items-end inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+						<SelectorIcon
+							className="w-5 h-5 text-gray-400"
+							aria-hidden="true"
+						/>
+					</span>
+				</button>
+				{showChoices && <div className="absolute w-full max-h-24 py-1 mt-1 z-30 overflow-auto text-base bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+					{tags.map((tag, tagIdx) => (
+						<div
+							key={tagIdx}
+							className="text-amber-900 bg-amber-100 cursor-default select-none relative py-2 pl-10 pr-4 hover:bg-gray-200"
+							onClick={() => update_tag(tag)}
+						>
+							{tag}
+								<span
+									className={`${
+										reportStructure.tags.includes(tag) ? 'font-medium' : 'font-normal'
+									} block truncate`}
+								>
+								</span>
+								{reportStructure.tags.includes(tag)? (
+									<span
+										className='text-amber-600 absolute inset-y-0 left-0 flex items-center pl-3'
+									>
+										<CheckIcon className="w-5 h-5" aria-hidden="true" />
+									</span>
+								) : null}
+						</div>
+					))}
+				</div>}
+			</div>
+		)
+	}
+
 	return (
 		<div className='h-screen p-6 bg-gray-100'>
 
@@ -273,28 +349,29 @@ export const Report_Builder = () => {
 					handleColumnPropertyChange={handleColumnPropertyChange}
 					handleFormulaUpdate={handleFormulaUpdate}
 					handleFormulaRemoval={handleFormulaRemoval}
+					handleColumnSymbol={handleColumnSymbol}
 				/>
 			}
 
-			<div className="flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
+			<div className="relative flex z-10 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<ToggleSwitch enabled={!reportStructure.public} setEnabled={() => handleAccess()} />
+				<TagSelector/>
 				<Button onClick={() => saveReport()} text="Save Report" color="blue" />
 			</div>
 
-			<div className="flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
+			<div className="relative flex z-0 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<Input placeholder={'Enter Report Name'} label={'Report Name'} value={reportStructure.name} flex={'flex'}
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
-				
-				<div className="ml-4 ">
+				<div className="ml-4">
 					<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green" />
 					<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green" />
 				</div>
-
 			</div>
+			
 
 
-			<div className="flex-col w-9/12  overflow-auto">
+			<div className="flex-col w-9/12 z-0 overflow-auto">
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (
@@ -313,7 +390,7 @@ export const Report_Builder = () => {
 								{table.columns.map((col, i) => {
 									return <div
 										key={col.id}
-										className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md bg-white text-xs cursor-pointer"
+										className={`flex ${selectedColumn?.columnIndex == i? 'bg-blue-100': 'bg-white'} justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md text-xs cursor-pointer`}
 										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
 										<span>{col.label}</span>
 									</div>
