@@ -93,16 +93,16 @@ export const ColumnToolBar = ({
 	}, [formulaVariables])
 
 	const handleSelectCollectionForVariable = (collection_name, i) => {
-		// TODO: 
-		const query = Report_Data.findOne({
-			// "accountId" : "60958c98857a7b14acb156d9", TODO:
-			"collection_name": collection_name
+		Meteor.call('Fetch_Single_Collection_Keys',collection_name, (error, result) => {
+			if(error) console.log(error)
+			if(result) {
+				setFormulaVariables(prevState => {
+					prevState[i].collection_name = collection_name
+					prevState[i].keys = result.keys
+					return [...prevState]
+				});
+			}
 		})
-		setFormulaVariables(prevState => {
-			prevState[i].collection_name = collection_name
-			prevState[i].keys = Object.keys(query)
-			return [...prevState]
-		});
 	}
 
 	const handleSelectedKey = (key, i) => {
