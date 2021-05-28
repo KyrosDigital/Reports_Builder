@@ -8,7 +8,7 @@ export const ToolBar = ({
 	userCollections, setCollectionForTable, 
 	addColumnToTable, deleteColumn, addRowToTable, deleteTable,
 	column, columnFormula, handleColumnLabelChange, handleColumnPropertyChange,
-	handleFormulaUpdate, handleFormulaRemoval
+	handleFormulaUpdate, handleFormulaRemoval, handleColumnSymbol
 }) => {
 
   return (
@@ -41,6 +41,7 @@ export const ToolBar = ({
 					handleFormulaUpdate={handleFormulaUpdate}
 					handleFormulaRemoval={handleFormulaRemoval}
 					columnFormula={columnFormula}
+					handleColumnSymbol={handleColumnSymbol}
 				/>
 			}
 

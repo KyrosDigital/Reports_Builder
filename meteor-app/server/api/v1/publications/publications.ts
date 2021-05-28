@@ -13,14 +13,6 @@ Meteor.publish('AccountViewers', function () {
 	}
 })
 
-Meteor.publish('AccountTags', function() {
-	if (this.userId) {
-		let account = getAccount(this.userId)
-		return account?.tags
-	} else {
-		this.ready()
-	}
-})
 
 Meteor.publish('ReportData', function () {
 	if (this.userId && Roles.userIsInRole(this.userId, ['Editor'])) {

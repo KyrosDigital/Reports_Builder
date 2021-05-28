@@ -18,7 +18,6 @@ export const Report_Builder = () => {
 
 	const loading1 = useSubscription('ReportData')
 	const loading2 = useSubscription('ReportStructure')
-	const loading3 = useSubscription('AccountTags')
 
 	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false, tags: [''] })
 	const [cellSelected, setCellSelected] = useState({ tableId: '', cellId: '' })
@@ -32,13 +31,11 @@ export const Report_Builder = () => {
 	
 
 	useEffect(() => {
-		if (loading3) {
-			Meteor.call('Get_Tags', (error, result) => {
-				if (error) console.log(error)
-				if (result) setTags(result)
-			})
-		}
-	}, [loading3])
+		Meteor.call('Get_Tags', (error, result) => {
+			if (error) console.log(error)
+			if (result) setTags(result)
+		})
+	}, [])
 
 	useEffect(() => {
 		if (!loading1 && !loading2) {
@@ -164,6 +161,15 @@ export const Report_Builder = () => {
 		});
 	}
 
+	const handleColumnSymbol = (tableId, columnIndex, symbol) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+
+		reportStructure.tables[tableIndex].columns[columnIndex].symbol = symbol
+		setReportStructure(prevState => {
+			return { ...prevState, tables: reportStructure.tables }
+		});
+	}
+
 	const handleColumnPropertyChange = (tableId, columnIndex, property) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 
@@ -281,22 +287,22 @@ export const Report_Builder = () => {
 
 	function TagSelector() {
 		return (
-			<div className="relative z-10 mt-1">
-				<button className="relative w-full py-2 pl-3 pr-10 border-black border-solid text-left bg-white rounded-lg shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm"
+			<div className="relative z-20 self-end">
+				<button className="flex w-full py-2 pl-3 pr-10 border-black border-solid text-left bg-white rounded-lg shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm"
 				onClick={()=> {showChoices? setShowChoices(false) : setShowChoices(true)}}>
 					<span className="block truncate">Tags</span>
-					<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+					<span className="items-end inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
 						<SelectorIcon
 							className="w-5 h-5 text-gray-400"
 							aria-hidden="true"
 						/>
 					</span>
 				</button>
-				{showChoices && <div className="absolute w-full max-h-24 py-1 mt-1 z-20 overflow-auto text-base bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+				{showChoices && <div className="absolute w-full max-h-24 py-1 mt-1 z-30 overflow-auto text-base bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
 					{tags.map((tag, tagIdx) => (
 						<div
 							key={tagIdx}
-							className="relative z-10 text-amber-900 bg-amber-100 cursor-default select-none relative py-2 pl-10 pr-4 hover:bg-gray-200"
+							className="text-amber-900 bg-amber-100 cursor-default select-none relative py-2 pl-10 pr-4 hover:bg-gray-200"
 							onClick={() => update_tag(tag)}
 						>
 							{tag}
@@ -321,7 +327,7 @@ export const Report_Builder = () => {
 	}
 
 	return (
-		<div className='relative h-screen p-6 bg-gray-100'>
+		<div className='h-screen p-6 bg-gray-100'>
 
 			{/* ToolBar */}
 			{showToolBar &&
@@ -341,16 +347,17 @@ export const Report_Builder = () => {
 					handleColumnPropertyChange={handleColumnPropertyChange}
 					handleFormulaUpdate={handleFormulaUpdate}
 					handleFormulaRemoval={handleFormulaRemoval}
+					handleColumnSymbol={handleColumnSymbol}
 				/>
 			}
 
-			<div className="container relative flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
+			<div className="relative flex z-10 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<ToggleSwitch enabled={!reportStructure.public} setEnabled={() => handleAccess()} />
 				<TagSelector/>
 				<Button onClick={() => saveReport()} text="Save Report" color="blue" />
 			</div>
 
-			<div className="container relative flex z-0 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
+			<div className="relative flex z-0 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<Input placeholder={'Enter Report Name'} label={'Report Name'} value={reportStructure.name} flex={'flex'}
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
@@ -362,7 +369,7 @@ export const Report_Builder = () => {
 			
 
 
-			<div className="relative flex-col w-9/12 z-0 overflow-auto">
+			<div className="flex-col w-9/12 z-0 overflow-auto">
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (
@@ -381,7 +388,7 @@ export const Report_Builder = () => {
 								{table.columns.map((col, i) => {
 									return <div
 										key={col.id}
-										className="flex justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md bg-white text-xs cursor-pointer"
+										className={`flex ${selectedColumn?.columnIndex == i? 'bg-blue-100': 'bg-white'} justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md text-xs cursor-pointer`}
 										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
 										<span>{col.label}</span>
 									</div>
