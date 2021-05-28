@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import React, { useState, useEffect, Fragment } from 'react'
+import React, { useState, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
@@ -10,7 +10,6 @@ import useSubscription from '../../api/hooks'
 import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
-import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 
 
@@ -39,7 +38,6 @@ export const Report_Builder = () => {
 				if (result) setTags(result)
 			})
 		}
-
 	}, [loading3])
 
 	useEffect(() => {
@@ -283,8 +281,8 @@ export const Report_Builder = () => {
 
 	function TagSelector() {
 		return (
-			<div className="relative z-40 mt-1">
-				<button className="relative w-full py-2 pl-3 pr-10 border-black border-solid text-left bg-white rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm"
+			<div className="relative z-10 mt-1">
+				<button className="relative w-full py-2 pl-3 pr-10 border-black border-solid text-left bg-white rounded-lg shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm"
 				onClick={()=> {showChoices? setShowChoices(false) : setShowChoices(true)}}>
 					<span className="block truncate">Tags</span>
 					<span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -294,11 +292,11 @@ export const Report_Builder = () => {
 						/>
 					</span>
 				</button>
-				{showChoices && <div className="relative w-full max-h-24 py-1 mt-1 z-40 overflow-auto text-base bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+				{showChoices && <div className="absolute w-full max-h-24 py-1 mt-1 z-20 overflow-auto text-base bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
 					{tags.map((tag, tagIdx) => (
 						<div
 							key={tagIdx}
-							className="text-amber-900 bg-amber-100 cursor-default select-none relative py-2 pl-10 pr-4 hover:text-gray-900"
+							className="relative z-10 text-amber-900 bg-amber-100 cursor-default select-none relative py-2 pl-10 pr-4 hover:bg-gray-200"
 							onClick={() => update_tag(tag)}
 						>
 							{tag}
@@ -346,29 +344,25 @@ export const Report_Builder = () => {
 				/>
 			}
 
-			<div className="flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
+			<div className="container relative flex justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<ToggleSwitch enabled={!reportStructure.public} setEnabled={() => handleAccess()} />
 				<TagSelector/>
 				<Button onClick={() => saveReport()} text="Save Report" color="blue" />
 			</div>
 
-			<div className="relative flex z-10 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
+			<div className="container relative flex z-0 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<Input placeholder={'Enter Report Name'} label={'Report Name'} value={reportStructure.name} flex={'flex'}
 					onChange={(e) => handleReportName(e.target.value)}
 				/>
-
-
 				<div className="ml-4">
 					<Button onClick={() => createNewTable('static')} text="+ New Static Table" color="green" />
 					<Button onClick={() => createNewTable('collection')} text="+ New Collection Table" color="green" />
-					
 				</div>
-
 			</div>
 			
 
 
-			<div className="flex-col w-9/12  overflow-auto">
+			<div className="relative flex-col w-9/12 z-0 overflow-auto">
 
 				{/* tables */}
 				{reportStructure.tables.map((table) => (

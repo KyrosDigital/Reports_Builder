@@ -17,6 +17,7 @@ export const ColumnToolBar = ({
 	const [formulaVariables, setFormulaVariables] = useState([])
 	const [formulaValues, setFormulaValues] = useState([])
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
+	const symbols = ['$', '%']
 
 	// preload data from loaded report structure
 	useEffect(() => {
@@ -133,6 +134,14 @@ export const ColumnToolBar = ({
 		toast.success('Formula Removed!')
 	}
 
+	const add_symbol = (symbol) => {
+		if (column.symbol === symbol) {
+			column.symbol = null
+		} else {
+			column.symbol = symbol
+		}
+	}
+
 	return (
 		<>
 			{/* Column type */}
@@ -215,9 +224,17 @@ export const ColumnToolBar = ({
 				</div>
 			}
 			
+			<div className="content-start">
+				{symbols.map((symbol, i) => {
+					return <div key={i}>
+						<button onClick={() => add_symbol(symbol)} className={`flex ${column.symbol === symbol? 'bg-gray-200' : 'bg-transparent'} px-2 py-2 hover:bg-gray-200 border border-black rounded`}
+					>{symbol}</button>
+					</div>
+				})}
+			</div>
 
 			{/* delete table */}
-			<div>
+			<div className="flex">
 				<Button onClick={() => deleteColumn(tableId, columnIndex)} text="Delete Column" color="red"/>
 			</div>
 			
