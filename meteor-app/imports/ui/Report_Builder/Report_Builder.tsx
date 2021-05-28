@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
@@ -285,6 +285,31 @@ export const Report_Builder = () => {
 		});
 	}
 
+	function useOutsideAlerter(ref) {
+		useEffect(() => {
+			/**
+			 * Alert if clicked on outside of element
+			 */
+			function handleClickOutside(event) {
+				if (ref.current && !ref.current.contains(event.target)) {
+					setShowChoices(false)
+				}
+			}
+			// Bind the event listener
+			document.addEventListener("mousedown", handleClickOutside);
+			return () => {
+				// Unbind the event listener on clean up
+				document.removeEventListener("mousedown", handleClickOutside);
+			};
+		}, [ref]);
+	}
+
+	function OutsideAlerter(props) {
+		const wrapperRef = useRef(null);
+		useOutsideAlerter(wrapperRef);
+	
+		return <div ref={wrapperRef}>{props.children}</div>;
+	}
 
 	function TagSelector() {
 		return (
@@ -355,7 +380,9 @@ export const Report_Builder = () => {
 
 			<div className="relative flex z-10 justify-between mb-5 w-9/12 p-4 bg-white rounded filter drop-shadow-md">
 				<ToggleSwitch enabled={!reportStructure.public} setEnabled={() => handleAccess()} />
-				<TagSelector/>
+				<OutsideAlerter>
+					<TagSelector/>
+				</OutsideAlerter>
 				<Button onClick={() => saveReport()} text="Save Report" color="blue" />
 			</div>
 
