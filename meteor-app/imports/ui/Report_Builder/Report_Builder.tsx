@@ -82,6 +82,7 @@ export const Report_Builder = () => {
 	const setCollectionForTable = (tableId: string, collection_name: string) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 		reportStructure.tables[tableIndex].collection = collection_name
+		reportStructure.tables[tableIndex].columns.forEach(col => col.property = '') // reset all column properties when collection changes
 		setReportStructure(prevState => {
 			return { ...prevState, tables: reportStructure.tables }
 		});
@@ -332,6 +333,7 @@ export const Report_Builder = () => {
 			{/* ToolBar */}
 			{showToolBar &&
 				<ToolBar
+					reportStructure={reportStructure}
 					table={selectedTable}
 					handleTableTitleUpdate={handleTableTitleUpdate}
 					handleTableSort={handleTableSort}

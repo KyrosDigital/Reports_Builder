@@ -4,7 +4,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Button } from './buttons'
 import { Label } from './labels'
 
-export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
+export const DataPicker = ({ callback, open, setOpen, collectionOnly. forcedCollection }) => {
 
 	const [collections, setCollections] = useState([])
 	const [selectedCollection, setSelectedCollection] = useState(null)
@@ -17,11 +17,12 @@ export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
 			Meteor.call('Fetch_Collection_Keys', (error, result) => {
 				if (error) console.log(error)
 				if (result) {
-					console.log(result)
 					setCollections(result)
+					if(forcedCollection) {
+						setSelectedCollection(result.find(collection => collection.collection_name === forcedCollection))
+					}
 				}
 			})
-			console.log(open)
 		}
 	}, [open])
 
@@ -32,8 +33,15 @@ export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
 		setSelectedKey(null)
 	}
 
-	const handleReset = () => {
+	const handleRemove = () => {
+		callback({ collection_name: '', key: '' })
+		setOpen(false)
 		setSelectedCollection(null)
+		setSelectedKey(null)
+	}
+
+	const handleReset = () => {
+		if(!forcedCollection) setSelectedCollection(null)
 		setSelectedKey(null)
 	}
 
@@ -115,6 +123,14 @@ export const DataPicker = ({ callback, open, setOpen, collectionOnly }) => {
 									// ref={cancelButtonRef}
 								>
 									Reset
+                </button>
+								<button
+									type="button"
+									className="mt-3 w-full inline-flex justify-center rounded-md border bg-red-600 shadow-sm px-4 py-2 bg-white text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+									onClick={() => handleRemove()}
+									// ref={cancelButtonRef}
+								>
+									Remove
                 </button>
 							</div>
 						</div>

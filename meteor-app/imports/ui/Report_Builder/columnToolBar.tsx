@@ -7,7 +7,7 @@ import { Report_Data } from '../../api/collections'
 import toast from 'react-hot-toast';
 
 export const ColumnToolBar = ({
-	column, columnIndex, tableId, 
+	reportStructure, column, columnIndex, tableId, 
 	handleColumnLabelChange, handleColumnPropertyChange,
 	handleFormulaUpdate, handleFormulaRemoval, columnFormula,
 	deleteColumn, userCollections, handleColumnSymbol
@@ -18,6 +18,7 @@ export const ColumnToolBar = ({
 	const [formulaValues, setFormulaValues] = useState([])
 	const [symbolState, setSymbolState] = useState('')
 	const [colProperty, setColProperty] = useState()
+	const [toggleDataPicker, setToggleDataPicker] = useState(false)
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
 	const symbols = ['$', '%']
 
@@ -141,6 +142,7 @@ export const ColumnToolBar = ({
 		toast.success('Formula Removed!')
 	}
 
+
 	const add_symbol = (symbol) => {
 		if (symbolState == symbol) {
 			setSymbolState('')
@@ -149,10 +151,23 @@ export const ColumnToolBar = ({
 			setSymbolState(symbol)
 			handleColumnSymbol(tableId, columnIndex, symbol)
 		}
+  }
+
+	const handleDataPicker = () => {
+		setToggleDataPicker(true)
 	}
 
 	return (
 		<>
+
+			{/* Modal for selecting data */}
+			<DataPicker 
+				callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.key)} 
+				open={toggleDataPicker} setOpen={setToggleDataPicker} 
+				collectionOnly={false} 
+				forcedCollection={reportStructure?.tables.find(table => table.id === tableId).collection} 
+			/>
+
 			{/* Column type */}
 			<div className="flex">
 				<Label text={`Column Type:`} color={'indigo'}/>
@@ -177,7 +192,8 @@ export const ColumnToolBar = ({
 						placeholder={'Enter column property'}
 						label={"Column Property:"} 
 						value={column.property} 
-						onChange={(e) => {handleColumnPropertyChange(tableId, columnIndex, e.target.value); setColProperty(e.target.value)}}
+						onClick={() => handleDataPicker()}
+						disabled={true}
 						/>
 				</div>
 			}

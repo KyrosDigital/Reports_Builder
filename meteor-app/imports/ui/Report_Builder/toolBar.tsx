@@ -4,7 +4,7 @@ import { TableToolBar } from './tableToolBar'
 import { ColumnToolBar } from './columnToolBar'
 
 export const ToolBar = ({
-	table, handleTableTitleUpdate, handleTableSort,
+	reportStructure, table, handleTableTitleUpdate, handleTableSort,
 	userCollections, setCollectionForTable, 
 	addColumnToTable, deleteColumn, addRowToTable, deleteTable,
 	column, columnFormula, handleColumnLabelChange, handleColumnPropertyChange,
@@ -31,6 +31,7 @@ export const ToolBar = ({
 
 			{column && 
 				<ColumnToolBar 
+					reportStructure={reportStructure}
 					column={column.column}
 					columnIndex={column.columnIndex}
 					tableId={column.tableId}
