@@ -34,7 +34,7 @@ Meteor.methods({
 		Used to fetch distinct collection names belonging to an account
 		TODO: restrict to account and user roles
 	*/
-	Fetch_Collection_Keys: function () {
+	Fetch_All_Collection_Keys: function () {
 
 		const user = getUserDetails(Meteor.user())
 
@@ -60,6 +60,31 @@ Meteor.methods({
 				keys: keys
 			}
 		})
+
+	},
+
+	/*
+	Used to fetch distinct collection names belonging to an account
+	TODO: restrict to account and user roles
+*/
+	Fetch_Single_Collection_Keys: function (collection_name) {
+
+		const user = getUserDetails(Meteor.user())
+
+		let keys = []
+
+		let obj = Report_Data.findOne({ account_id: user.account_id, collection_name: collection_name })
+
+		_.each(obj, function (val, key) {
+			if (val) {
+				keys.push(key);
+			}
+		});
+
+		return {
+			collection_name: collection_name,
+			keys: keys
+		}
 
 	},
 

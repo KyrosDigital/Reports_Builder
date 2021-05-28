@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import React, { useState, useEffect } from 'react';
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
@@ -29,18 +30,18 @@ export const ColumnToolBar = ({
 			setFormulaValues(columnFormula.values)
 
 			const mapVariableArray = columnFormula.values.map(value => {
-				// TODO:
-				const query = Report_Data.findOne({
-					// "accountId" : "60958c98857a7b14acb156d9", TODO:
-					"collection_name": value.collection_name
-				})
-				return {
-					char: value.key, 
+				let obj = {
+					char: value.key,
 					collection_name: value.collection_name,
-					keys: query ? Object.keys(query) : [],
+					keys: [],
 					selectedKey: value.property,
 					queryModifier: value.queryModifier
 				}
+				Meteor.call('Fetch_Single_Collection_Keys', value.collection_name, (error, result) => {
+					if(error) console.log(error)
+					if(result) { obj.keys = result.keys }
+				})
+				return obj
 			})
 			setFormulaVariables(mapVariableArray)
 		} else { // handles toggling between columns, if one has a formula and one does not
@@ -111,13 +112,13 @@ export const ColumnToolBar = ({
 		});
 	}
 
-	const handleSelectedQueryModifier = (key, i) => {
+	const handleSelectedQueryModifier = (collection_name, key, i) => {
 		setFormulaVariables(prevState => {
 			prevState[i].queryModifier = key
 			return [...prevState]
 		});
 		// we also need to corespond the query modifier to the column property
-		handleColumnPropertyChange(tableId, columnIndex, key)
+		handleColumnPropertyChange(tableId, columnIndex, collection_name, key)
 	}
 
 	// NOTE: we must save formula by click for time being.
@@ -135,7 +136,7 @@ export const ColumnToolBar = ({
 
 	const removeFormula = () => {
 		handleFormulaRemoval(tableId, columnIndex, column.id)
-		handleColumnPropertyChange(tableId, columnIndex, '')
+		handleColumnPropertyChange(tableId, columnIndex, '', '')
 		setFormulaString('')
 		setFormulaValues([])
 		setFormulaVariables([])
@@ -162,7 +163,7 @@ export const ColumnToolBar = ({
 
 			{/* Modal for selecting data */}
 			<DataPicker 
-				callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.key)} 
+				callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.collection_name, value.key)} 
 				open={toggleDataPicker} setOpen={setToggleDataPicker} 
 				collectionOnly={false} 
 				forcedCollection={reportStructure?.tables.find(table => table.id === tableId).collection} 
@@ -237,7 +238,7 @@ export const ColumnToolBar = ({
 				return <div className="mb-4" key={i}>
 					<Label text={label} color={'indigo'}/>
 					{!variable.queryModifier && variable.keys.map((key, x) => {
-						return <Button key={x} onClick={() => handleSelectedQueryModifier(key, i)} text={key} color="green"/>
+						return <Button key={x} onClick={() => handleSelectedQueryModifier(variable.collection_name, key, i)} text={key} color="green"/>
 					})}
 				</div>
 			})}

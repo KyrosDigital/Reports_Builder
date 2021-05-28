@@ -171,9 +171,9 @@ export const Report_Builder = () => {
 		});
 	}
 
-	const handleColumnPropertyChange = (tableId, columnIndex, property) => {
+	const handleColumnPropertyChange = (tableId, columnIndex, collection_name, property) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
-
+		reportStructure.tables[tableIndex].columns[columnIndex].collection_name = collection_name
 		reportStructure.tables[tableIndex].columns[columnIndex].property = property
 		setReportStructure(prevState => {
 			return { ...prevState, tables: reportStructure.tables }
