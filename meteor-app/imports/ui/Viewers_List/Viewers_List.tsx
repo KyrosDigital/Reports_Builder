@@ -27,6 +27,7 @@ export const Viewers_List = () => {
             <th className="px-4 text-pink-500 py-2">Name</th>
             <th className="px-4 text-pink-500 py-2">Username</th>
             <th className="px-4 text-pink-500 py-2">Email</th>
+						<th className="px-4 text-pink-500 py-2">Tags</th>
           </tr>
         </thead>
         <tbody>
@@ -35,6 +36,7 @@ export const Viewers_List = () => {
             <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.profile.first_name} {viewer.profile.last_name}</td>
             <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.username}</td>
             <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.emails[0].address}</td>
+						<td className="border border-black border-solid px-4 py-2 font-medium">{viewer.profile.tags}</td>
           </tr>
 			  })}
         </tbody>
