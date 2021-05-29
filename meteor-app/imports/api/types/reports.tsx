@@ -22,6 +22,7 @@ export interface TableColumn {
 	formulaId?: string; // if the column has a formula applied to it
 	property: string; // the property of a mongo object, from collection driven tables
 	collection_name: string; // the collection the property belongs to
+	relation_key?: string; // a key name that outlines a relationship to other collection objects
 	enum: string; // defines the intended enumeration for the cell under a column
 	symbol?: string;
 }

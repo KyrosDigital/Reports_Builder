@@ -117,12 +117,12 @@ export const seedUserData = () => {
 			await createEditor(account_id, 'NathanJean', 'nathan@c2s.com', 'Nate', 'Jean')
 			await createViewers(account_id, 'xxxyyyzzz', 'agent', 'CraigGeers', 'craig@c2s.com', 'Craig', 'Geers')
 			await createViewers(account_id, 'bbbcccaaa', 'manager', 'ShelleyFrody', 'shelly@c2s.com', 'Shelley', 'Frody')
-			await createReportData({ account_id, collection_name: 'Transactions', price: 500, viewer_id: 'xxxyyyzzz', date: new Date(2021, 03, 02), commission: .5 })
-			await createReportData({ account_id, collection_name: 'Transactions', price: 100, viewer_id: 'xxxyyyzzz', date: new Date(2021, 03, 01), commission: .1 })
-			await createReportData({ account_id, collection_name: 'Transactions', price: 200, viewer_id: 'bbbcccaaa', date: new Date(2021, 04, 01), commission: .25 })
-			await createReportData({ account_id, collection_name: 'Transactions', price: 300, viewer_id: 'bbbcccaaa', date: new Date(2021, 04, 02), commission: 1 })
-			await createReportData({ account_id, collection_name: 'Agents', viewer_id: 'xxxyyyzzz', first_name: 'Craig', last_name: 'Geers' })
-			await createReportData({ account_id, collection_name: 'Agents', viewer_id: 'bbbcccaaa', first_name: 'Shelley', last_name: 'Frody' })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 500, viewer_id: 'xxxyyyzzz', date: new Date(2021, 03, 02), commission: .5, agent_id: 'qqqwwweee' })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 100, viewer_id: 'xxxyyyzzz', date: new Date(2021, 03, 01), commission: .1, agent_id: 'qqqwwweee' })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 200, viewer_id: 'bbbcccaaa', date: new Date(2021, 04, 01), commission: .25, agent_id: 'rrreeewww' })
+			await createReportData({ account_id, collection_name: 'Transactions', price: 300, viewer_id: 'bbbcccaaa', date: new Date(2021, 04, 02), commission: 1, agent_id: 'rrreeewww' })
+			await createReportData({ account_id, collection_name: 'Agents', viewer_id: 'xxxyyyzzz', first_name: 'Craig', last_name: 'Geers', agent_id: 'qqqwwweee' })
+			await createReportData({ account_id, collection_name: 'Agents', viewer_id: 'bbbcccaaa', first_name: 'Shelley', last_name: 'Frody', agent_id: 'rrreeewww' })
 		}
 
 		run()

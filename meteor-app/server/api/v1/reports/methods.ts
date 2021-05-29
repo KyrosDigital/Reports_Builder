@@ -147,14 +147,32 @@ Meteor.methods({
 
 		// generates cells, for a given row, if table is collection driven
 		const generateCells = (columns: Array<TableColumn>, document: ReportData) => {
+
 			return columns.map((column, i) => {
+
+				let doc = document
+
 				let type = '', property = null, propertyValue = null, value: number | Object| string | null | undefined = 0;
+
+				// if there is a relation key, we overide the document from table collection, to the column specific collection
+				if(column.relation_key) {
+					let query = {
+						account_id: user.account_id,
+						collection_name: column.collection_name,
+					}
+					if (!report.public && user.role === 'Viewer') {
+						query['viewer_id'] = user.viewer_id
+					}
+					query[column.relation_key] = doc[column.relation_key]
+					doc = Report_Data.findOne(query)
+				}
 				// a column should only have either a formula, or a property assigned, never both
 				property = column.property
-				propertyValue = document[property]
+				propertyValue = doc[property]
+
 				if(!column.formulaId) {
 					type = 'property'
-					value = document[property]
+					value = doc[property]
 				}
 				if(column.formulaId) {
 					type = 'formula'

@@ -11,6 +11,7 @@ export const ColumnToolBar = ({
 	reportStructure, column, columnIndex, tableId, 
 	handleColumnLabelChange, handleColumnPropertyChange,
 	handleFormulaUpdate, handleFormulaRemoval, columnFormula,
+	handleColumnRelationKeyChange,
 	deleteColumn, userCollections, handleColumnSymbol
 }) => {
 
@@ -20,6 +21,7 @@ export const ColumnToolBar = ({
 	const [symbolState, setSymbolState] = useState('')
 	const [colProperty, setColProperty] = useState()
 	const [toggleDataPicker, setToggleDataPicker] = useState(false)
+	const [toggleRelationPicker, setToggleRelationPicker] = useState(false)
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
 	const symbols = ['$', '%']
 
@@ -158,6 +160,10 @@ export const ColumnToolBar = ({
 		setToggleDataPicker(true)
 	}
 
+	const handleRelationPicker = () => {
+		setToggleRelationPicker(true)
+	}
+
 	return (
 		<>
 
@@ -166,7 +172,16 @@ export const ColumnToolBar = ({
 				callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.collection_name, value.key)} 
 				open={toggleDataPicker} setOpen={setToggleDataPicker} 
 				collectionOnly={false} 
-				forcedCollection={reportStructure?.tables.find(table => table.id === tableId).collection} 
+				forcedCollection={null}
+				// forcedCollection={reportStructure?.tables.find(table => table.id === tableId).collection}
+			/>
+
+			{/* Modal for selecting relationship */}
+			<DataPicker 
+				callback={(value) => handleColumnRelationKeyChange(tableId, columnIndex, value.key)} 
+				open={toggleRelationPicker} setOpen={setToggleRelationPicker} 
+				collectionOnly={false} 
+				forcedCollection={null}
 			/>
 
 			{/* Column type */}
@@ -248,6 +263,19 @@ export const ColumnToolBar = ({
 				<div className="flex">
 					<Button onClick={() => saveFormula()} text={'Save Formula'} color="blue"/>
 					<Button onClick={() => removeFormula()} text={'Remove Formula'} color="red"/>
+				</div>
+			}
+
+			{/* Column relation_key - if no formula */}
+			{!formulaString &&
+				<div className="mb-4">
+					<Input 
+						placeholder={'Enter relation key'}
+						label={"Relation key:"} 
+						value={column.relation_key} 
+						onClick={() => handleRelationPicker()}
+						disabled={true}
+						/>
 				</div>
 			}
 			
