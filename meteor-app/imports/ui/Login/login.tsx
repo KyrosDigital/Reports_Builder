@@ -2,8 +2,15 @@ import { Meteor } from 'meteor/meteor';
 import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from '../components/buttons'
+import { Redirect } from 'react-router-dom';
+import { UserContext } from '/imports/api/contexts/userContext';
 
 export const Login = () => {
+
+	const { user } = useContext(UserContext)
+	if (user) {
+		return <Redirect to='/report-list' />
+	}
 
 	const history = useHistory()
 

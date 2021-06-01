@@ -4,6 +4,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Viewer } from '../../api/types/accounts'
 import { UserContext } from '../../api/contexts/userContext';
 import  SearchBar from '../components/searchbar'
+import { Redirect } from 'react-router-dom';
 
 const usePage = (account_id) => useTracker(() => {
 	const subscription = Meteor.subscribe('AccountViewers')
@@ -16,11 +17,15 @@ const usePage = (account_id) => useTracker(() => {
 
 export const Viewers_List = () => {
 
-	const { account_id } = useContext(UserContext)
+	const { user, account_id } = useContext(UserContext)
 	const { isLoading, viewers } = usePage(account_id)
 	const [query, setQuery] = useState('')
 	const [viewersShown, setViewersShown] = useState(viewers)
 	let viewersShownRegex = new RegExp(query, "i")
+
+	if (!user) {
+		return <Redirect to='/login' />
+	}
 
 	useEffect(() => {
 		filterDishes()
