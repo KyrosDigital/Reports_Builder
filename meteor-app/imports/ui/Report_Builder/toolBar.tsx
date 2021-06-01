@@ -8,6 +8,7 @@ export const ToolBar = ({
 	userCollections, setCollectionForTable, 
 	addColumnToTable, deleteColumn, addRowToTable, deleteTable,
 	column, columnFormula, handleColumnLabelChange, handleColumnPropertyChange,
+	handleColumnRelationKeyChange,
 	handleFormulaUpdate, handleFormulaRemoval, handleColumnSymbol
 }) => {
 
@@ -37,6 +38,7 @@ export const ToolBar = ({
 					tableId={column.tableId}
 					handleColumnLabelChange={handleColumnLabelChange}
 					handleColumnPropertyChange={handleColumnPropertyChange}
+					handleColumnRelationKeyChange={handleColumnRelationKeyChange}
 					deleteColumn={deleteColumn}
 					userCollections={userCollections}
 					handleFormulaUpdate={handleFormulaUpdate}

@@ -16,7 +16,7 @@ import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 export const Report_Builder = () => {
 	const { id } = useParams()
 
-	const loading1 = useSubscription('ReportData')
+	// const loading1 = useSubscription('ReportData')
 	const loading2 = useSubscription('ReportStructure')
 
 	const [reportStructure, setReportStructure] = useState<ReportStructure>({ _id: id, name: '', tables: [], formulas: [], public: false, tags: [''] })
@@ -38,7 +38,7 @@ export const Report_Builder = () => {
 	}, [])
 
 	useEffect(() => {
-		if (!loading1 && !loading2) {
+		if (!loading2) {
 
 			Meteor.call('Fetch_Collection_Names', (error, result) => {
 				if (error) console.log(error)
@@ -50,7 +50,7 @@ export const Report_Builder = () => {
 				setReportStructure(reportQuery)
 			}
 		}
-	}, [loading1, loading2])
+	}, [loading2])
 
 	useEffect(() => {
 		// console.log(reportStructure)
@@ -171,10 +171,18 @@ export const Report_Builder = () => {
 		});
 	}
 
-	const handleColumnPropertyChange = (tableId, columnIndex, property) => {
+	const handleColumnPropertyChange = (tableId, columnIndex, collection_name, property) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
-
+		reportStructure.tables[tableIndex].columns[columnIndex].collection_name = collection_name
 		reportStructure.tables[tableIndex].columns[columnIndex].property = property
+		setReportStructure(prevState => {
+			return { ...prevState, tables: reportStructure.tables }
+		});
+	}
+
+	const handleColumnRelationKeyChange = (tableId, columnIndex, relation_key) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+		reportStructure.tables[tableIndex].columns[columnIndex].relation_key = relation_key
 		setReportStructure(prevState => {
 			return { ...prevState, tables: reportStructure.tables }
 		});
@@ -372,6 +380,7 @@ export const Report_Builder = () => {
 					columnFormula={selectedColumnFormula}
 					handleColumnLabelChange={handleColumnLabelChange}
 					handleColumnPropertyChange={handleColumnPropertyChange}
+					handleColumnRelationKeyChange={handleColumnRelationKeyChange}
 					handleFormulaUpdate={handleFormulaUpdate}
 					handleFormulaRemoval={handleFormulaRemoval}
 					handleColumnSymbol={handleColumnSymbol}

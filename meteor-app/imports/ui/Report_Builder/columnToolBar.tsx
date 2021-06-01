@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import React, { useState, useEffect } from 'react';
 import { Button } from '../components/buttons'
 import { Input } from '../components/inputs'
@@ -10,6 +11,7 @@ export const ColumnToolBar = ({
 	reportStructure, column, columnIndex, tableId, 
 	handleColumnLabelChange, handleColumnPropertyChange,
 	handleFormulaUpdate, handleFormulaRemoval, columnFormula,
+	handleColumnRelationKeyChange,
 	deleteColumn, userCollections, handleColumnSymbol
 }) => {
 
@@ -19,6 +21,7 @@ export const ColumnToolBar = ({
 	const [symbolState, setSymbolState] = useState('')
 	const [colProperty, setColProperty] = useState()
 	const [toggleDataPicker, setToggleDataPicker] = useState(false)
+	const [toggleRelationPicker, setToggleRelationPicker] = useState(false)
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
 	const symbols = ['$', '%']
 
@@ -29,18 +32,18 @@ export const ColumnToolBar = ({
 			setFormulaValues(columnFormula.values)
 
 			const mapVariableArray = columnFormula.values.map(value => {
-				// TODO:
-				const query = Report_Data.findOne({
-					// "accountId" : "60958c98857a7b14acb156d9", TODO:
-					"collection_name": value.collection_name
-				})
-				return {
-					char: value.key, 
+				let obj = {
+					char: value.key,
 					collection_name: value.collection_name,
-					keys: query ? Object.keys(query) : [],
+					keys: [],
 					selectedKey: value.property,
 					queryModifier: value.queryModifier
 				}
+				Meteor.call('Fetch_Single_Collection_Keys', value.collection_name, (error, result) => {
+					if(error) console.log(error)
+					if(result) { obj.keys = result.keys }
+				})
+				return obj
 			})
 			setFormulaVariables(mapVariableArray)
 		} else { // handles toggling between columns, if one has a formula and one does not
@@ -92,16 +95,16 @@ export const ColumnToolBar = ({
 	}, [formulaVariables])
 
 	const handleSelectCollectionForVariable = (collection_name, i) => {
-		// TODO: 
-		const query = Report_Data.findOne({
-			// "accountId" : "60958c98857a7b14acb156d9", TODO:
-			"collection_name": collection_name
+		Meteor.call('Fetch_Single_Collection_Keys',collection_name, (error, result) => {
+			if(error) console.log(error)
+			if(result) {
+				setFormulaVariables(prevState => {
+					prevState[i].collection_name = collection_name
+					prevState[i].keys = result.keys
+					return [...prevState]
+				});
+			}
 		})
-		setFormulaVariables(prevState => {
-			prevState[i].collection_name = collection_name
-			prevState[i].keys = Object.keys(query)
-			return [...prevState]
-		});
 	}
 
 	const handleSelectedKey = (key, i) => {
@@ -111,13 +114,13 @@ export const ColumnToolBar = ({
 		});
 	}
 
-	const handleSelectedQueryModifier = (key, i) => {
+	const handleSelectedQueryModifier = (collection_name, key, i) => {
 		setFormulaVariables(prevState => {
 			prevState[i].queryModifier = key
 			return [...prevState]
 		});
 		// we also need to corespond the query modifier to the column property
-		handleColumnPropertyChange(tableId, columnIndex, key)
+		handleColumnPropertyChange(tableId, columnIndex, collection_name, key)
 	}
 
 	// NOTE: we must save formula by click for time being.
@@ -135,7 +138,7 @@ export const ColumnToolBar = ({
 
 	const removeFormula = () => {
 		handleFormulaRemoval(tableId, columnIndex, column.id)
-		handleColumnPropertyChange(tableId, columnIndex, '')
+		handleColumnPropertyChange(tableId, columnIndex, '', '')
 		setFormulaString('')
 		setFormulaValues([])
 		setFormulaVariables([])
@@ -157,15 +160,28 @@ export const ColumnToolBar = ({
 		setToggleDataPicker(true)
 	}
 
+	const handleRelationPicker = () => {
+		setToggleRelationPicker(true)
+	}
+
 	return (
 		<>
 
 			{/* Modal for selecting data */}
 			<DataPicker 
-				callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.key)} 
+				callback={(value) => handleColumnPropertyChange(tableId, columnIndex, value.collection_name, value.key)} 
 				open={toggleDataPicker} setOpen={setToggleDataPicker} 
 				collectionOnly={false} 
-				forcedCollection={reportStructure?.tables.find(table => table.id === tableId).collection} 
+				forcedCollection={null}
+				// forcedCollection={reportStructure?.tables.find(table => table.id === tableId).collection}
+			/>
+
+			{/* Modal for selecting relationship */}
+			<DataPicker 
+				callback={(value) => handleColumnRelationKeyChange(tableId, columnIndex, value.key)} 
+				open={toggleRelationPicker} setOpen={setToggleRelationPicker} 
+				collectionOnly={false} 
+				forcedCollection={null}
 			/>
 
 			{/* Column type */}
@@ -237,7 +253,7 @@ export const ColumnToolBar = ({
 				return <div className="mb-4" key={i}>
 					<Label text={label} color={'indigo'}/>
 					{!variable.queryModifier && variable.keys.map((key, x) => {
-						return <Button key={x} onClick={() => handleSelectedQueryModifier(key, i)} text={key} color="green"/>
+						return <Button key={x} onClick={() => handleSelectedQueryModifier(variable.collection_name, key, i)} text={key} color="green"/>
 					})}
 				</div>
 			})}
@@ -247,6 +263,19 @@ export const ColumnToolBar = ({
 				<div className="flex">
 					<Button onClick={() => saveFormula()} text={'Save Formula'} color="blue"/>
 					<Button onClick={() => removeFormula()} text={'Remove Formula'} color="red"/>
+				</div>
+			}
+
+			{/* Column relation_key - if no formula */}
+			{!formulaString &&
+				<div className="mb-4">
+					<Input 
+						placeholder={'Enter relation key'}
+						label={"Relation key:"} 
+						value={column.relation_key} 
+						onClick={() => handleRelationPicker()}
+						disabled={true}
+						/>
 				</div>
 			}
 			

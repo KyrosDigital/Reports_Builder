@@ -14,7 +14,7 @@ export const DataPicker = ({ callback, open, setOpen, collectionOnly. forcedColl
 
 	useEffect(() => {
 		if (open) {
-			Meteor.call('Fetch_Collection_Keys', (error, result) => {
+			Meteor.call('Fetch_All_Collection_Keys', (error, result) => {
 				if (error) console.log(error)
 				if (result) {
 					setCollections(result)

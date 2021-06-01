@@ -16,7 +16,10 @@ export const Report_View = () => {
 	useEffect(() => {
 		Meteor.call('Compose_Report', id, (error : Error, result : ReportStructure) => {
 			if(error) console.log(error)
-			if (result) setReport(result)
+			if (result) {
+				console.log(result)
+				setReport(result)
+			}
 		})
 	}, [])
 
