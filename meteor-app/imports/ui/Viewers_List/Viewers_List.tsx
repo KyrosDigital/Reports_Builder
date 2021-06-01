@@ -31,11 +31,16 @@ export const Viewers_List = () => {
 		filterDishes()
 	}, [query])
 
+	useEffect(() => {
+		setViewersShown(viewers)
+	}, [viewers])
+
 	const filterDishes = () => {
 		if(query.length > 0) {
 			let newResults = viewers.filter(viewer =>
 				viewersShownRegex.test(viewer.profile.first_name) || viewersShownRegex.test(viewer.profile.last_name) 
-				|| viewersShownRegex.test(viewer.emails[0].address) || viewersShownRegex.test(viewer.username))
+				|| viewersShownRegex.test(viewer.emails[0].address) || viewersShownRegex.test(viewer.username)
+				|| viewersShownRegex.test(viewer.profile.tags))
 			setViewersShown(newResults)
 		} else if (query.length === 0) {
 			setViewersShown(viewers)
