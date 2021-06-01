@@ -3,6 +3,7 @@ import { useTracker } from 'meteor/react-meteor-data'
 import React, { useState, useEffect, useContext } from 'react'
 import { Viewer } from '../../api/types/accounts'
 import { UserContext } from '../../api/contexts/userContext';
+import  SearchBar from '../components/searchbar'
 
 const usePage = (account_id) => useTracker(() => {
 	const subscription = Meteor.subscribe('AccountViewers')
@@ -17,9 +18,28 @@ export const Viewers_List = () => {
 
 	const { account_id } = useContext(UserContext)
 	const { isLoading, viewers } = usePage(account_id)
+	const [query, setQuery] = useState('')
+	const [viewersShown, setViewersShown] = useState(viewers)
+	let viewersShownRegex = new RegExp(query, "i")
+
+	useEffect(() => {
+		filterDishes()
+	}, [query])
+
+	const filterDishes = () => {
+		if(query.length > 0) {
+			let newResults = viewers.filter(viewer =>
+				viewersShownRegex.test(viewer.profile.first_name) || viewersShownRegex.test(viewer.profile.last_name) 
+				|| viewersShownRegex.test(viewer.emails[0].address) || viewersShownRegex.test(viewer.username))
+			setViewersShown(newResults)
+		} else if (query.length === 0) {
+			setViewersShown(viewers)
+		}
+	}
 
 	return (
 		<div className='container p-6 bg-gray-50'>
+			<SearchBar query={query} setQuery={setQuery} />
 			<h1 className="font-sans text-xl font-bold">Viewers:</h1>
       <table className="table-auto">
         <thead>
@@ -31,7 +51,7 @@ export const Viewers_List = () => {
           </tr>
         </thead>
         <tbody>
-					{!isLoading && viewers.map((viewer, i) => {
+					{!isLoading && viewersShown.map((viewer, i) => {
           return <tr key={i} className="">
             <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.profile.first_name} {viewer.profile.last_name}</td>
             <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.username}</td>
