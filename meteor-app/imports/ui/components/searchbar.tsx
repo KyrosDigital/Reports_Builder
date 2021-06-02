@@ -6,16 +6,12 @@ const SearchBar = ({ query, setQuery }) => {
         setQuery("")
     }
 
-		
-
     return (
         <div className="flex relative search-bar-div items-stretch">
 					<Input placeholder={'type to search'} value={query} onChange={(e) => setQuery(e.target.value)} />
 					<button onClick={handleXClick}
 							className="bg-red-400 rounded border-black border-2 px-2 mx-2"
-					>
-							Clear
-					</button>
+					> Clear </button>
         </div>
     );
 }

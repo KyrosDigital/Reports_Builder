@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { App } from '../../ui/App'
-import { LoggedIn } from '../loggedIn'
 import Navbar from '../../ui/components/nav';
 import { Login } from '../../ui/Login/login'
 import { Report_View } from '../../ui/Report_View/Report_View';
