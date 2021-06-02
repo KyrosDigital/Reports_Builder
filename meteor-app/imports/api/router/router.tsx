@@ -9,6 +9,7 @@ import { Report_View } from '../../ui/Report_View/Report_View';
 import { Report_Builder } from '../../ui/Report_Builder/Report_Builder';
 import { Report_List } from '../../ui/Report_List/Report_List'
 import { Viewers_List } from '../../ui/Viewers_List/Viewers_List'
+import { Not_Found } from '../../ui/404_Page/notFound'
 
 export const Main_Router = () => {
 
@@ -24,6 +25,7 @@ export const Main_Router = () => {
 						<Route path='/report-list' component={Report_List} />
 						<Route path='/report-view/:id?' component={Report_View} />
 						<Route path='/report-builder/:id?' component={Report_Builder} />
+						<Route component={Not_Found}/>
 					</Switch>
 				</Router>
 		</App>
