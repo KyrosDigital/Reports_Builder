@@ -8,9 +8,6 @@ import { Tooltip } from '../components/tooltips'
 import { Redirect } from 'react-router-dom';
 
 export const Report_View = () => {
-
-	
-
 	const { id } = useParams()
 
   const [report, setReport] = useState(null)

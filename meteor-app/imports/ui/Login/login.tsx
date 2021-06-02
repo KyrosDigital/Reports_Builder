@@ -36,11 +36,11 @@ export const Login = () => {
     
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="h-screen flex justify-center items-center bg-gray-100">
         <div >
-            <h1>Login</h1>
+            <h1 className="font-semibold tracking-wide text-xl my-2">Login</h1>
             <div className="w-56 mb-3 pt-0">
-                <h1>Username: </h1>
+                <h1 className="font-light">Username: </h1>
                 <input 
                     className="w-48 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border-0 shadow outline-none focus:outline-none focus:ring w-full"
                     type="text" 
@@ -49,7 +49,7 @@ export const Login = () => {
                 />
             </div>
             <div className="w-56 mb-3 pt-0">
-					<h1>Password: </h1>
+					<h1 className="font-light">Password: </h1>
                 <input 
                     className="w-48 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border-0 shadow outline-none focus:outline-none focus:ring w-full"
                     type="text" 

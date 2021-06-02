@@ -30,7 +30,7 @@ export const Report_List = () => {
     <div className='h-screen w-screen p-6 bg-gray-100'>
 			
 			<div className="flex justify-between">
-				<p className="text-md font-bold">Your Reports:</p>
+				<p className="text-xl font-semibold tracking-wide">Your Reports:</p>
 				{role === "Editor" && <Link to='/report-builder' className="mr-4">
 					<Button onClick={() => { }} text="Make New Report" color="blue" />
 				</Link>}

@@ -48,30 +48,31 @@ export const Viewers_List = () => {
 	}
 
 	return (
-		<div className='container p-6 bg-gray-50'>
+		<div className='h-screen w-screen p-6 bg-gray-100'>
 			<SearchBar query={query} setQuery={setQuery} />
-			<h1 className="font-sans text-xl font-bold">Viewers:</h1>
-      <table className="table-auto">
-        <thead>
-          <tr>
-            <th className="px-4 text-pink-500 py-2">Name</th>
-            <th className="px-4 text-pink-500 py-2">Username</th>
-            <th className="px-4 text-pink-500 py-2">Email</th>
-						<th className="px-4 text-pink-500 py-2">Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-					{!isLoading && viewersShown.map((viewer, i) => {
-          return <tr key={i} className="">
-            <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.profile.first_name} {viewer.profile.last_name}</td>
-            <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.username}</td>
-            <td className="border border-black border-solid px-4 py-2 font-medium">{viewer.emails[0].address}</td>
-						<td className="border border-black border-solid px-4 py-2 font-medium">{viewer.profile.tags}</td>
-          </tr>
-			  })}
-        </tbody>
-      </table>
-			
+			<h1 className="text-xl font-semibold tracking-wide my-4">Viewers:</h1>
+			<div className="">
+				<table className="table-auto">
+					<thead>
+						<tr>
+							<th className="px-4 font-light py-2 tracking-wide">NAME</th>
+							<th className="px-4 font-light py-2 tracking-wide">USERNAME</th>
+							<th className="px-4 font-light py-2 tracking-wide">EMAIL</th>
+							<th className="px-4 font-light py-2 tracking-wide">TAGS</th>
+						</tr>
+					</thead>
+					<tbody>
+						{!isLoading && viewersShown.map((viewer, i) => {
+						return <tr key={i} className="bg-white">
+							<td className="border border-black border-solid px-4 py-2 font-normal">{viewer.profile.first_name} {viewer.profile.last_name}</td>
+							<td className="border border-black border-solid px-4 py-2 font-normal">{viewer.username}</td>
+							<td className="border border-black border-solid px-4 py-2 font-normal">{viewer.emails[0].address}</td>
+							<td className="border border-black border-solid px-4 py-2 font-normal">{viewer.profile.tags}</td>
+						</tr>
+					})}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	);
 };
