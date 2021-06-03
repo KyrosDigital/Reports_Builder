@@ -272,8 +272,10 @@ export const Report_Builder = () => {
 
 	const saveReport = () => {
 		Meteor.call('Upsert_Report', reportStructure, (error, result) => {
-			if (error) console.log(error)
-			if (result) {
+			if (error)  {
+				console.log(error)
+				toast.error('Could not save, please complete report')
+			} else if (result) {
 				setReportStructure(result)
 				toast.success('Report Saved!')
 			}
@@ -426,7 +428,7 @@ export const Report_Builder = () => {
 								{table.columns.map((col, i) => {
 									return <div
 										key={col.id}
-										className={`flex ${selectedColumn?.columnIndex == i? 'bg-blue-100': 'bg-white'} justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md text-xs cursor-pointer`}
+										className={`flex ${selectedColumn?.columnIndex == i && selectedColumn?.tableId === table.id?  'bg-blue-100': 'bg-white'} justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md text-xs cursor-pointer`}
 										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
 										<span>{col.label}</span>
 									</div>

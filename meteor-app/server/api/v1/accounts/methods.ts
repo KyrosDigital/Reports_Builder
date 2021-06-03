@@ -4,6 +4,7 @@ import { Roles } from 'meteor/alanning:roles'
 import { Client_Accounts } from "/imports/api/collections"
 import { getUserDetails } from "../reports/functions";
 import { getAccount } from "./functions";
+import { check } from 'meteor/check'
 
 Meteor.methods({
 
@@ -21,6 +22,7 @@ Meteor.methods({
 	// used in api, retrieves the client account
 	Fetch_Account: function (jwt) {
 		if (jwt) {
+			check(jwt, String)
 			return Client_Accounts.findOne({ jwt })
 		}
 	},
@@ -30,7 +32,7 @@ Meteor.methods({
 		return getAccount(this.userId)
 	},
 
-	// this might not be neccessary now that I'm just publishing it directly
+	// used in report builder
 	Get_Tags: function () {
 		let account = getAccount(this.userId)
 		return account?.tags
@@ -39,6 +41,8 @@ Meteor.methods({
 	// used in api, retrieves the client account
 	Update_Account: function (jwt, name) {
 		if (jwt && name) { // Update tags
+			check(jwt, String)
+			check(name, String)
 			const update = Client_Accounts.update({ jwt }, { $set: { name: name, updated_at: new Date() } })
 			if (update) return Client_Accounts.findOne({ jwt })
 		}
@@ -48,8 +52,21 @@ Meteor.methods({
 
 	},
 
+	// username: string;
+	// emails: Array<ViewerEmail>;
+	// profile: {
+	// 	first_name: string;
+	// 	last_name: string;
+	// 	viewer_id: string;
+	// 	tags: Array<string>;
+	// 	[key: string]: string | number | Object | null | undefined;
+	// }
+
 	// used in api, creates a viewer user under an account
 	Create_Viewer_User: function (jwt, json) {
+		check(jwt, String)
+		check(json, {username : String, emails : [String], 
+			profile : {first_name : String, last_name : String, viewer_id : String, tags : [String]}})
 		return new Promise<string>((resolve, reject) => {
 
 			const accountId = Client_Accounts.findOne({ jwt })?._id
