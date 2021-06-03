@@ -4,6 +4,9 @@ import { Roles } from 'meteor/alanning:roles'
 import { Client_Accounts } from "/imports/api/collections"
 import { getUserDetails } from "../reports/functions";
 import { getAccount } from "./functions";
+import { check } from 'meteor/check'
+import { Match } from 'meteor/check'
+import { Viewer } from '../../../../imports/api/types/accounts'
 
 Meteor.methods({
 
@@ -19,8 +22,9 @@ Meteor.methods({
 	},
 
 	// used in api, retrieves the client account
-	Fetch_Account: function (jwt) {
+	Fetch_Account: function (jwt : string) {
 		if (jwt) {
+			check(jwt, String)
 			return Client_Accounts.findOne({ jwt })
 		}
 	},
@@ -37,8 +41,10 @@ Meteor.methods({
 	},
 
 	// used in api, retrieves the client account
-	Update_Account: function (jwt, name) {
+	Update_Account: function (jwt : string, name : string) {
 		if (jwt && name) { // Update tags
+			check(jwt, String)
+			check(name, String)
 			const update = Client_Accounts.update({ jwt }, { $set: { name: name, updated_at: new Date() } })
 			if (update) return Client_Accounts.findOne({ jwt })
 		}
@@ -49,7 +55,9 @@ Meteor.methods({
 	},
 
 	// used in api, creates a viewer user under an account
-	Create_Viewer_User: function (jwt, json) {
+	Create_Viewer_User: function (jwt : string, json : Viewer) {
+		check(jwt, String)
+		Match.test(json, {username : String, })
 		return new Promise<string>((resolve, reject) => {
 
 			const accountId = Client_Accounts.findOne({ jwt })?._id
