@@ -169,16 +169,16 @@ Meteor.methods({
 	// }
 	Upsert_Report: function(report: ReportStructure) {
 		console.log('report: ', report)
-		check(report, {_id : Match.Maybe(String), account_id : Match.Maybe(String), name : String, 
-			tables : [{id : String, title : String, type : String, 
-				columns : [{id : String, label : String, formulaId : Match.Maybe(String), property : Match.Maybe(String), collection_name : String, relation_key : Match.Maybe(String), enum : String, symbol : Match.Maybe(String)}], 
-				rows : [{id : String, 
-					cells : [{id : String, index : Number, type : String, property : String, propertyValue : String, value : String, expression : String}] }], 
-				collection : String, sort_by : String}], 
-			formulas : [{id : String, tableId : String, columnId : String, columnIndex : Number, expression : String, 
-				// some of the formula types were decided by looking at how they are created in the columnToolBar
-				values : [{key : String, type : String, operation : String, collection_name : Match.Maybe(String), queryModifier : String, query : {collection_name : String}, property : Match.Maybe(String), path : Match.Maybe(String), columnId : Match.Maybe(String), cellIndex : Match.Maybe(String)}] }], 
-			public : Boolean, tags : [String] })
+		// check(report, {_id : Match.Maybe(String), account_id : Match.Maybe(String), name : String, 
+		// 	tables : [{id : String, title : String, type : String, 
+		// 		columns : [{id : String, label : String, formulaId : Match.Maybe(String), property : Match.Maybe(String), collection_name : String, relation_key : Match.Maybe(String), enum : String, symbol : Match.Maybe(String)}], 
+		// 		rows : [{id : String, 
+		// 			cells : [{id : String, index : Number, type : String, property : String, propertyValue : String, value : String, expression : String}] }], 
+		// 		collection : String, sort_by : String}], 
+		// 	formulas : [{id : String, tableId : String, columnId : String, columnIndex : Number, expression : String, 
+		// 		// some of the formula types were decided by looking at how they are created in the columnToolBar
+		// 		values : [{key : String, type : String, operation : String, collection_name : Match.Maybe(String), queryModifier : String, query : {collection_name : String}, property : Match.Maybe(String), path : Match.Maybe(String), columnId : Match.Maybe(String), cellIndex : Match.Maybe(String)}] }], 
+		// 	public : Boolean, tags : [String] })
 		const user = getUserDetails(Meteor.user())
 		let action = null;
 		if(!report._id) {

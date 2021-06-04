@@ -139,7 +139,8 @@ export const Report_Builder = () => {
 
 	const addRowToTable = (tableId: string) => {
 		const cells = (tableColumns: Array<TableColumn>) => {
-			return tableColumns.map(() => ({ id: uuidv4() }))
+			// need to at least have value and symbol for cells to render
+			return tableColumns.map((col, i) => ({ id: uuidv4(), value: '', index: i, symbol: '' }))
 		}
 		const updatedTables = reportStructure.tables.map(table => {
 			if (table.id === tableId) {
