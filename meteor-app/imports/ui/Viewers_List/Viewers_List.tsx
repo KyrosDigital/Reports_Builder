@@ -28,14 +28,14 @@ export const Viewers_List = () => {
 	}
 
 	useEffect(() => {
-		filterDishes()
+		filterViewers()
 	}, [query])
 
 	useEffect(() => {
 		setViewersShown(viewers)
 	}, [viewers])
 
-	const filterDishes = () => {
+	const filterViewers = () => {
 		if(query.length > 0) {
 			let newResults = viewers.filter(viewer =>
 				viewersShownRegex.test(viewer.profile.first_name) || viewersShownRegex.test(viewer.profile.last_name) 
