@@ -11,6 +11,7 @@ import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { verifyReport } from './verifyReport'
 
 
 export const Report_Builder = () => {
@@ -91,7 +92,7 @@ export const Report_Builder = () => {
 	const addColumnToTable = (tableId: string) => {
 		const updatedTables = reportStructure.tables.map(table => {
 			if (table.id === tableId) {
-				table.columns.push({ id: uuidv4(), label: '', property: '', enum: '' })
+				table.columns.push({ id: uuidv4(), label: '', property: '', collection_name: '', enum: '' })
 				table.rows.forEach(row => {
 					row.cells.push({
 						id: uuidv4(),
@@ -272,15 +273,21 @@ export const Report_Builder = () => {
 	}
 
 	const saveReport = () => {
-		Meteor.call('Upsert_Report', reportStructure, (error, result) => {
-			if (error)  {
-				console.log(error)
-				toast.error('Could not save, please complete report')
-			} else if (result) {
-				setReportStructure(result)
-				toast.success('Report Saved!')
-			}
-		})
+		let message = verifyReport(reportStructure)
+		if (message.length == 0) {
+			Meteor.call('Upsert_Report', reportStructure, (error, result) => {
+				if (error)  {
+					console.log(error)
+					toast.error('Could not save')
+				} else if (result) {
+					setReportStructure(result)
+					toast.success('Report Saved!')
+				}
+			})
+		} else {
+			toast.error(message)
+		}
+		
 	}
 
 	const update_tag = (tag) => {

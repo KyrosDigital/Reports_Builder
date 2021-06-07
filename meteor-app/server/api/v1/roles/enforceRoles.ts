@@ -1,3 +1,5 @@
+import { Meteor } from "meteor/meteor"
+import { Roles } from 'meteor/alanning:roles'
 /*********************************************************************************
 @description This function will be used primarily to handle error responses from
 asynchronous code execution. To maximize reusability and cover the largest possible
@@ -46,5 +48,6 @@ export const Handle_Error = (reason, message) => {
 }
 export const enforceRole = function(userId, role) {
   if(userId && Roles.userIsInRole(userId, role)) {
-  } else Handle_Error('Auth', 'Not Authorized')
+		return
+  } else throw new Meteor.Error('No Permission', 'user is not in editor role');
 }

@@ -1,5 +1,4 @@
 import { ReportStructure } from '../../api/types/reports'
-import { check, Match } from 'meteor/check'
 
 
 // {_id : Match.Maybe(String), account_id : Match.Maybe(String), name : String, 
@@ -13,25 +12,47 @@ import { check, Match } from 'meteor/check'
 // 		values : [{key : String, type : String, operation : String, collection_name : Match.Maybe(String), queryModifier : String, query : {collection_name : String}, property : Match.Maybe(String), path : Match.Maybe(String), columnId : Match.Maybe(String), cellIndex : Match.Maybe(String)}] }], 
 // 	public : Boolean, tags : [String] }
 
-export const verify_report = (report : ReportStructure) => {
+export const verifyReport = (report : ReportStructure) => {
+	
 	if (!report) return 'no report found'
-	if (!report['name']) return 'please name report'
-	if (report.tables) {
-		report.tables.forEach((table) => {
-			if (!table.title) return 'please name table'
-			if (table.type === 'collection' && !table.collection) return 'please select collection for ' + table.title + ' table'
-			if (table.columns.length > 0) {
-				table.columns.forEach((col) => {
-					
-				})
-			}
-			if (table.rows.length > 0) {
-				table.rows.forEach((row) => {
-					
-				})
-			}
-		})
+	
+	if (!report.name) return 'please name report'
+
+	if (report.tables.length > 0) {
 		
+		for (const table of report.tables) {
+			
+			if (!table.title) return 'please name table'
+			
+			if (table.type === 'collection' && !table.collection) return 'please select collection for ' + table.title + ' table'
+			
+			if (table.columns.length > 0) {
+
+				for (const col of table.columns) {
+
+					if (!col.label) return 'please label columns'
+
+					if (!col.collection_name) return 'please add property or formula to ' + col.label + ' column in ' + table.title
+
+				}
+			}
+		}
+	}
+	
+	if (report.formulas.length > 0) {
+
+		for (const formula of report.formulas) {
+
+			for (const value of formula.values) {
+
+				if (!value.collection_name) return 'Please select collection for ' + value.key
+
+				if (!value.property) return 'Please select property for ' + value.key
+
+				if (!value.queryModifier) return 'Please select filter for ' + value.key
+
+			}
+		}
 	}
 
 	return ''

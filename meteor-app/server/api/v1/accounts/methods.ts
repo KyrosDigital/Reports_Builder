@@ -5,6 +5,7 @@ import { Client_Accounts } from "/imports/api/collections"
 import { getUserDetails } from "../reports/functions";
 import { getAccount } from "./functions";
 import { check } from 'meteor/check'
+import { enforceRole } from '../roles/enforceRoles'
 
 Meteor.methods({
 
@@ -108,10 +109,10 @@ Meteor.methods({
 	},
 
 	Fetch_Viewers_For_Account: function () {
-		if (this.userId && Roles.userIsInRole(this.userId, ['Editor'])) {
-			let accountId = Meteor.users.findOne({ _id: this.userId })?.profile.accountId
-			return Meteor.users.find({ 'profile.accountId': accountId }).fetch()
-		}
+		enforceRole(this.userId, 'Editor')
+		let accountId = Meteor.users.findOne({ _id: this.userId })?.profile.accountId
+		return Meteor.users.find({ 'profile.accountId': accountId }).fetch()
+		
 	},
 
 	Modify_Viewer_User_Profile: function () {
