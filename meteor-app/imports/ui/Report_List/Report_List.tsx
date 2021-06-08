@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '../components/buttons'
 import { Report_Structures } from '../../api/collections'
 import { UserContext } from '../../api/contexts/userContext';
-
+import { Redirect } from 'react-router-dom';
 
 const usePage = () => useTracker(() => {
 	// The publication must also be secure
@@ -19,7 +19,10 @@ const usePage = () => useTracker(() => {
 
 export const Report_List = () => {
 
-	const { role, tags } = useContext(UserContext)
+	const { user, role, tags } = useContext(UserContext)
+	if (!user) {
+		return <Redirect to='/login' />
+	}
 	
 	const { isLoading, reports } = usePage()
 
@@ -27,7 +30,7 @@ export const Report_List = () => {
     <div className='h-screen w-screen p-6 bg-gray-100'>
 			
 			<div className="flex justify-between">
-				<p className="text-md font-bold">Your Reports:</p>
+				<p className="text-xl font-semibold tracking-wide">Your Reports:</p>
 				{role === "Editor" && <Link to='/report-builder' className="mr-4">
 					<Button onClick={() => { }} text="Make New Report" color="blue" />
 				</Link>}
