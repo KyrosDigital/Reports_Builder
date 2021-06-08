@@ -14,25 +14,25 @@ import { ReportStructure } from '../../api/types/reports'
 
 export const verifyReport = (report : ReportStructure) => {
 	
-	if (!report) return 'no report found'
+	if (!report) return 'No report found'
 	
-	if (!report.name) return 'please name report'
+	if (!report.name) return 'Please name report'
 
 	if (report.tables.length > 0) {
 		
 		for (const table of report.tables) {
 			
-			if (!table.title) return 'please name table'
+			if (!table.title) return 'Please name table'
 			
-			if (table.type === 'collection' && !table.collection) return 'please select collection for ' + table.title + ' table'
+			if (table.type === 'collection' && !table.collection) return 'Please select collection for ' + table.title + ' table'
 			
 			if (table.columns.length > 0) {
 
 				for (const col of table.columns) {
 
-					if (!col.label) return 'please label columns'
+					if (!col.label) return 'Please label columns'
 
-					if (!col.collection_name) return 'please add property or formula to ' + col.label + ' column in ' + table.title
+					if (!col.collection_name) return 'Please add property or formula to ' + col.label + ' column in ' + table.title
 
 				}
 			}

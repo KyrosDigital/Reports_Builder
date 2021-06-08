@@ -96,8 +96,9 @@ Meteor.methods({
 
 	},
 
-
-
+	/*
+		Used to create a new report, or to update one
+	*/
 	Upsert_Report: function(report: ReportStructure) {
 		enforceRole(this.userId, 'Editor')
 		check(report, {_id : Match.Maybe(String), account_id : Match.Maybe(String), name : String, 

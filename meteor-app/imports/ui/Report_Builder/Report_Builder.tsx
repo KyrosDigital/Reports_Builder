@@ -273,8 +273,9 @@ export const Report_Builder = () => {
 	}
 
 	const saveReport = () => {
-		let message = verifyReport(reportStructure)
-		if (message.length == 0) {
+		let message = ''
+		message = verifyReport(reportStructure)
+		if (!message) {
 			Meteor.call('Upsert_Report', reportStructure, (error, result) => {
 				if (error)  {
 					console.log(error)

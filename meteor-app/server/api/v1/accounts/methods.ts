@@ -53,16 +53,6 @@ Meteor.methods({
 
 	},
 
-	// username: string;
-	// emails: Array<ViewerEmail>;
-	// profile: {
-	// 	first_name: string;
-	// 	last_name: string;
-	// 	viewer_id: string;
-	// 	tags: Array<string>;
-	// 	[key: string]: string | number | Object | null | undefined;
-	// }
-
 	// used in api, creates a viewer user under an account
 	Create_Viewer_User: function (jwt, json) {
 		check(jwt, String)
