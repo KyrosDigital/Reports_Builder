@@ -1,12 +1,13 @@
 import { Meteor } from "meteor/meteor";
 import { _ } from "meteor/underscore";
 import { v4 as uuidv4 } from 'uuid';
-import math, { string } from 'mathjs'
+import math from 'mathjs'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
 import { ReportStructure, ReportData, Table, TableRow, TableColumn, FormulaValue } from '../../../../imports/api/types/reports'
 import { getUserDetails } from "./functions";
 import { check, Match } from 'meteor/check'
 import { enforceRole } from '../roles/enforceRoles'
+import { getAccount } from "../accounts/functions";
 
 Meteor.methods({
 
@@ -16,8 +17,9 @@ Meteor.methods({
 	*/
 	Insert_Report_Data: function(json) {
 		enforceRole(this.userId, 'Editor')
+		let account = getAccount(this.userId)
 		check(json, Match.ObjectIncluding({collection_name : String}))
-		Report_Data.insert({accountId: 'fyS84mmYeNLqDuaSS', ...json})
+		Report_Data.insert({account_id: account._id, ...json})
 	},
 
 	/*

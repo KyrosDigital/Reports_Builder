@@ -2,7 +2,6 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles'
 import { Client_Accounts } from "/imports/api/collections"
-import { getUserDetails } from "../reports/functions";
 import { getAccount } from "./functions";
 import { check } from 'meteor/check'
 import { enforceRole } from '../roles/enforceRoles'
@@ -56,7 +55,7 @@ Meteor.methods({
 	// used in api, creates a viewer user under an account
 	Create_Viewer_User: function (jwt, json) {
 		check(jwt, String)
-		check(json, {username : String, emails : [String], 
+		check(json, {username : String, emails : String, 
 			profile : {first_name : String, last_name : String, viewer_id : String, tags : [String]}})
 		return new Promise<string>((resolve, reject) => {
 
@@ -101,7 +100,13 @@ Meteor.methods({
 	Fetch_Viewers_For_Account: function () {
 		enforceRole(this.userId, 'Editor')
 		let accountId = Meteor.users.findOne({ _id: this.userId })?.profile.accountId
-		return Meteor.users.find({ 'profile.accountId': accountId }).fetch()
+		if (accountId) {
+			let viewers = Meteor.users.find({ 'profile.accountId': accountId }).fetch()
+			if (viewers) {
+				return viewers
+			}
+		} 
+		return []
 		
 	},
 

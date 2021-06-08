@@ -53,13 +53,9 @@ export const ColumnToolBar = ({
 		}
 	}, [columnFormula])
 	useEffect(() => {
-		if (column.symbol) {
-			setSymbolState(column.symbol)
-		}
-	}, [column.symbol])
-	useEffect(() => {
+		setSymbolState(column.symbol)
 		setColProperty(column.property)
-	}, [column.property])
+	}, [column])
 
 	// if the formula string, or formula values change
 	useEffect(() => {
