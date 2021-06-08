@@ -13,7 +13,6 @@ export const Input = ({ placeholder, value, onChange, onClick, onBlur, disabled,
 					type="text" 
 				placeholder={placeholder} value={value} onChange={onChange} onBlur={onBlur} disabled={disabled}
 				/>
-			</div>
-		
+		</div>
 	)
 }

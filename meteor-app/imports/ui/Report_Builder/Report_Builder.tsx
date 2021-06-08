@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { ToolBar } from './toolBar'
@@ -12,9 +12,18 @@ import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 import { verifyReport } from './verifyReport'
+import { Redirect } from 'react-router-dom'
+import { UserContext } from '/imports/api/contexts/userContext';
+
 
 
 export const Report_Builder = () => {
+
+	const { user } = useContext(UserContext)
+	if (!user) {
+		return <Redirect to='/login' />
+	}
+
 	const { id } = useParams()
 
 	// const loading1 = useSubscription('ReportData')

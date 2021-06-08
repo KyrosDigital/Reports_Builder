@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor'
 import React, { createContext } from 'react'
 import { withTracker } from 'meteor/react-meteor-data'
 
-export const UserContext = createContext({ user: {}, userId: '', role: '', viewer_id: '', tags: [''], isLoggedIn: false })
+export const UserContext = createContext({ user: {}, userId: '', role: '', viewer_id: '', account_id: '', tags: [''], isLoggedIn: false })
 
 export const withAccount = withTracker((props) => {
 	let viewer_id = '', account_id

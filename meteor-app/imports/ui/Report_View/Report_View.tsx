@@ -5,13 +5,18 @@ import moment from 'moment'
 import { UserContext } from '/imports/api/contexts/userContext';
 import { ReportStructure } from '/imports/api/types/reports';
 import { Tooltip } from '../components/tooltips'
+import { Redirect } from 'react-router-dom';
 
 export const Report_View = () => {
 	const { id } = useParams()
 
   const [report, setReport] = useState(null)
 
-	const { viewer_id } = useContext(UserContext)
+	const { user } = useContext(UserContext)
+
+	if (!user) {
+		return <Redirect to='/login' />
+	}
 
 	useEffect(() => {
 		Meteor.call('Compose_Report', id, (error : Error, result : ReportStructure) => {
