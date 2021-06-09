@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from 'meteor/accounts-base';
 import { Roles } from 'meteor/alanning:roles'
-import { Client_Accounts } from "/imports/api/collections"
+import { Client_Accounts, Report_Data } from "/imports/api/collections"
 import { getUserDetails } from "../reports/functions";
 import { getAccount } from "./functions";
 
@@ -18,6 +18,27 @@ Meteor.methods({
 
 	},
 
+	// finds all report data and returns and object with keys as the collection names
+	Fetch_Data: function () {
+		// TODO: add enforce roles
+		let account_obj = getAccount(this.userId)
+		let account = account_obj._id
+		let data = {}
+		Report_Data.find({ 'account_id' : account}).forEach((document) => {
+			let {collection_name, account_id, _id, ...rest} = document
+			if (data.hasOwnProperty(document.collection_name)) {
+				data[document.collection_name].push(rest)
+			} else {
+				data[document.collection_name] = [rest]
+			}
+		})
+		return data
+		// return Report_Data.rawCollection().aggregate([
+		// 		{$match: {account_id: '$account_id'}},
+		// 		{$group: {_id: '$collection_name'}}
+		// ])
+	},
+
 	// used in api, retrieves the client account
 	Fetch_Account: function (jwt) {
 		if (jwt) {
@@ -30,7 +51,7 @@ Meteor.methods({
 		return getAccount(this.userId)
 	},
 
-	// this might not be neccessary now that I'm just publishing it directly
+	// used in report builder to assign viewer tags
 	Get_Tags: function () {
 		let account = getAccount(this.userId)
 		return account?.tags

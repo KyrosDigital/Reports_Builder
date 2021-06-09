@@ -31,6 +31,9 @@ const Navbar = () => {
 						<Link to='/report-builder' className="mr-4">
 							Report Builder
 						</Link>
+						<Link to='/report-data-overview' className="mr-4">
+							Report Data
+						</Link>
 					</>
 					}
 					{/* Viewer & Editor Links */}
