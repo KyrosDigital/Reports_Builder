@@ -101,7 +101,9 @@ export const TableToolBar = ({
 			</div>
       
 			{/* delete table */}
-			<Button onClick={() => removeRow(table.id)} text="Remove row" color="red"/>
+			{table.type === 'static' && 
+				<Button onClick={() => removeRow(table.id)} text="Remove row" color="red"/>
+			}
 
 			{/* delete table */}
 			<Button onClick={() => deleteTable(table.id)} text="Delete table" color="red"/>
