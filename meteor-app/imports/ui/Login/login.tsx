@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { Button } from '../components/buttons'
 import { Redirect } from 'react-router-dom';
 import { UserContext } from '/imports/api/contexts/userContext';
+import toast from 'react-hot-toast';
 
 export const Login = () => {
 
@@ -26,12 +27,20 @@ export const Login = () => {
   }
 
 	const handleSubmit = () => {
-		setUsername('') 
-		setPassword('')
-		Meteor.loginWithPassword(username, password, (error) => {
-			if(error) console.log(error);
-			else history.push('report-list')
-		})
+		
+		if (!username || !password) {
+			toast.error('missing username or password')
+		} else {
+			setUsername('') 
+			setPassword('')
+			Meteor.loginWithPassword(username, password, (error) => {
+				if(error) {
+					toast.error('username or password invalid')
+				} 
+				else history.push('report-list')
+			})
+		}
+		
 	}
     
 
