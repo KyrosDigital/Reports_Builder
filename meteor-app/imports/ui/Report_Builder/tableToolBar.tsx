@@ -6,7 +6,7 @@ import { Label } from '../components/labels'
 
 export const TableToolBar = ({
 	table, setCollectionForTable, handleTableTitleUpdate,
-	handleTableSort, addColumnToTable, addRowToTable, deleteTable
+	handleTableSort, addColumnToTable, addRowToTable, deleteTable, removeRow
 }) => {
 
 	const [toggleDataPicker, setToggleDataPicker] = useState(false)
@@ -100,6 +100,8 @@ export const TableToolBar = ({
 				</div>
 			</div>
       
+			{/* delete table */}
+			<Button onClick={() => removeRow(table.id)} text="Remove row" color="red"/>
 
 			{/* delete table */}
 			<Button onClick={() => deleteTable(table.id)} text="Delete table" color="red"/>

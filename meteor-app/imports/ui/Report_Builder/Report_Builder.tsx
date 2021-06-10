@@ -209,6 +209,16 @@ export const Report_Builder = () => {
 		}
 	}
 
+	const removeRow = (tableId) => {
+		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+		reportStructure.tables[tableIndex].rows.pop()
+		setReportStructure(prevState => {
+			return { ...prevState, tables: reportStructure.tables }
+		});
+		// setShowToolBar(false)
+		// setSelectedTable(null)
+	}
+
 	const handleTableTitleUpdate = (tableId, title) => {
 		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
 		reportStructure.tables[tableIndex].title = title
@@ -392,6 +402,7 @@ export const Report_Builder = () => {
 					handleFormulaUpdate={handleFormulaUpdate}
 					handleFormulaRemoval={handleFormulaRemoval}
 					handleColumnSymbol={handleColumnSymbol}
+					removeRow={removeRow}
 				/>
 			}
 
