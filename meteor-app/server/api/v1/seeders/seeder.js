@@ -69,11 +69,11 @@ export const seedUserData = () => {
 					username: username,
 					email: email,
 					password: 'password',
+					tags: [tag],
 					profile: {
 						first_name: first_name,
 						last_name: last_name,
 						account_id: account_id,
-						tags: [tag],
 						viewer_id: viewer_id
 					}
 				})

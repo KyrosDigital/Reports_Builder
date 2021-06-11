@@ -149,23 +149,60 @@ Meteor.methods({
 		const generateCells = (columns: Array<TableColumn>, document: ReportData) => {
 
 			return columns.map((column, i) => {
-
+				// literal document in collection
 				let doc = document
 
 				let type = '', property = null, propertyValue = null, value: number | Object| string | null | undefined = 0;
 
 				// if there is a relation key, we overide the document from table collection, to the column specific collection
-				if(column.relation_key) {
+				if (column.relation_key) {
+					// query used as the WHERE for the mongo find
 					let query = {
 						account_id: user.account_id,
 						collection_name: column.collection_name,
 					}
+					// if report is private, add viewer_id to field for another WHERE filter
 					if (!report.public && user.role === 'Viewer') {
 						query['viewer_id'] = user.viewer_id
 					}
+					// set relation key to match whatever column was supposed to be queried
+					// query['viewer_id'] = doc['viewer_id']
+					// WHERE A.viewer_id = T.viewer_id
+					// must have matching key for this to work
 					query[column.relation_key] = doc[column.relation_key]
 					doc = Report_Data.findOne(query)
 				}
+
+
+
+				if (column.collection_name != doc.collection_name) {
+					// query used as the WHERE for the mongo find
+					let query = {
+						account_id: user.account_id,
+						collection_name: column.collection_name,
+					}
+					// if report is private, add viewer_id to field for another WHERE filter
+					if (!report.public && user.role === 'Viewer') {
+						query['viewer_id'] = user.viewer_id
+					}
+					// set relation key to be whatever similar key, most likely viewer_id
+					// assume all docs in collection have same format
+					let column_collection = Report_Data.findOne({
+																	account_id: user.account_id,
+																	collection_name: column.collection_name
+																})
+					let {_id, collection_name, account_id, ...filtered_column_collection} = column_collection
+					let column_collection_keys = Object.keys(filtered_column_collection)
+					let doc_keys = Object.keys(doc)
+					let shared_key = column_collection_keys.filter(key => doc_keys.includes(key))
+					if (shared_key.length) {
+						query[shared_key[0]] = doc[shared_key[0]]
+					}
+					doc = Report_Data.findOne(query)
+				}
+
+
+
 				// a column should only have either a formula, or a property assigned, never both
 				property = column.property
 				propertyValue = doc[property]
@@ -282,3 +319,4 @@ Meteor.methods({
 	}
 
 })
+
