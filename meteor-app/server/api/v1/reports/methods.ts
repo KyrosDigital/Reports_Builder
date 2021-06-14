@@ -155,23 +155,31 @@ Meteor.methods({
 				let type = '', property = null, propertyValue = null, value: number | Object| string | null | undefined = 0;
 
 				// if there is a relation key, we overide the document from table collection, to the column specific collection
-				if (column.relation_key) {
-					// query used as the WHERE for the mongo find
-					let query = {
-						account_id: user.account_id,
-						collection_name: column.collection_name,
-					}
-					// if report is private, add viewer_id to field for another WHERE filter
-					if (!report.public && user.role === 'Viewer') {
-						query['viewer_id'] = user.viewer_id
-					}
-					// set relation key to match whatever column was supposed to be queried
-					// query['viewer_id'] = doc['viewer_id']
-					// WHERE A.viewer_id = T.viewer_id
-					// must have matching key for this to work
-					query[column.relation_key] = doc[column.relation_key]
-					doc = Report_Data.findOne(query)
-				}
+				// if (column.relation_key) {
+				// 	// query used as the WHERE for the mongo find
+				// 	let query = {
+				// 		account_id: user.account_id,
+				// 		// query from column collection
+				// 		collection_name: column.collection_name,
+				// 	}
+				// 	// if report is private, add viewer_id to field for another WHERE filter
+				// 	if (!report.public && user.role === 'Viewer') {
+				// 		query['viewer_id'] = user.viewer_id
+				// 	}
+				// 	// set relation key to match whatever column was supposed to be queried
+				// 	// query['viewer_id'] = doc['viewer_id']
+				// 	// WHERE A.viewer_id = T.viewer_id
+				// 	// must have matching key for this to work
+				// 	query[column.relation_key] = doc[column.relation_key]
+				// 	doc = Report_Data.findOne(query)
+
+				// 	/*
+				// 	this loops thru every document in transactions becuase the table is transactions driven. It will normally just query 
+				// 	from the table collection, but since there is a relation key, it queries the document from the column collection
+				// 	with the relation key value from the original transactions document, therefore "joining" them. In this way, 
+				// 	relation key must be common among both, otherwise will return nothing
+				// 	*/
+				// }
 
 
 

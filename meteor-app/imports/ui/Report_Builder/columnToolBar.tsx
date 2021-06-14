@@ -1,18 +1,17 @@
 import { Meteor } from 'meteor/meteor';
-import React, { useState, useEffect } from 'react';
-import { Button } from '../components/buttons'
-import { Input } from '../components/inputs'
-import { Label } from '../components/labels'
-import { DataPicker } from '../components/dataPicker';
-import { Report_Data } from '../../api/collections'
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { Button } from '../components/buttons';
+import { DataPicker } from '../components/dataPicker';
+import { Input } from '../components/inputs';
+import { Label } from '../components/labels';
 
 export const ColumnToolBar = ({
 	reportStructure, column, columnIndex, tableId, 
 	handleColumnLabelChange, handleColumnPropertyChange,
 	handleFormulaUpdate, handleFormulaRemoval, columnFormula,
 	handleColumnRelationKeyChange,
-	deleteColumn, userCollections, handleColumnSymbol
+	deleteColumn, userCollections, handleColumnSymbol, setRelationKey
 }) => {
 
 	const [formulaString, setFormulaString] = useState('')
@@ -52,10 +51,9 @@ export const ColumnToolBar = ({
 			setFormulaVariables([])
 		}
 	}, [columnFormula])
+
 	useEffect(() => {
-		if (column.symbol) {
-			setSymbolState(column.symbol)
-		}
+		setSymbolState(column.symbol)
 	}, [column.symbol])
 
 	// if the formula string, or formula values change

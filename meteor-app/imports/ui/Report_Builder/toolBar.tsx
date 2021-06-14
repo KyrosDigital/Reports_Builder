@@ -9,7 +9,7 @@ export const ToolBar = ({
 	addColumnToTable, deleteColumn, addRowToTable, deleteTable,
 	column, columnFormula, handleColumnLabelChange, handleColumnPropertyChange,
 	handleColumnRelationKeyChange,
-	handleFormulaUpdate, handleFormulaRemoval, handleColumnSymbol
+	handleFormulaUpdate, handleFormulaRemoval, handleColumnSymbol, setRelationKey
 }) => {
 
   return (

@@ -36,12 +36,17 @@ export const Report_Builder = () => {
 	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
 	const [tags, setTags] = useState([])
 	const [showChoices, setShowChoices] = useState(false)
+	const [collectionKeys, setCollectionKeys] = useState({})
 	
 
 	useEffect(() => {
 		Meteor.call('Get_Tags', (error, result) => {
 			if (error) console.log(error)
 			if (result) setTags(result)
+		});
+		Meteor.call('Fetch_Data', (error, result) => {
+			if (error) console.log(error)
+			if (result) setCollectionKeys(result)
 		})
 	}, [])
 
@@ -60,9 +65,24 @@ export const Report_Builder = () => {
 		}
 	}, [loading2])
 
-	useEffect(() => {
-		// console.log(reportStructure)
-	}, [reportStructure])
+	// const setRelationKey = (tableId: string, columnIndex : number) => {
+	// 	let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
+	// 	let table_collection_name = reportStructure.tables[tableIndex].collection
+	// 	let col_collection_name = reportStructure.tables[tableIndex].columns[columnIndex].collection_name
+	// 	if (col_collection_name != table_collection_name) {
+	// 		let table_collection_keys = Object.keys(collectionKeys[table_collection_name])
+	// 		let col_collection_keys = Object.keys(collectionKeys[col_collection_name])
+	// 		let shared_key = col_collection_keys.filter(key => table_collection_keys.includes(key))
+	// 		// only works if one shared key
+	// 		if (shared_key.length == 1) {
+	// 			reportStructure.tables[tableIndex].columns[columnIndex].relation_key = shared_key[0]
+  //       console.log("relation_key", reportStructure.tables[tableIndex].columns[columnIndex].relation_key)
+	// 			setReportStructure(prevState => {
+	// 				return { ...prevState, tables: reportStructure.tables }
+	// 			});
+	// 		}
+	// 	}
+	// }
 
 	const createNewTable = (type: string) => {
 		const table = {

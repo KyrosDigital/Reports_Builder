@@ -25,6 +25,27 @@ Meteor.methods({
 		}
 	},
 
+	// finds all report data and returns and object with keys as the collection names
+	Fetch_Data: function () {
+		// TODO: add enforce roles
+		let account_obj = getAccount(this.userId)
+		let account = account_obj._id
+		let data = {}
+		Report_Data.find({ 'account_id' : account}).forEach((document) => {
+			let {collection_name, account_id, _id, ...rest} = document
+			if (data.hasOwnProperty(document.collection_name)) {
+				data[document.collection_name].push(rest)
+			} else {
+				data[document.collection_name] = [rest]
+			}
+		})
+		return data
+		// return Report_Data.rawCollection().aggregate([
+		// 		{$match: {account_id: '$account_id'}},
+		// 		{$group: {_id: '$collection_name'}}
+		// ])
+	},
+
 	// used in meteor server, to access a client account object for a given user
 	Fetch_Account_For_User: function () {
 		return getAccount(this.userId)
