@@ -15,6 +15,7 @@ import { configureRoles } from './api/v1/roles/roles'
 
 // seeders
 import { seedUserData } from './api/v1/seeders/seeder'
+import { security } from './api/v1/accounts/security';
 
 // securiy
 import { security } from './api/v1/accounts/security'
