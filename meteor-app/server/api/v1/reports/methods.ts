@@ -5,6 +5,9 @@ import math from 'mathjs'
 import { Report_Data, Report_Structures } from '../../../../imports/api/collections';
 import { ReportStructure, ReportData, Table, TableRow, TableColumn, FormulaValue } from '../../../../imports/api/types/reports'
 import { getUserDetails } from "./functions";
+import { check, Match } from 'meteor/check'
+import { enforceRole } from '../roles/enforceRoles'
+import { getAccount } from "../accounts/functions";
 
 Meteor.methods({
 
@@ -13,7 +16,10 @@ Meteor.methods({
 		TODO: restrict to account and user roles
 	*/
 	Insert_Report_Data: function(json) {
-		Report_Data.insert({accountId: 'fyS84mmYeNLqDuaSS', ...json})
+		enforceRole(this.userId, 'Editor')
+		let account = getAccount(this.userId)
+		check(json, Match.ObjectIncluding({collection_name : String}))
+		Report_Data.insert({account_id: account._id, ...json})
 	},
 
 	/*
@@ -21,6 +27,7 @@ Meteor.methods({
 		TODO: restrict to user roles
 	*/
 	Fetch_Collection_Names: function() {
+		enforceRole(this.userId, 'Editor')
 		const user = getUserDetails(Meteor.user())
 		let distinct = _.uniq(Report_Data.find({ account_id: user.account_id }, {
 			sort: { collection_name: 1 }, fields: { collection_name: 1 }
@@ -35,6 +42,7 @@ Meteor.methods({
 		TODO: restrict to account and user roles
 	*/
 	Fetch_All_Collection_Keys: function () {
+		enforceRole(this.userId, 'Editor')
 
 		const user = getUserDetails(Meteor.user())
 
@@ -68,6 +76,8 @@ Meteor.methods({
 	TODO: restrict to account and user roles
 */
 	Fetch_Single_Collection_Keys: function (collection_name) {
+		enforceRole(this.userId, 'Editor')
+		check(collection_name, String)
 
 		const user = getUserDetails(Meteor.user())
 
@@ -92,6 +102,17 @@ Meteor.methods({
 		Used to create a new report, or to update one
 	*/
 	Upsert_Report: function(report: ReportStructure) {
+		enforceRole(this.userId, 'Editor')
+		check(report, {_id : Match.Maybe(String), account_id : Match.Maybe(String), name : String, 
+			tables : [{id : String, title : String, type : String, 
+				columns : [{id : String, label : String, formulaId : Match.Maybe(String), property : Match.Maybe(String), collection_name : String, relation_key : Match.Maybe(String), enum : String, symbol : Match.Maybe(String)}], 
+				rows : [{id : String, 
+					cells : [{id : String, index : Number, type : String, property : String, propertyValue : String, value : String, expression : String}] }], 
+				collection : String, sort_by : String}], 
+			formulas : [{id : String, tableId : String, columnId : String, columnIndex : Number, expression : String, 
+				// some of the formula types were decided by looking at how they are created in the columnToolBar
+				values : [{key : String, type : String, operation : String, collection_name : Match.Maybe(String), queryModifier : String, query : {collection_name : String}, property : Match.Maybe(String), path : Match.Maybe(String), columnId : Match.Maybe(String), cellIndex : Match.Maybe(String)}] }], 
+			public : Boolean, tags : [String] })
 		const user = getUserDetails(Meteor.user())
 		let action = null;
 		if(!report._id) {
@@ -120,6 +141,10 @@ Meteor.methods({
 	*/
 
 	Compose_Report: function(reportId: string) {
+		if (!this.userId) {
+			throw new Meteor.Error('No Permission', 'user is not logged in')
+		}
+		check(reportId, String)
 
 		let user = getUserDetails(Meteor.user())
 
@@ -131,6 +156,7 @@ Meteor.methods({
 
 		// used to generate rows, if table is collection driven
 		const performQuery = (collection: string) => {
+			check(collection, String)
 			if (report.public || user.role === 'Editor') {
         return Report_Data.find({
 					account_id: user.account_id,
@@ -145,9 +171,18 @@ Meteor.methods({
 			}
 		}
 
+		// export interface ReportData {
+		// 	_id: string | undefined;
+		// 	collection_name: string;
+		// 	viewer_id?: string;
+		// 	[key: string]: string | number | Object | null | undefined;
+		
+		// }
+
 		// generates cells, for a given row, if table is collection driven
 		const generateCells = (columns: Array<TableColumn>, document: ReportData) => {
-
+			check(columns, [{id : String, label : String, formulaId : Match.Maybe(String), property : Match.Maybe(String), collection_name : String, relation_key : Match.Maybe(String), enum : String, symbol : Match.Maybe(String)}])
+			check(document, Match.ObjectIncluding({collection_name : String, viewer_id : String}))
 			return columns.map((column, i) => {
 
 				let doc = document
@@ -183,7 +218,13 @@ Meteor.methods({
 
 		// generates rows within a table, if collection driven
 		const generateRows =  (table: Table) => {
+			check(table, {id : String, title : String, type : String, 
+				columns : [{id : String, label : String, formulaId : Match.Maybe(String), property : Match.Maybe(String), collection_name : String, relation_key : Match.Maybe(String), enum : String, symbol : Match.Maybe(String)}], 
+				rows : [{id : String, 
+					cells : [{id : String, index : Number, type : String, property : String, propertyValue : String, value : String, expression : String}] }], 
+				collection : String, sort_by : String})
 			// if type is "static", the rows should already be defined
+			// TODO : allow user to defind rows for static table
 			if(table.type === 'collection') {
 				const collection = performQuery(table.collection)
 

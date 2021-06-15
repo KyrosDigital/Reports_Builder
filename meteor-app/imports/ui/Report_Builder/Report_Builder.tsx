@@ -11,8 +11,10 @@ import { ReportStructure, TableColumn } from '../../api/types/reports'
 import { useParams } from 'react-router-dom';
 import { Report_Structures } from '../../api/collections'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
+import { verifyReport } from './verifyReport'
 import { Redirect } from 'react-router-dom'
 import { UserContext } from '/imports/api/contexts/userContext';
+
 
 
 export const Report_Builder = () => {
@@ -99,7 +101,7 @@ export const Report_Builder = () => {
 	const addColumnToTable = (tableId: string) => {
 		const updatedTables = reportStructure.tables.map(table => {
 			if (table.id === tableId) {
-				table.columns.push({ id: uuidv4(), label: '', property: '', enum: '' })
+				table.columns.push({ id: uuidv4(), label: '', property: '', collection_name: '', enum: '' })
 				table.rows.forEach(row => {
 					row.cells.push({
 						id: uuidv4(),
@@ -147,7 +149,8 @@ export const Report_Builder = () => {
 
 	const addRowToTable = (tableId: string) => {
 		const cells = (tableColumns: Array<TableColumn>) => {
-			return tableColumns.map(() => ({ id: uuidv4() }))
+			// need to at least have value and symbol for cells to render
+			return tableColumns.map((col, i) => ({ id: uuidv4(), value: '', index: i, symbol: '' }))
 		}
 		const updatedTables = reportStructure.tables.map(table => {
 			if (table.id === tableId) {
@@ -279,13 +282,22 @@ export const Report_Builder = () => {
 	}
 
 	const saveReport = () => {
-		Meteor.call('Upsert_Report', reportStructure, (error, result) => {
-			if (error) console.log(error)
-			if (result) {
-				setReportStructure(result)
-				toast.success('Report Saved!')
-			}
-		})
+		let message = ''
+		message = verifyReport(reportStructure)
+		if (!message) {
+			Meteor.call('Upsert_Report', reportStructure, (error, result) => {
+				if (error)  {
+					console.log(error)
+					toast.error('Could not save')
+				} else if (result) {
+					setReportStructure(result)
+					toast.success('Report Saved!')
+				}
+			})
+		} else {
+			toast.error(message)
+		}
+		
 	}
 
 	const update_tag = (tag) => {
@@ -434,7 +446,7 @@ export const Report_Builder = () => {
 								{table.columns.map((col, i) => {
 									return <div
 										key={col.id}
-										className={`flex ${selectedColumn?.columnIndex == i? 'bg-blue-100': 'bg-white'} justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md text-xs cursor-pointer`}
+										className={`flex ${selectedColumn?.columnIndex == i && selectedColumn?.tableId === table.id?  'bg-blue-100': 'bg-white'} justify-center items-center h-8 w-40 max-w-sm m-1 border-2 border-indigo-200 hover:border-indigo-100 rounded-md text-xs cursor-pointer`}
 										onClick={() => toggleToolBarForColumn(table.id, col, i)}>
 										<span>{col.label}</span>
 									</div>
