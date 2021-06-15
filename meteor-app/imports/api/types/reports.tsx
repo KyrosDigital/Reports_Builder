@@ -67,7 +67,7 @@ export interface FormulaQuery {
 export interface ReportData {
 	_id: string | undefined;
 	collection_name: string;
-	viewer_id?: string;
+	viewer_id: string;
 	[key: string]: string | number | Object | null | undefined;
 
 }

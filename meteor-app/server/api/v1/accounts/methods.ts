@@ -1,9 +1,10 @@
-import { Meteor } from "meteor/meteor";
 import { Accounts } from 'meteor/accounts-base';
-import { Roles } from 'meteor/alanning:roles'
-import { Client_Accounts, Report_Data } from "/imports/api/collections"
-import { getUserDetails } from "../reports/functions";
+import { Roles } from 'meteor/alanning:roles';
+import { check } from 'meteor/check';
+import { Meteor } from "meteor/meteor";
+import { enforceRole } from '../roles/enforceRoles';
 import { getAccount } from "./functions";
+import { Client_Accounts, Report_Data } from "/imports/api/collections";
 
 Meteor.methods({
 
@@ -33,15 +34,12 @@ Meteor.methods({
 			}
 		})
 		return data
-		// return Report_Data.rawCollection().aggregate([
-		// 		{$match: {account_id: '$account_id'}},
-		// 		{$group: {_id: '$collection_name'}}
-		// ])
 	},
 
 	// used in api, retrieves the client account
 	Fetch_Account: function (jwt) {
 		if (jwt) {
+			check(jwt, String)
 			return Client_Accounts.findOne({ jwt })
 		}
 	},
@@ -60,6 +58,8 @@ Meteor.methods({
 	// used in api, retrieves the client account
 	Update_Account: function (jwt, name) {
 		if (jwt && name) { // Update tags
+			check(jwt, String)
+			check(name, String)
 			const update = Client_Accounts.update({ jwt }, { $set: { name: name, updated_at: new Date() } })
 			if (update) return Client_Accounts.findOne({ jwt })
 		}
@@ -71,6 +71,9 @@ Meteor.methods({
 
 	// used in api, creates a viewer user under an account
 	Create_Viewer_User: function (jwt, json) {
+		check(jwt, String)
+		check(json, {username : String, emails : String, 
+			profile : {first_name : String, last_name : String, viewer_id : String, tags : [String]}})
 		return new Promise<string>((resolve, reject) => {
 
 			const accountId = Client_Accounts.findOne({ jwt })?._id
@@ -112,10 +115,16 @@ Meteor.methods({
 	},
 
 	Fetch_Viewers_For_Account: function () {
-		if (this.userId && Roles.userIsInRole(this.userId, ['Editor'])) {
-			let accountId = Meteor.users.findOne({ _id: this.userId })?.profile.accountId
-			return Meteor.users.find({ 'profile.accountId': accountId }).fetch()
-		}
+		enforceRole(this.userId, 'Editor')
+		let accountId = Meteor.users.findOne({ _id: this.userId })?.profile.accountId
+		if (accountId) {
+			let viewers = Meteor.users.find({ 'profile.accountId': accountId }).fetch()
+			if (viewers) {
+				return viewers
+			}
+		} 
+		return []
+		
 	},
 
 	Modify_Viewer_User_Profile: function () {
