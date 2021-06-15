@@ -48,7 +48,7 @@ export const Viewers_List = () => {
 	}
 
 	return (
-		<div className='h-screen w-screen p-6 bg-gray-100'>
+		<div className='min-h-screen h-full w-full p-6 bg-gray-100'>
 			<SearchBar query={query} setQuery={setQuery} />
 			<h1 className="text-xl font-semibold tracking-wide my-4">Viewers:</h1>
 			<div className="">

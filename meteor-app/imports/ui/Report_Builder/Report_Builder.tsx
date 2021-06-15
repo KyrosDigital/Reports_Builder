@@ -381,7 +381,7 @@ export const Report_Builder = () => {
 	}
 
 	return (
-		<div className='h-screen p-6 bg-gray-100'>
+		<div className='min-h-screen h-full w-full p-6 bg-gray-100'>
 
 			{/* ToolBar */}
 			{showToolBar &&
