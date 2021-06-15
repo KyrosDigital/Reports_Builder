@@ -21,7 +21,7 @@ Meteor.methods({
 
 	// finds all report data and returns and object with keys as the collection names
 	Fetch_Data: function () {
-		// TODO: add enforce roles
+		enforceRole(this.userId, 'Editor')
 		let account_obj = getAccount(this.userId)
 		let account = account_obj._id
 		let data = {}
