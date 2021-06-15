@@ -31,13 +31,15 @@ export const Login = () => {
 		if (!username || !password) {
 			toast.error('missing username or password')
 		} else {
-			setUsername('') 
-			setPassword('')
 			Meteor.loginWithPassword(username, password, (error) => {
 				if(error) {
 					toast.error('username or password invalid')
 				} 
-				else history.push('report-list')
+				else {
+					setUsername('')
+					setPassword('')
+					history.push('report-list')
+				}
 			})
 		}
 		
