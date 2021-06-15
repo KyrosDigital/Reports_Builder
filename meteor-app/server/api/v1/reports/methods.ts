@@ -173,16 +173,16 @@ Meteor.methods({
 				// 	query[column.relation_key] = doc[column.relation_key]
 				// 	doc = Report_Data.findOne(query)
 
-				// 	/*
-				// 	this loops thru every document in transactions becuase the table is transactions driven. It will normally just query 
-				// 	from the table collection, but since there is a relation key, it queries the document from the column collection
-				// 	with the relation key value from the original transactions document, therefore "joining" them. In this way, 
-				// 	relation key must be common among both, otherwise will return nothing
-				// 	*/
-				// }
+					/*
+					this loops thru every document in transactions becuase the table is transactions driven. It will normally just query 
+					from the table collection, but since there is a relation key, it queries the document from the column collection
+					with the relation key value from the original transactions document, therefore "joining" them. In this way, 
+					relation key must be common among both, otherwise will return nothing
+					*/
+				
 
 
-
+				// auto assign relation key for table join
 				if (column.collection_name != doc.collection_name) {
 					// query used as the WHERE for the mongo find
 					let query = {
@@ -263,10 +263,12 @@ Meteor.methods({
 			// we must loop over every table, row, so that formula results can be applied to individual cells, under a column
 			report?.tables.forEach(table => {
 
+				// each row in table
 				table.rows.forEach(row => {
 
 					let expression = '';
 
+					// run through each formula
 					report?.formulas.forEach(formula => {
 						
 						expression = formula.expression;

@@ -36,7 +36,6 @@ export const Report_Builder = () => {
 	const [selectedColumnFormula, setSelectedColumnFormula] = useState(null)
 	const [tags, setTags] = useState([])
 	const [showChoices, setShowChoices] = useState(false)
-	const [collectionKeys, setCollectionKeys] = useState({})
 	
 
 	useEffect(() => {
@@ -44,10 +43,6 @@ export const Report_Builder = () => {
 			if (error) console.log(error)
 			if (result) setTags(result)
 		});
-		Meteor.call('Fetch_Data', (error, result) => {
-			if (error) console.log(error)
-			if (result) setCollectionKeys(result)
-		})
 	}, [])
 
 	useEffect(() => {

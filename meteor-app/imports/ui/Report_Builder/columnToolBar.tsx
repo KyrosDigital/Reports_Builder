@@ -18,7 +18,7 @@ export const ColumnToolBar = ({
 	const [formulaVariables, setFormulaVariables] = useState([])
 	const [formulaValues, setFormulaValues] = useState([])
 	const [symbolState, setSymbolState] = useState('')
-	const [colProperty, setColProperty] = useState()
+	const [colProperty, setColProperty] = useState(false)
 	const [toggleDataPicker, setToggleDataPicker] = useState(false)
 	const [toggleRelationPicker, setToggleRelationPicker] = useState(false)
 	const alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -265,7 +265,7 @@ export const ColumnToolBar = ({
 			}
 
 			{/* Column relation_key - if no formula */}
-			{!formulaString &&
+			{/* {!formulaString &&
 				<div className="mb-4">
 					<Input 
 						placeholder={'Enter relation key'}
@@ -275,7 +275,7 @@ export const ColumnToolBar = ({
 						disabled={true}
 						/>
 				</div>
-			}
+			} */}
 			
 			<div>
 				<span className="whitespace-nowrap text-xs font-semibold inline-block py-1 px-2 rounded text-indigo-600 bg-indigo-200 last:mr-0 mr-1">
