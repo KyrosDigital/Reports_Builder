@@ -12,17 +12,19 @@ export const verifyReport = (report : ReportStructure) => {
 			
 			if (!table.title) return 'Please name table'
 
-			if (table.columns.length == 0) return table.title + ' table must have at least one column'
+			if (!table.collection) return 'Please assign collection to \"' + table.title + '\"'
+
+			if (table.columns.length == 0) return '\"' + table.title + '\" table must have at least one column'
 			
-			if (table.type === 'collection' && !table.collection) return 'Please select collection for ' + table.title + ' table'
+			if (table.type === 'collection' && !table.collection) return 'Please select collection for \"' + table.title + '\"'
 			
 			if (table.columns.length > 0) {
 
 				for (const col of table.columns) {
 
-					if (!col.label) return 'Please label columns'
+					if (!col.label) return 'Please label columns in \"' + table.title + '\"'
 
-					if (!col.collection_name) return 'Please add property or formula to ' + col.label + ' column in ' + table.title
+					if (!col.collection_name) return 'Please add property or formula to \"' + col.label + '\" column in \"' + table.title + '\"'
 
 				}
 			}

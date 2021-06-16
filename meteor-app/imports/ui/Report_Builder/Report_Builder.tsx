@@ -191,14 +191,6 @@ export const Report_Builder = () => {
 		});
 	}
 
-	const handleColumnRelationKeyChange = (tableId, columnIndex, relation_key) => {
-		let tableIndex = reportStructure.tables.findIndex(table => table.id === tableId)
-		reportStructure.tables[tableIndex].columns[columnIndex].relation_key = relation_key
-		setReportStructure(prevState => {
-			return { ...prevState, tables: reportStructure.tables }
-		});
-	}
-
 	const deleteTable = (tableId) => {
 		let c = confirm("Are you sure you want to delete this table?")
 		if (c) {
@@ -410,7 +402,6 @@ export const Report_Builder = () => {
 					columnFormula={selectedColumnFormula}
 					handleColumnLabelChange={handleColumnLabelChange}
 					handleColumnPropertyChange={handleColumnPropertyChange}
-					handleColumnRelationKeyChange={handleColumnRelationKeyChange}
 					handleFormulaUpdate={handleFormulaUpdate}
 					handleFormulaRemoval={handleFormulaRemoval}
 					handleColumnSymbol={handleColumnSymbol}
