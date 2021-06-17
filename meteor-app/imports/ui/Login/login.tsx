@@ -5,6 +5,8 @@ import { Button } from '../components/buttons'
 import { Redirect } from 'react-router-dom';
 import { UserContext } from '/imports/api/contexts/userContext';
 import toast from 'react-hot-toast';
+import * as d3 from "d3";
+import { useEffect } from 'react';
 
 export const Login = () => {
 
@@ -44,10 +46,36 @@ export const Login = () => {
 		}
 		
 	}
+
+	const BarChart = (w, h) =>  {
+		const data = [12, 5, 6, 6, 9, 10];
+
+		const svg = d3.select("#bar-chart")
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h)
+			.style("margin-left", 100);
+
+		svg.selectAll("rect")
+			.data(data)
+			.enter()
+			.append("rect")
+			.attr("x", (d, i) => i * 70)
+			.attr("y", (d, i) => h - 10 * d)
+			.attr("width", 65)
+			.attr("height", (d, i) => d * 10)
+			.attr("fill", "green")
+	}
+
+	useEffect(() => {
+		BarChart(300, 300)
+	}, [])
+
     
 
   return (
     <div className="h-screen flex justify-center items-center bg-gray-100">
+			<div id={'bar-chart'}></div>
         <div >
             <h1 className="font-semibold tracking-wide text-xl my-2">Login</h1>
             <div className="w-56 mb-3 pt-0">
