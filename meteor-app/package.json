@@ -14,6 +14,7 @@
     "@heroicons/react": "^1.0.1",
     "bcrypt": "^5.0.1",
     "content-type": "^1.0.4",
+    "d3": "^7.0.0",
     "jsonwebtoken": "^8.5.1",
     "mathjs": "^9.3.2",
     "meteor-node-stubs": "^1.0.1",
@@ -28,6 +29,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/d3": "^6.7.0",
     "@types/mathjs": "^6.0.12",
     "@types/meteor": "^1.4.70",
     "@types/meteor-roles": "^1.2.32",
@@ -38,7 +40,7 @@
     "@types/uuid": "^8.3.0",
     "autoprefixer": "^10.2.5",
     "postcss": "^8.2.15",
-    "tailwindcss": "^2.1.2",
+    "tailwindcss": "^2.0.4",
     "typescript": "^4.2.2"
   },
   "meteor": {

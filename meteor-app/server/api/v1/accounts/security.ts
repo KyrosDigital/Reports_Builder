@@ -7,5 +7,6 @@ export const security = () => {
 	Meteor.users.deny({
 		update() { return true; }
 	});
-
+	
 }
+
