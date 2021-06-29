@@ -171,13 +171,6 @@ Meteor.methods({
 			}
 		}
 
-		// export interface ReportData {
-		// 	_id: string | undefined;
-		// 	collection_name: string;
-		// 	viewer_id?: string;
-		// 	[key: string]: string | number | Object | null | undefined;
-		
-		// }
 
 		// generates cells, for a given row, if table is collection driven
 		const generateCells = (columns: Array<TableColumn>, document: ReportData) => {

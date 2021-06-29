@@ -1,10 +1,10 @@
-import { Meteor } from "meteor/meteor";
 import { Accounts } from 'meteor/accounts-base';
-import { Roles } from 'meteor/alanning:roles'
-import { Client_Accounts } from "/imports/api/collections"
+import { Roles } from 'meteor/alanning:roles';
+import { check } from 'meteor/check';
+import { Meteor } from "meteor/meteor";
+import { enforceRole } from '../roles/enforceRoles';
 import { getAccount } from "./functions";
-import { check } from 'meteor/check'
-import { enforceRole } from '../roles/enforceRoles'
+import { Client_Accounts, Report_Data } from "/imports/api/collections";
 
 Meteor.methods({
 
@@ -17,6 +17,23 @@ Meteor.methods({
 
 	Create_Account: function () {
 
+	},
+
+	// finds all report data and returns and object with keys as the collection names
+	Fetch_Data: function () {
+		enforceRole(this.userId, 'Editor')
+		let account_obj = getAccount(this.userId)
+		let account = account_obj._id
+		let data = {}
+		Report_Data.find({ 'account_id' : account}).forEach((document) => {
+			let {collection_name, account_id, _id, ...rest} = document
+			if (data.hasOwnProperty(document.collection_name)) {
+				data[document.collection_name].push(rest)
+			} else {
+				data[document.collection_name] = [rest]
+			}
+		})
+		return data
 	},
 
 	// used in api, retrieves the client account
@@ -32,7 +49,7 @@ Meteor.methods({
 		return getAccount(this.userId)
 	},
 
-	// used in report builder
+	// used in report builder to assign viewer tags
 	Get_Tags: function () {
 		let account = getAccount(this.userId)
 		return account?.tags
