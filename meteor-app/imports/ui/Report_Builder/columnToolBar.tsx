@@ -11,7 +11,6 @@ export const ColumnToolBar = ({
 	reportStructure, column, columnIndex, tableId, 
 	handleColumnLabelChange, handleColumnPropertyChange,
 	handleFormulaUpdate, handleFormulaRemoval, columnFormula,
-	handleColumnRelationKeyChange,
 	deleteColumn, userCollections, handleColumnSymbol
 }) => {
 
@@ -262,19 +261,6 @@ export const ColumnToolBar = ({
 				<div className="flex">
 					<Button onClick={() => saveFormula()} text={'Save Formula'} color="blue"/>
 					<Button onClick={() => removeFormula()} text={'Remove Formula'} color="red"/>
-				</div>
-			}
-
-			{/* Column relation_key - if no formula */}
-			{!formulaString &&
-				<div className="mb-4">
-					<Input 
-						placeholder={'Enter relation key'}
-						label={"Relation key:"} 
-						value={column.relation_key} 
-						onClick={() => handleRelationPicker()}
-						disabled={true}
-						/>
 				</div>
 			}
 			
